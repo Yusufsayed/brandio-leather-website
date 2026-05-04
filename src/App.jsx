@@ -91,7 +91,7 @@ export default function BrandioLeatherWebsite() {
       <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-amber-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <button onClick={() => scrollToSection('home')} className="flex items-center gap-2">
-            <img src={LOGO} alt="Brandio Leather" className="h-10 object-contain" />
+            <img src={LOGO} alt="Brandio Leather" className="h-14 object-contain rounded" />
           </button>
 
           <div className="hidden md:flex gap-8 items-center">
@@ -314,7 +314,7 @@ export default function BrandioLeatherWebsite() {
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-3 gap-8 mb-8">
             <div>
-              <img src={LOGO} alt="Brandio Leather" className="h-10 mb-4 brightness-200" />
+              <img src={LOGO} alt="Brandio Leather" className="h-14 mb-4 brightness-200 rounded" />
               <p className="text-amber-100">Premium leather goods manufacturer and exporter since 2010.</p>
             </div>
             <div>
