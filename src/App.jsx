@@ -80,18 +80,18 @@ function ProductCard({ product, onInquire }) {
 const PRODUCTS = {
   wallets: {
     bifold: [
-      { id: 64, name: 'ES Bifold',           sku: 'MC-0064', collection: 'Massini Collection', frontImage: '/MC-0064.png', insideImage: '/MC-0064_inside.png' },
+      { id: 64, name: 'European Size Bifold',           sku: 'MC-0064', collection: 'Massini Collection', frontImage: '/MC-0064.png', insideImage: '/MC-0064_inside.png' },
       { id: 6,  name: 'Classic Black Bifold', image: '💳' },
       { id: 7,  name: 'Brown Leather Bifold', image: '💳' },
       { id: 8,  name: 'Tan Bifold Wallet',    image: '💳' },
     ],
     trifold: [
-      { id: 65, name: 'ES Trifold',           sku: 'MC-0065', collection: 'Massini Collection', frontImage: '/MC-0065.png', insideImage: '/MC-0065_inside.png' },
+      { id: 65, name: 'European Size Trifold',           sku: 'MC-0065', collection: 'Massini Collection', frontImage: '/MC-0065.png', insideImage: '/MC-0065_inside.png' },
       { id: 9,  name: 'Premium Trifold Black', image: '💳' },
       { id: 10, name: 'Cognac Trifold',        image: '💳' },
     ],
     'note-case': [
-      { id: 61, name: 'ES Note Case',         sku: 'MC-0061', collection: 'Massini Collection', frontImage: '/MC-0061.png', insideImage: '/MC-0061_inside.png' },
+      { id: 61, name: 'European Size Note Case',         sku: 'MC-0061', collection: 'Massini Collection', frontImage: '/MC-0061.png', insideImage: '/MC-0061_inside.png' },
       { id: 13, name: 'Leather Note Case',     image: '📋' },
       { id: 14, name: 'Premium Note Holder',   image: '📋' },
     ],
