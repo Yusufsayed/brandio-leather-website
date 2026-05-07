@@ -5,6 +5,67 @@ const LOGO = 'https://raw.githubusercontent.com/Yusufsayed/brandio-leather-websi
 const FACTORY_FRONT = 'https://raw.githubusercontent.com/Yusufsayed/brandio-leather-website/main/42545c7a-e2a7-4009-82f2-f1dc6a009b4c.JPG';
 const FACTORY_SIDE = 'https://raw.githubusercontent.com/Yusufsayed/brandio-leather-website/main/c9ae221d-0bd2-42b0-b23e-390863a98187.JPG';
 
+function ProductCard({ product, onInquire }) {
+  const [flipped, setFlipped] = useState(false);
+
+  if (product.frontImage) {
+    return (
+      <div
+        className="bg-white rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-amber-100 cursor-pointer"
+        onMouseEnter={() => setFlipped(true)}
+        onMouseLeave={() => setFlipped(false)}
+        onClick={() => setFlipped(!flipped)}
+      >
+        <div className="h-48 relative overflow-hidden bg-amber-50">
+          <img
+            src={product.frontImage}
+            alt={product.name}
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-400 ${flipped ? 'opacity-0' : 'opacity-100'}`}
+          />
+          <img
+            src={product.insideImage}
+            alt={`${product.name} inside`}
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-400 ${flipped ? 'opacity-100' : 'opacity-0'}`}
+          />
+          <div className={`absolute bottom-2 right-2 text-xs px-2 py-1 rounded bg-black/50 text-white transition-opacity duration-300 ${flipped ? 'opacity-100' : 'opacity-0'}`}>
+            Inside View
+          </div>
+          {product.sku && (
+            <div className="absolute top-2 left-2 text-xs px-2 py-1 rounded bg-amber-900/80 text-white font-mono">
+              {product.sku}
+            </div>
+          )}
+        </div>
+        <div className="p-4">
+          <h3 className="font-bold text-gray-900 mb-1">{product.name}</h3>
+          {product.collection && <p className="text-xs text-amber-700 mb-3">{product.collection}</p>}
+          <button
+            onClick={(e) => { e.stopPropagation(); onInquire(); }}
+            className="w-full py-2 bg-amber-100 text-amber-900 rounded-lg font-semibold hover:bg-amber-200 transition"
+          >
+            Inquire Now
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white rounded-lg overflow-hidden hover:shadow-xl transition transform hover:scale-105 duration-300 border border-amber-100">
+      <div className="h-32 bg-gradient-to-br from-amber-100 to-yellow-50 flex items-center justify-center text-6xl">{product.image}</div>
+      <div className="p-4">
+        <h3 className="font-bold text-gray-900 mb-3">{product.name}</h3>
+        <button
+          onClick={onInquire}
+          className="w-full py-2 bg-amber-100 text-amber-900 rounded-lg font-semibold hover:bg-amber-200 transition"
+        >
+          Inquire Now
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function BrandioLeatherWebsite() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
@@ -34,11 +95,13 @@ export default function BrandioLeatherWebsite() {
       { id: 5, name: 'Business Briefcase', image: '💼' },
     ],
     'bifold': [
+      { id: 64, name: 'ES Bifold', sku: 'MC-0064', collection: 'Massini Collection', frontImage: '/MC-0064.png', insideImage: '/MC-0064_inside.png' },
       { id: 6, name: 'Classic Black Bifold', image: '💳' },
       { id: 7, name: 'Brown Leather Bifold', image: '💳' },
       { id: 8, name: 'Tan Bifold Wallet', image: '💳' },
     ],
     'trifold': [
+      { id: 65, name: 'ES Trifold', sku: 'MC-0065', collection: 'Massini Collection', frontImage: '/MC-0065.png', insideImage: '/MC-0065_inside.png' },
       { id: 9, name: 'Premium Trifold Black', image: '💳' },
       { id: 10, name: 'Cognac Trifold', image: '💳' },
     ],
@@ -47,6 +110,7 @@ export default function BrandioLeatherWebsite() {
       { id: 12, name: 'Premium Zip Around', image: '💳' },
     ],
     'note-case': [
+      { id: 61, name: 'ES Note Case', sku: 'MC-0061', collection: 'Massini Collection', frontImage: '/MC-0061.png', insideImage: '/MC-0061_inside.png' },
       { id: 13, name: 'Leather Note Case', image: '📋' },
       { id: 14, name: 'Premium Note Holder', image: '📋' },
     ],
@@ -247,18 +311,7 @@ export default function BrandioLeatherWebsite() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {products[selectedCategory]?.map((product) => (
-                <div key={product.id} className="bg-white rounded-lg overflow-hidden hover:shadow-xl transition transform hover:scale-105 duration-300 border border-amber-100">
-                  <div className="h-32 bg-gradient-to-br from-amber-100 to-yellow-50 flex items-center justify-center text-6xl">{product.image}</div>
-                  <div className="p-4">
-                    <h3 className="font-bold text-gray-900 mb-3">{product.name}</h3>
-                    <button
-                      onClick={() => scrollToSection('contact')}
-                      className="w-full py-2 bg-amber-100 text-amber-900 rounded-lg font-semibold hover:bg-amber-200 transition"
-                    >
-                      Inquire Now
-                    </button>
-                  </div>
-                </div>
+                <ProductCard key={product.id} product={product} onInquire={() => scrollToSection('contact')} />
               ))}
             </div>
           </div>
