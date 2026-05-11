@@ -87,7 +87,7 @@ const PRODUCTS = {
       { id: 2255, name: 'American Size Bifold', sku: 'CH-2255', collection: 'Chicago Collection · Massini Woven',      frontImage: '/CH-2255.png',  insideImage: '/CH-2255_inside.png' },
       { id: 2232, name: 'American Size Bifold', sku: 'BA-2232', collection: 'Bali Collection · Brown Stripe',          frontImage: '/BA-2232.png',  insideImage: '/BA-2232_inside.png' },
       { id: 2106, name: 'American Size Bifold', sku: 'MI-2106', collection: 'Micro Collection · Textured Black',       frontImage: '/MI-2106.png',  insideImage: '/MI-2106_inside.png' },
-      { id: 1146, name: 'American Size Bifold', sku: 'CN-1146', collection: 'Cannes Collection · Classic Black',       frontImage: '/CN-1146.png',  insideImage: '/CN-1146_inside.png' },
+      { id: 1146, name: 'American Size Bifold', sku: 'CN-1146', collection: 'Canton Collection · Classic Black',       frontImage: '/CN-1146.png',  insideImage: '/CN-1146_inside.png' },
       { id: 5006, name: 'American Size Bifold', sku: 'CA-5006', collection: 'Cancun Collection · Dimbill Stripe',      frontImage: '/CA-5006.png',  insideImage: '/CA-5006_inside.png' },
     ],
     trifold: [
@@ -98,7 +98,7 @@ const PRODUCTS = {
       { id: 2256, name: 'American Size Trifold', sku: 'CH-2256', collection: 'Chicago Collection · Massini Woven',      frontImage: '/CH-2256.png',  insideImage: '/CH-2256_inside.png' },
       { id: 2233, name: 'American Size Trifold', sku: 'BA-2233', collection: 'Bali Collection · Brown Stripe',          frontImage: '/BA-2233.png',  insideImage: '/BA-2233_inside.png' },
       { id: 2107, name: 'American Size Trifold', sku: 'MI-2107', collection: 'Micro Collection · Textured Black',       frontImage: '/MI-2107.png',  insideImage: '/MI-2107_inside.png' },
-      { id: 1147, name: 'American Size Trifold', sku: 'CN-1147', collection: 'Cannes Collection · Classic Black',       frontImage: '/CN-1147.png',  insideImage: '/CN-1147_inside.png' },
+      { id: 1147, name: 'American Size Trifold', sku: 'CN-1147', collection: 'Canton Collection · Classic Black',       frontImage: '/CN-1147.png',  insideImage: '/CN-1147_inside.png' },
       { id: 5007, name: 'American Size Trifold', sku: 'CA-5007', collection: 'Cancun Collection · Dimbill Stripe',      frontImage: '/CA-5007.png',  insideImage: '/CA-5007_inside.png' },
     ],
     'note-case': [
@@ -111,7 +111,7 @@ const PRODUCTS = {
       { id: 2257, name: 'American Size Zip-around', sku: 'CH-2257', collection: 'Chicago Collection · Massini Woven',  frontImage: '/CH-2257.png',  insideImage: '/CH-2257_inside.png' },
       { id: 2234, name: 'American Size Zip-around', sku: 'BA-2234', collection: 'Bali Collection · Brown Stripe',      frontImage: '/BA-2234.png',  insideImage: '/BA-2234_inside.png' },
       { id: 2108, name: 'American Size Zip-around', sku: 'MI-2108', collection: 'Micro Collection · Textured Black',   frontImage: '/MI-2108.png',  insideImage: '/MI-2108_inside.png' },
-      { id: 1148, name: 'American Size Zip-around', sku: 'CN-1148', collection: 'Cannes Collection · Classic Black',   frontImage: '/CN-1148.png',  insideImage: '/CN-1148_inside.png' },
+      { id: 1148, name: 'American Size Zip-around', sku: 'CN-1148', collection: 'Canton Collection · Classic Black',   frontImage: '/CN-1148.png',  insideImage: '/CN-1148_inside.png' },
       { id: 5008, name: 'American Size Zip-around', sku: 'CA-5008', collection: 'Cancun Collection · Dimbill Stripe',  frontImage: '/CA-5008.png',  insideImage: '/CA-5008_inside.png' },
     ],
   },
@@ -381,7 +381,7 @@ export default function BrandioLeatherWebsite() {
                 { code: 'CH', name: 'Chicago Collection', size: 'American Size', material: 'Massini Woven Leather',     styles: 'Bifold · Trifold · Zip-around', hero: '/CH-2255.png', desc: 'Hand-woven leather wallets in deep black. Texture, depth, and Brandio New York packaging.' },
                 { code: 'BA', name: 'Bali Collection',    size: 'American Size', material: 'Brown Leather · Stripe',    styles: 'Bifold · Trifold · Zip-around', hero: '/BA-2232.png', desc: 'Minimalist brown leather wallets with a signature navy-and-cream stripe detail. Branded with the Brandio mark.' },
                 { code: 'MI', name: 'Micro Collection',   size: 'American Size', material: 'Textured Black · Leather',  styles: 'Bifold · Trifold · Zip-around', hero: '/MI-2106.png', desc: 'Compact black wallets with a textured weave panel and smooth leather trim. Subtle Branded mark, urban edge.' },
-                { code: 'CN', name: 'Cannes Collection',  size: 'American Size', material: 'Classic Black Leather',     styles: 'Bifold · Trifold · Zip-around', hero: '/CN-1146.png', desc: 'Pure black leather wallets with diagonal corner stitching. Understated Brandio branding for a clean, professional look.' },
+                { code: 'CN', name: 'Canton Collection',  size: 'American Size', material: 'Classic Black Leather',     styles: 'Bifold · Trifold · Zip-around', hero: '/CN-1146.png', desc: 'Pure black leather wallets with diagonal corner stitching. Understated Brandio branding for a clean, professional look.' },
                 { code: 'CA', name: 'Cancun Collection',  size: 'American Size', material: 'Dimbill · Red & Navy Stripe', styles: 'Bifold · Trifold · Zip-around', hero: '/CA-5006.png', desc: 'Black leather wallets with a bold red, cream, and navy striped accent. The signature Dimbill line, vibrant and refined.' },
               ].map(col => (
                 <div key={col.code} className="bg-white border border-amber-200 rounded-xl overflow-hidden hover:shadow-lg transition flex flex-col">
