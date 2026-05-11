@@ -83,7 +83,7 @@ const PRODUCTS = {
       { id: 64,   name: 'European Size Bifold', sku: 'MC-0064', collection: 'Massini Collection · Paper',              frontImage: '/MC-0064.png',  insideImage: '/MC-0064_inside.png' },
       { id: 123,  name: 'American Size Bifold', sku: 'OS-0123', collection: 'Osaka Collection · Carbon Fiber',         frontImage: '/OS-0123.png',  insideImage: '/OS-0123_inside.png' },
       { id: 3035, name: 'American Size Bifold', sku: 'PA-3035', collection: 'Palermo Collection · Yaali New York',     frontImage: '/PA-3035.png',  insideImage: '/PA-3035_inside.png' },
-      { id: 2288, name: 'American Size Bifold', sku: 'MN-2288', collection: 'Munich Collection · Yacht',               frontImage: '/MN-2288.png',  insideImage: '/MN-2288_inside.png' },
+      { id: 2286, name: 'American Size Bifold', sku: 'MN-2286', collection: 'Munich Collection · Yacht',               frontImage: '/MN-2286.png',  insideImage: '/MN-2286_inside.png' },
       { id: 2255, name: 'American Size Bifold', sku: 'CH-2255', collection: 'Chicago Collection · Massini Woven',      frontImage: '/CH-2255.png',  insideImage: '/CH-2255_inside.png' },
     ],
     trifold: [
@@ -99,7 +99,7 @@ const PRODUCTS = {
     'zip-around': [
       { id: 125,  name: 'American Size Zip-around', sku: 'OS-0125', collection: 'Osaka Collection · Carbon Fiber',     frontImage: '/OS-0125.png',  insideImage: '/OS-0125_inside.png' },
       { id: 3037, name: 'American Size Zip-around', sku: 'PA-3037', collection: 'Palermo Collection · Yaali New York', frontImage: '/PA-3037.png',  insideImage: '/PA-3037_inside.png' },
-      { id: 2286, name: 'American Size Zip-around', sku: 'MN-2286', collection: 'Munich Collection · Yacht',           frontImage: '/MN-2286.png',  insideImage: '/MN-2286_inside.png' },
+      { id: 2288, name: 'American Size Zip-around', sku: 'MN-2288', collection: 'Munich Collection · Yacht',           frontImage: '/MN-2288.png',  insideImage: '/MN-2288_inside.png' },
       { id: 2257, name: 'American Size Zip-around', sku: 'CH-2257', collection: 'Chicago Collection · Massini Woven',  frontImage: '/CH-2257.png',  insideImage: '/CH-2257_inside.png' },
     ],
   },
@@ -366,7 +366,7 @@ export default function BrandioLeatherWebsite() {
                 { code: 'MC', name: 'Massini Collection', size: 'European Size', material: 'Paper Packaging',          styles: 'Note Case · Bifold · Trifold', hero: '/MC-0064.png',  desc: 'European-style wallets with clean lines and premium full-grain leather. Slim profile, maximum function.' },
                 { code: 'OS', name: 'Osaka Collection',   size: 'American Size', material: 'Carbon Fiber · Tin Box',   styles: 'Bifold · Trifold · Zip-around', hero: '/OS-0123.png', desc: 'Modern carbon-fiber-pattern wallets shipped in a premium tin box. Bold, technical, durable.' },
                 { code: 'PA', name: 'Palermo Collection', size: 'American Size', material: 'Black / Burgundy',          styles: 'Bifold · Trifold · Zip-around', hero: '/PA-3035.png', desc: 'Two-tone black and burgundy wallets under the Yaali New York label. Classic colour story, contemporary cut.' },
-                { code: 'MN', name: 'Munich Collection',  size: 'American Size', material: 'Yacht Leather',            styles: 'Bifold · Trifold · Zip-around', hero: '/MN-2288.png', desc: 'Sleek black yacht-leather wallets engineered for daily luxury. Yacht line packaging included.' },
+                { code: 'MN', name: 'Munich Collection',  size: 'American Size', material: 'Yacht Leather',            styles: 'Bifold · Trifold · Zip-around', hero: '/MN-2286.png', desc: 'Sleek black yacht-leather wallets engineered for daily luxury. Yacht line packaging included.' },
                 { code: 'CH', name: 'Chicago Collection', size: 'American Size', material: 'Massini Woven Leather',     styles: 'Bifold · Trifold · Zip-around', hero: '/CH-2255.png', desc: 'Hand-woven leather wallets in deep black. Texture, depth, and Brandio New York packaging.' },
               ].map(col => (
                 <div key={col.code} className="bg-white border border-amber-200 rounded-xl overflow-hidden hover:shadow-lg transition flex flex-col">
