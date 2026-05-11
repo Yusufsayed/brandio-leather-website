@@ -85,6 +85,7 @@ const PRODUCTS = {
       { id: 3035, name: 'American Size Bifold', sku: 'PA-3035', collection: 'Palermo Collection · Yaali New York',     frontImage: '/PA-3035.png',  insideImage: '/PA-3035_inside.png' },
       { id: 2286, name: 'American Size Bifold', sku: 'MN-2286', collection: 'Munich Collection · Yacht',               frontImage: '/MN-2286.png',  insideImage: '/MN-2286_inside.png' },
       { id: 2255, name: 'American Size Bifold', sku: 'CH-2255', collection: 'Chicago Collection · Massini Woven',      frontImage: '/CH-2255.png',  insideImage: '/CH-2255_inside.png' },
+      { id: 2232, name: 'American Size Bifold', sku: 'BA-2232', collection: 'Bali Collection · Brown Stripe',          frontImage: '/BA-2232.png',  insideImage: '/BA-2232_inside.png' },
     ],
     trifold: [
       { id: 65,   name: 'European Size Trifold', sku: 'MC-0065', collection: 'Massini Collection · Paper',              frontImage: '/MC-0065.png',  insideImage: '/MC-0065_inside.png' },
@@ -92,6 +93,7 @@ const PRODUCTS = {
       { id: 3036, name: 'American Size Trifold', sku: 'PA-3036', collection: 'Palermo Collection · Yaali New York',     frontImage: '/PA-3036.png',  insideImage: '/PA-3036_inside.png' },
       { id: 2287, name: 'American Size Trifold', sku: 'MN-2287', collection: 'Munich Collection · Yacht',               frontImage: '/MN-2287.png',  insideImage: '/MN-2287_inside.png' },
       { id: 2256, name: 'American Size Trifold', sku: 'CH-2256', collection: 'Chicago Collection · Massini Woven',      frontImage: '/CH-2256.png',  insideImage: '/CH-2256_inside.png' },
+      { id: 2233, name: 'American Size Trifold', sku: 'BA-2233', collection: 'Bali Collection · Brown Stripe',          frontImage: '/BA-2233.png',  insideImage: '/BA-2233_inside.png' },
     ],
     'note-case': [
       { id: 61,   name: 'European Size Note Case', sku: 'MC-0061', collection: 'Massini Collection · Paper',            frontImage: '/MC-0061.png',  insideImage: '/MC-0061_inside.png' },
@@ -101,6 +103,7 @@ const PRODUCTS = {
       { id: 3037, name: 'American Size Zip-around', sku: 'PA-3037', collection: 'Palermo Collection · Yaali New York', frontImage: '/PA-3037.png',  insideImage: '/PA-3037_inside.png' },
       { id: 2288, name: 'American Size Zip-around', sku: 'MN-2288', collection: 'Munich Collection · Yacht',           frontImage: '/MN-2288.png',  insideImage: '/MN-2288_inside.png' },
       { id: 2257, name: 'American Size Zip-around', sku: 'CH-2257', collection: 'Chicago Collection · Massini Woven',  frontImage: '/CH-2257.png',  insideImage: '/CH-2257_inside.png' },
+      { id: 2234, name: 'American Size Zip-around', sku: 'BA-2234', collection: 'Bali Collection · Brown Stripe',      frontImage: '/BA-2234.png',  insideImage: '/BA-2234_inside.png' },
     ],
   },
   bags: [
@@ -368,6 +371,7 @@ export default function BrandioLeatherWebsite() {
                 { code: 'PA', name: 'Palermo Collection', size: 'American Size', material: 'Black / Burgundy',          styles: 'Bifold · Trifold · Zip-around', hero: '/PA-3035.png', desc: 'Two-tone black and burgundy wallets under the Yaali New York label. Classic colour story, contemporary cut.' },
                 { code: 'MN', name: 'Munich Collection',  size: 'American Size', material: 'Yacht Leather',            styles: 'Bifold · Trifold · Zip-around', hero: '/MN-2286.png', desc: 'Sleek black yacht-leather wallets engineered for daily luxury. Yacht line packaging included.' },
                 { code: 'CH', name: 'Chicago Collection', size: 'American Size', material: 'Massini Woven Leather',     styles: 'Bifold · Trifold · Zip-around', hero: '/CH-2255.png', desc: 'Hand-woven leather wallets in deep black. Texture, depth, and Brandio New York packaging.' },
+                { code: 'BA', name: 'Bali Collection',    size: 'American Size', material: 'Brown Leather · Stripe',    styles: 'Bifold · Trifold · Zip-around', hero: '/BA-2232.png', desc: 'Minimalist brown leather wallets with a signature navy-and-cream stripe detail. Branded with the Brandio mark.' },
               ].map(col => (
                 <div key={col.code} className="bg-white border border-amber-200 rounded-xl overflow-hidden hover:shadow-lg transition flex flex-col">
                   <div className="h-48 bg-amber-50 overflow-hidden">
