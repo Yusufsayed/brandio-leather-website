@@ -86,6 +86,9 @@ const PRODUCTS = {
       { id: 2286, name: 'American Size Bifold', sku: 'MN-2286', collection: 'Munich Collection · Yacht',               frontImage: '/MN-2286.png',  insideImage: '/MN-2286_inside.png' },
       { id: 2255, name: 'American Size Bifold', sku: 'CH-2255', collection: 'Chicago Collection · Massini Woven',      frontImage: '/CH-2255.png',  insideImage: '/CH-2255_inside.png' },
       { id: 2232, name: 'American Size Bifold', sku: 'BA-2232', collection: 'Bali Collection · Brown Stripe',          frontImage: '/BA-2232.png',  insideImage: '/BA-2232_inside.png' },
+      { id: 2106, name: 'American Size Bifold', sku: 'MI-2106', collection: 'Micro Collection · Textured Black',       frontImage: '/MI-2106.png',  insideImage: '/MI-2106_inside.png' },
+      { id: 1146, name: 'American Size Bifold', sku: 'CN-1146', collection: 'Cannes Collection · Classic Black',       frontImage: '/CN-1146.png',  insideImage: '/CN-1146_inside.png' },
+      { id: 5006, name: 'American Size Bifold', sku: 'CA-5006', collection: 'Cancun Collection · Dimbill Stripe',      frontImage: '/CA-5006.png',  insideImage: '/CA-5006_inside.png' },
     ],
     trifold: [
       { id: 65,   name: 'European Size Trifold', sku: 'MC-0065', collection: 'Massini Collection · Paper',              frontImage: '/MC-0065.png',  insideImage: '/MC-0065_inside.png' },
@@ -94,6 +97,9 @@ const PRODUCTS = {
       { id: 2287, name: 'American Size Trifold', sku: 'MN-2287', collection: 'Munich Collection · Yacht',               frontImage: '/MN-2287.png',  insideImage: '/MN-2287_inside.png' },
       { id: 2256, name: 'American Size Trifold', sku: 'CH-2256', collection: 'Chicago Collection · Massini Woven',      frontImage: '/CH-2256.png',  insideImage: '/CH-2256_inside.png' },
       { id: 2233, name: 'American Size Trifold', sku: 'BA-2233', collection: 'Bali Collection · Brown Stripe',          frontImage: '/BA-2233.png',  insideImage: '/BA-2233_inside.png' },
+      { id: 2107, name: 'American Size Trifold', sku: 'MI-2107', collection: 'Micro Collection · Textured Black',       frontImage: '/MI-2107.png',  insideImage: '/MI-2107_inside.png' },
+      { id: 1147, name: 'American Size Trifold', sku: 'CN-1147', collection: 'Cannes Collection · Classic Black',       frontImage: '/CN-1147.png',  insideImage: '/CN-1147_inside.png' },
+      { id: 5007, name: 'American Size Trifold', sku: 'CA-5007', collection: 'Cancun Collection · Dimbill Stripe',      frontImage: '/CA-5007.png',  insideImage: '/CA-5007_inside.png' },
     ],
     'note-case': [
       { id: 61,   name: 'European Size Note Case', sku: 'MC-0061', collection: 'Massini Collection · Paper',            frontImage: '/MC-0061.png',  insideImage: '/MC-0061_inside.png' },
@@ -104,6 +110,9 @@ const PRODUCTS = {
       { id: 2288, name: 'American Size Zip-around', sku: 'MN-2288', collection: 'Munich Collection · Yacht',           frontImage: '/MN-2288.png',  insideImage: '/MN-2288_inside.png' },
       { id: 2257, name: 'American Size Zip-around', sku: 'CH-2257', collection: 'Chicago Collection · Massini Woven',  frontImage: '/CH-2257.png',  insideImage: '/CH-2257_inside.png' },
       { id: 2234, name: 'American Size Zip-around', sku: 'BA-2234', collection: 'Bali Collection · Brown Stripe',      frontImage: '/BA-2234.png',  insideImage: '/BA-2234_inside.png' },
+      { id: 2108, name: 'American Size Zip-around', sku: 'MI-2108', collection: 'Micro Collection · Textured Black',   frontImage: '/MI-2108.png',  insideImage: '/MI-2108_inside.png' },
+      { id: 1148, name: 'American Size Zip-around', sku: 'CN-1148', collection: 'Cannes Collection · Classic Black',   frontImage: '/CN-1148.png',  insideImage: '/CN-1148_inside.png' },
+      { id: 5008, name: 'American Size Zip-around', sku: 'CA-5008', collection: 'Cancun Collection · Dimbill Stripe',  frontImage: '/CA-5008.png',  insideImage: '/CA-5008_inside.png' },
     ],
   },
   bags: [
@@ -120,11 +129,10 @@ const PRODUCTS = {
     { id: 20, name: 'Leather Watch Strap', image: '⌚' },
   ],
   travel: [
-    { id: 21, name: 'Passport Holder',   image: '📕' },
-    { id: 22, name: 'Travel Organizer',  image: '📦' },
-    { id: 23, name: 'Luggage Tag Set',   image: '🏷️' },
-    { id: 24, name: 'Document Holder',   image: '📄' },
-    { id: 25, name: 'Travel Belt',       image: '⌚' },
+    { id: 45, name: 'Zip Passport Holder',     sku: 'YL-45', collection: 'Yaali Travel · Smooth Black',    frontImage: '/YL-45.png', insideImage: '/YL-45_inside.png' },
+    { id: 47, name: 'Vintage Passport Holder', sku: 'YL-47', collection: 'Yaali Travel · Vintage Brown',   frontImage: '/YL-47.png', insideImage: '/YL-47_inside.png' },
+    { id: 51, name: 'Slim Passport Holder',    sku: 'YL-51', collection: 'Yaali Travel · Classic Black',   frontImage: '/YL-51.png', insideImage: '/YL-51_inside.png' },
+    { id: 77, name: 'Zip Travel Wallet',       sku: 'YL-77', collection: 'Yaali Travel · Minimal Black',   frontImage: '/YL-77.png', insideImage: '/YL-77_inside.png' },
   ],
 };
 
@@ -372,6 +380,9 @@ export default function BrandioLeatherWebsite() {
                 { code: 'MN', name: 'Munich Collection',  size: 'American Size', material: 'Yacht Leather',            styles: 'Bifold · Trifold · Zip-around', hero: '/MN-2286.png', desc: 'Sleek black yacht-leather wallets engineered for daily luxury. Yacht line packaging included.' },
                 { code: 'CH', name: 'Chicago Collection', size: 'American Size', material: 'Massini Woven Leather',     styles: 'Bifold · Trifold · Zip-around', hero: '/CH-2255.png', desc: 'Hand-woven leather wallets in deep black. Texture, depth, and Brandio New York packaging.' },
                 { code: 'BA', name: 'Bali Collection',    size: 'American Size', material: 'Brown Leather · Stripe',    styles: 'Bifold · Trifold · Zip-around', hero: '/BA-2232.png', desc: 'Minimalist brown leather wallets with a signature navy-and-cream stripe detail. Branded with the Brandio mark.' },
+                { code: 'MI', name: 'Micro Collection',   size: 'American Size', material: 'Textured Black · Leather',  styles: 'Bifold · Trifold · Zip-around', hero: '/MI-2106.png', desc: 'Compact black wallets with a textured weave panel and smooth leather trim. Subtle Branded mark, urban edge.' },
+                { code: 'CN', name: 'Cannes Collection',  size: 'American Size', material: 'Classic Black Leather',     styles: 'Bifold · Trifold · Zip-around', hero: '/CN-1146.png', desc: 'Pure black leather wallets with diagonal corner stitching. Understated Brandio branding for a clean, professional look.' },
+                { code: 'CA', name: 'Cancun Collection',  size: 'American Size', material: 'Dimbill · Red & Navy Stripe', styles: 'Bifold · Trifold · Zip-around', hero: '/CA-5006.png', desc: 'Black leather wallets with a bold red, cream, and navy striped accent. The signature Dimbill line, vibrant and refined.' },
               ].map(col => (
                 <div key={col.code} className="bg-white border border-amber-200 rounded-xl overflow-hidden hover:shadow-lg transition flex flex-col">
                   <div className="h-48 bg-amber-50 overflow-hidden">
@@ -413,6 +424,9 @@ export default function BrandioLeatherWebsite() {
                 { code: 'MN', name: 'Munich — In-Box View',      desc: 'Munich wallet seated in its Yacht-line presentation box.',    image: '/MN_in_box.png' },
                 { code: 'CH', name: 'Chicago — Brandio New York', desc: 'Brandio New York branded box for the Chicago woven range.',  image: '/CH_packaging.png' },
                 { code: 'CH', name: 'Chicago — In-Box View',     desc: 'Chicago woven wallet seated in its Brandio New York box.',    image: '/CH_in_box.png' },
+                { code: 'BA', name: 'Bali — Brandio Box',         desc: 'Branded Brandio gift box for the Bali brown-stripe range.',  image: '/Brandio_Packaging.png' },
+                { code: 'MI', name: 'Micro — Branded Gift Box',   desc: 'Premium blue gift box for the Micro textured-black range. RFID protected.', image: '/Branded_Packaging.png' },
+                { code: 'CA', name: 'Cancun — Dimbill Box',       desc: 'Dimbill-branded gift box for the Cancun striped-accent range.', image: '/Dimbill_Packaging.png' },
               ].map((item, i) => (
                 <div key={i} className="bg-white border border-amber-200 rounded-xl overflow-hidden hover:shadow-lg transition group">
                   <div className="h-56 bg-amber-50 overflow-hidden">
