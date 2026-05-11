@@ -80,24 +80,27 @@ function ProductCard({ product, onInquire }) {
 const PRODUCTS = {
   wallets: {
     bifold: [
-      { id: 64, name: 'European Size Bifold',           sku: 'MC-0064', collection: 'Massini Collection', frontImage: '/MC-0064.png', insideImage: '/MC-0064_inside.png' },
-      { id: 6,  name: 'Classic Black Bifold', image: '💳' },
-      { id: 7,  name: 'Brown Leather Bifold', image: '💳' },
-      { id: 8,  name: 'Tan Bifold Wallet',    image: '💳' },
+      { id: 64,   name: 'European Size Bifold', sku: 'MC-0064', collection: 'Massini Collection · Paper',              frontImage: '/MC-0064.png',  insideImage: '/MC-0064_inside.png' },
+      { id: 123,  name: 'American Size Bifold', sku: 'OS-0123', collection: 'Osaka Collection · Carbon Fiber',         frontImage: '/OS-0123.png',  insideImage: '/OS-0123_inside.png' },
+      { id: 3035, name: 'American Size Bifold', sku: 'PA-3035', collection: 'Palermo Collection · Yaali New York',     frontImage: '/PA-3035.png',  insideImage: '/PA-3035_inside.png' },
+      { id: 2288, name: 'American Size Bifold', sku: 'MN-2288', collection: 'Munich Collection · Yacht',               frontImage: '/MN-2288.png',  insideImage: '/MN-2288_inside.png' },
+      { id: 2255, name: 'American Size Bifold', sku: 'CH-2255', collection: 'Chicago Collection · Massini Woven',      frontImage: '/CH-2255.png',  insideImage: '/CH-2255_inside.png' },
     ],
     trifold: [
-      { id: 65, name: 'European Size Trifold',           sku: 'MC-0065', collection: 'Massini Collection', frontImage: '/MC-0065.png', insideImage: '/MC-0065_inside.png' },
-      { id: 9,  name: 'Premium Trifold Black', image: '💳' },
-      { id: 10, name: 'Cognac Trifold',        image: '💳' },
+      { id: 65,   name: 'European Size Trifold', sku: 'MC-0065', collection: 'Massini Collection · Paper',              frontImage: '/MC-0065.png',  insideImage: '/MC-0065_inside.png' },
+      { id: 124,  name: 'American Size Trifold', sku: 'OS-0124', collection: 'Osaka Collection · Carbon Fiber',         frontImage: '/OS-0124.png',  insideImage: '/OS-0124_inside.png' },
+      { id: 3036, name: 'American Size Trifold', sku: 'PA-3036', collection: 'Palermo Collection · Yaali New York',     frontImage: '/PA-3036.png',  insideImage: '/PA-3036_inside.png' },
+      { id: 2287, name: 'American Size Trifold', sku: 'MN-2287', collection: 'Munich Collection · Yacht',               frontImage: '/MN-2287.png',  insideImage: '/MN-2287_inside.png' },
+      { id: 2256, name: 'American Size Trifold', sku: 'CH-2256', collection: 'Chicago Collection · Massini Woven',      frontImage: '/CH-2256.png',  insideImage: '/CH-2256_inside.png' },
     ],
     'note-case': [
-      { id: 61, name: 'European Size Note Case',         sku: 'MC-0061', collection: 'Massini Collection', frontImage: '/MC-0061.png', insideImage: '/MC-0061_inside.png' },
-      { id: 13, name: 'Leather Note Case',     image: '📋' },
-      { id: 14, name: 'Premium Note Holder',   image: '📋' },
+      { id: 61,   name: 'European Size Note Case', sku: 'MC-0061', collection: 'Massini Collection · Paper',            frontImage: '/MC-0061.png',  insideImage: '/MC-0061_inside.png' },
     ],
     'zip-around': [
-      { id: 11, name: 'Full Zip Wallet Black', image: '💳' },
-      { id: 12, name: 'Premium Zip Around',    image: '💳' },
+      { id: 125,  name: 'American Size Zip-around', sku: 'OS-0125', collection: 'Osaka Collection · Carbon Fiber',     frontImage: '/OS-0125.png',  insideImage: '/OS-0125_inside.png' },
+      { id: 3037, name: 'American Size Zip-around', sku: 'PA-3037', collection: 'Palermo Collection · Yaali New York', frontImage: '/PA-3037.png',  insideImage: '/PA-3037_inside.png' },
+      { id: 2286, name: 'American Size Zip-around', sku: 'MN-2286', collection: 'Munich Collection · Yacht',           frontImage: '/MN-2286.png',  insideImage: '/MN-2286_inside.png' },
+      { id: 2257, name: 'American Size Zip-around', sku: 'CH-2257', collection: 'Chicago Collection · Massini Woven',  frontImage: '/CH-2257.png',  insideImage: '/CH-2257_inside.png' },
     ],
   },
   bags: [
@@ -360,18 +363,29 @@ export default function BrandioLeatherWebsite() {
             <p className="text-gray-600 mb-12 text-lg">Curated leather ranges crafted around a unified design language.</p>
             <div className="grid md:grid-cols-2 gap-8">
               {[
-                { name: 'Massini Collection', desc: 'European-style wallets with clean lines and premium full-grain leather. Slim profile, maximum function.', tag: 'Wallets · 3 styles' },
-                { name: 'Executive Series',   desc: 'Boardroom-ready bags and organisers for the modern professional. Built to last the distance.', tag: 'Bags · Coming soon' },
-                { name: 'Terra Collection',   desc: 'Earth-toned small leather goods inspired by natural tanning traditions. Sustainable & beautiful.', tag: 'Small Accessories · Coming soon' },
-                { name: 'Voyage Line',        desc: 'Travel companions designed for global explorers — passport holders, organisers, and more.', tag: 'Travel · Coming soon' },
-              ].map((col, i) => (
-                <div key={i} className="bg-white border border-amber-200 rounded-xl p-8 hover:shadow-lg transition">
-                  <span className="inline-block text-xs font-semibold bg-amber-100 text-amber-800 px-3 py-1 rounded-full mb-4">{col.tag}</span>
-                  <h3 className="text-2xl font-bold text-amber-900 mb-3">{col.name}</h3>
-                  <p className="text-gray-600 leading-relaxed">{col.desc}</p>
-                  <button onClick={() => goTo('contact')} className="mt-6 px-5 py-2 bg-amber-900 text-white rounded-lg text-sm font-semibold hover:bg-amber-800 transition">
-                    Enquire
-                  </button>
+                { code: 'MC', name: 'Massini Collection', size: 'European Size', material: 'Paper Packaging',          styles: 'Note Case · Bifold · Trifold', hero: '/MC-0064.png',  desc: 'European-style wallets with clean lines and premium full-grain leather. Slim profile, maximum function.' },
+                { code: 'OS', name: 'Osaka Collection',   size: 'American Size', material: 'Carbon Fiber · Tin Box',   styles: 'Bifold · Trifold · Zip-around', hero: '/OS-0123.png', desc: 'Modern carbon-fiber-pattern wallets shipped in a premium tin box. Bold, technical, durable.' },
+                { code: 'PA', name: 'Palermo Collection', size: 'American Size', material: 'Black / Burgundy',          styles: 'Bifold · Trifold · Zip-around', hero: '/PA-3035.png', desc: 'Two-tone black and burgundy wallets under the Yaali New York label. Classic colour story, contemporary cut.' },
+                { code: 'MN', name: 'Munich Collection',  size: 'American Size', material: 'Yacht Leather',            styles: 'Bifold · Trifold · Zip-around', hero: '/MN-2288.png', desc: 'Sleek black yacht-leather wallets engineered for daily luxury. Yacht line packaging included.' },
+                { code: 'CH', name: 'Chicago Collection', size: 'American Size', material: 'Massini Woven Leather',     styles: 'Bifold · Trifold · Zip-around', hero: '/CH-2255.png', desc: 'Hand-woven leather wallets in deep black. Texture, depth, and Brandio New York packaging.' },
+              ].map(col => (
+                <div key={col.code} className="bg-white border border-amber-200 rounded-xl overflow-hidden hover:shadow-lg transition flex flex-col">
+                  <div className="h-48 bg-amber-50 overflow-hidden">
+                    <img src={col.hero} alt={col.name} className="w-full h-full object-cover" />
+                  </div>
+                  <div className="p-6 flex-1 flex flex-col">
+                    <div className="flex items-center gap-2 mb-3 flex-wrap">
+                      <span className="text-xs font-mono font-bold bg-amber-900 text-white px-2 py-1 rounded">{col.code}</span>
+                      <span className="text-xs font-semibold bg-amber-100 text-amber-800 px-2 py-1 rounded-full">{col.size}</span>
+                      <span className="text-xs font-semibold bg-amber-50 text-amber-700 px-2 py-1 rounded-full border border-amber-200">{col.material}</span>
+                    </div>
+                    <h3 className="text-2xl font-bold text-amber-900 mb-2">{col.name}</h3>
+                    <p className="text-gray-600 leading-relaxed text-sm mb-4">{col.desc}</p>
+                    <p className="text-xs text-gray-500 mb-4 mt-auto">{col.styles}</p>
+                    <button onClick={() => { setMainCategory('wallets'); goTo('products'); }} className="px-5 py-2 bg-amber-900 text-white rounded-lg text-sm font-semibold hover:bg-amber-800 transition self-start">
+                      View Wallets
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -382,28 +396,38 @@ export default function BrandioLeatherWebsite() {
       {/* ── Packaging ────────────────────────────────────────────────────────── */}
       {activeSection === 'packaging' && (
         <section className="py-20 px-4">
-          <div className="max-w-5xl mx-auto">
+          <div className="max-w-6xl mx-auto">
             <h2 className="text-5xl font-bold mb-4 text-amber-900">Packaging</h2>
-            <p className="text-gray-600 mb-12 text-lg">Custom packaging solutions that elevate your brand at the point of unboxing.</p>
-            <div className="grid md:grid-cols-3 gap-6">
+            <p className="text-gray-600 mb-12 text-lg">Each collection ships in its own branded presentation. Real packaging from our current production runs.</p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[
-                { icon: '📦', title: 'Gift Boxes',        desc: 'Rigid gift boxes in custom sizes, colours, and finishes. Embossed or foil-stamped logos available.' },
-                { icon: '🎀', title: 'Ribbon & Tissue',   desc: 'Branded ribbon, tissue paper, and belly-bands to complete the premium unboxing experience.' },
-                { icon: '🏷️', title: 'Hang Tags & Labels', desc: 'Die-cut hang tags, QR-enabled labels, and care-instruction cards printed to your spec.' },
-                { icon: '🛍️', title: 'Retail Bags',       desc: 'Paper and cotton carry bags with custom print, perfect for retail or trade-show display.' },
-                { icon: '📋', title: 'Custom Inserts',    desc: 'Foam or card inserts cut to product shape for a snug, premium feel inside every box.' },
-                { icon: '♻️', title: 'Eco Options',       desc: 'FSC-certified papers, recycled boards, and soy-based inks for sustainable brand packaging.' },
+                { code: 'OS', name: 'Osaka — Tin Box',           desc: 'Premium tin-box packaging for the Osaka carbon-fiber range.', image: '/OS_tin_box_packaging.png' },
+                { code: 'PA', name: 'Palermo — Yaali New York',  desc: 'Yaali New York branded gift box for the Palermo range.',     image: '/PA_packaging.png' },
+                { code: 'PA', name: 'Palermo — In-Box View',     desc: 'Palermo wallet seated in its Yaali New York presentation box.', image: '/PA_in_box.png' },
+                { code: 'MN', name: 'Munich — Yacht Box',        desc: 'Yacht-line presentation box for the Munich black collection.', image: '/MN_packaging.png' },
+                { code: 'MN', name: 'Munich — In-Box View',      desc: 'Munich wallet seated in its Yacht-line presentation box.',    image: '/MN_in_box.png' },
+                { code: 'CH', name: 'Chicago — Brandio New York', desc: 'Brandio New York branded box for the Chicago woven range.',  image: '/CH_packaging.png' },
+                { code: 'CH', name: 'Chicago — In-Box View',     desc: 'Chicago woven wallet seated in its Brandio New York box.',    image: '/CH_in_box.png' },
               ].map((item, i) => (
-                <div key={i} className="bg-white border border-amber-200 rounded-xl p-6 hover:shadow-lg transition text-center">
-                  <div className="text-4xl mb-4">{item.icon}</div>
-                  <h3 className="font-bold text-amber-900 text-lg mb-2">{item.title}</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">{item.desc}</p>
+                <div key={i} className="bg-white border border-amber-200 rounded-xl overflow-hidden hover:shadow-lg transition group">
+                  <div className="h-56 bg-amber-50 overflow-hidden">
+                    <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  </div>
+                  <div className="p-5">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-xs font-mono font-bold bg-amber-900 text-white px-2 py-0.5 rounded">{item.code}</span>
+                      <h3 className="font-bold text-amber-900">{item.name}</h3>
+                    </div>
+                    <p className="text-gray-600 text-sm leading-relaxed">{item.desc}</p>
+                  </div>
                 </div>
               ))}
             </div>
+
             <div className="mt-12 bg-amber-50 border border-amber-200 rounded-xl p-8 text-center">
-              <h3 className="text-2xl font-bold text-amber-900 mb-3">Need a Custom Packaging Quote?</h3>
-              <p className="text-gray-600 mb-6">Send us your brief and we'll turn it around within 48 hours.</p>
+              <h3 className="text-2xl font-bold text-amber-900 mb-3">Need Custom Packaging?</h3>
+              <p className="text-gray-600 mb-6">Tin boxes, branded gift boxes, custom inserts, hang tags and more — built to your brand spec.</p>
               <button onClick={() => goTo('contact')} className="px-8 py-3 bg-gradient-to-r from-amber-900 to-yellow-700 text-white rounded-lg font-semibold hover:shadow-lg transition">
                 Request a Quote
               </button>
