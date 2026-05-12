@@ -15,8 +15,9 @@ const NAV_ITEMS = [
 ];
 
 /* ─── Product card ─────────────────────────────────────────────────────────── */
-function ProductCard({ product, onInquire, imageMode = 'cover' }) {
+function ProductCard({ product, imageMode = 'cover' }) {
   const [flipped, setFlipped] = useState(false);
+  const hasInside = Boolean(product.insideImage);
 
   const imgBox = imageMode === 'contain'
     ? 'h-64 bg-gradient-to-br from-amber-50 to-white'
@@ -28,10 +29,10 @@ function ProductCard({ product, onInquire, imageMode = 'cover' }) {
   if (product.frontImage) {
     return (
       <div
-        className="bg-white rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-amber-100 cursor-pointer"
-        onMouseEnter={() => setFlipped(true)}
-        onMouseLeave={() => setFlipped(false)}
-        onClick={() => setFlipped(f => !f)}
+        className={`bg-white rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-amber-100 ${hasInside ? 'cursor-pointer' : ''}`}
+        onMouseEnter={hasInside ? () => setFlipped(true)  : undefined}
+        onMouseLeave={hasInside ? () => setFlipped(false) : undefined}
+        onClick={hasInside ? () => setFlipped(f => !f)    : undefined}
       >
         <div className={`relative overflow-hidden ${imgBox}`}>
           <img
@@ -39,14 +40,18 @@ function ProductCard({ product, onInquire, imageMode = 'cover' }) {
             alt={product.name}
             className={`absolute inset-0 w-full h-full ${imgFit} transition-opacity duration-300 ${flipped ? 'opacity-0' : 'opacity-100'}`}
           />
-          <img
-            src={product.insideImage}
-            alt={`${product.name} inside`}
-            className={`absolute inset-0 w-full h-full ${imgFit} transition-opacity duration-300 ${flipped ? 'opacity-100' : 'opacity-0'}`}
-          />
-          <div className={`absolute bottom-2 right-2 text-xs px-2 py-1 rounded bg-black/50 text-white transition-opacity duration-300 ${flipped ? 'opacity-100' : 'opacity-0'}`}>
-            Inside View
-          </div>
+          {hasInside && (
+            <img
+              src={product.insideImage}
+              alt={`${product.name} inside`}
+              className={`absolute inset-0 w-full h-full ${imgFit} transition-opacity duration-300 ${flipped ? 'opacity-100' : 'opacity-0'}`}
+            />
+          )}
+          {hasInside && (
+            <div className={`absolute bottom-2 right-2 text-xs px-2 py-1 rounded bg-black/50 text-white transition-opacity duration-300 ${flipped ? 'opacity-100' : 'opacity-0'}`}>
+              Inside View
+            </div>
+          )}
           {product.sku && (
             <div className="absolute top-2 left-2 text-xs px-2 py-1 rounded bg-amber-900/80 text-white font-mono">
               {product.sku}
@@ -54,14 +59,8 @@ function ProductCard({ product, onInquire, imageMode = 'cover' }) {
           )}
         </div>
         <div className="p-4">
-          <h3 className="font-bold text-gray-900 mb-1">{product.name}</h3>
-          {product.collection && <p className="text-xs text-amber-700 mb-3">{product.collection}</p>}
-          <button
-            onClick={e => { e.stopPropagation(); onInquire(); }}
-            className="w-full py-2 bg-amber-100 text-amber-900 rounded-lg font-semibold hover:bg-amber-200 transition"
-          >
-            Inquire Now
-          </button>
+          <h3 className="font-bold text-gray-900 leading-snug">{product.name}</h3>
+          {product.collection && <p className="text-xs text-amber-700 mt-1">{product.collection}</p>}
         </div>
       </div>
     );
@@ -71,13 +70,7 @@ function ProductCard({ product, onInquire, imageMode = 'cover' }) {
     <div className="bg-white rounded-lg overflow-hidden hover:shadow-xl transition transform hover:scale-105 duration-300 border border-amber-100">
       <div className="h-36 bg-gradient-to-br from-amber-100 to-yellow-50 flex items-center justify-center text-6xl">{product.image}</div>
       <div className="p-4">
-        <h3 className="font-bold text-gray-900 mb-3">{product.name}</h3>
-        <button
-          onClick={onInquire}
-          className="w-full py-2 bg-amber-100 text-amber-900 rounded-lg font-semibold hover:bg-amber-200 transition"
-        >
-          Inquire Now
-        </button>
+        <h3 className="font-bold text-gray-900">{product.name}</h3>
       </div>
     </div>
   );
@@ -129,12 +122,31 @@ const PRODUCTS = {
     { id: 4, name: 'Leather Crossbody',          image: '🎒' },
     { id: 5, name: 'Business Briefcase',         image: '💼' },
   ],
-  'small-accessories': [
-    { id: 17, name: 'Leather Key Holder',  image: '🔑' },
-    { id: 18, name: 'Card Holder Set',     image: '💳' },
-    { id: 19, name: 'Belt – Premium',      image: '👔' },
-    { id: 20, name: 'Leather Watch Strap', image: '⌚' },
-  ],
+  'small-accessories': {
+    'card-cases': [
+      { id: 991,   name: 'Card Case · Magnet + ID Window', sku: 'ML-991',  collection: 'Yaali Small Goods · Magnet',     frontImage: '/ML-991.png',  insideImage: '/ML-991_inside.png' },
+      { id: 996,   name: 'Card Case · Magnet Close',        sku: 'ML-996',  collection: 'Yaali Small Goods · Magnet',     frontImage: '/ML-996.png',  insideImage: '/ML-996_inside.png' },
+      { id: 102,   name: 'Black Leather Card Case',          sku: 'Y-102',  collection: 'Yaali Small Goods · Classic',    frontImage: '/Y-102.png',   insideImage: '/Y-102_inside.png' },
+      { id: 109,   name: 'RFID Cardholder',                  sku: 'Y-109',  collection: 'Yaali Small Goods · RFID',       frontImage: '/Y-109.png',   insideImage: '/Y-109_inside.png' },
+      { id: 114,   name: 'Card Case with ID Slot',           sku: 'Y-114',  collection: 'Yaali Small Goods · ID Slot',    frontImage: '/Y-114.png',   insideImage: '/Y-114_inside.png' },
+      { id: 115,   name: 'Metal Card Holder',                sku: 'Y-115',  collection: 'Yaali Small Goods · Metal',      frontImage: '/Y-115.png',   insideImage: '/Y-115_inside.png' },
+      { id: 3804,  name: 'Card Case with ID Slot',           sku: 'Y-3804', collection: 'Yaali Small Goods · ID Slot',    frontImage: '/Y-3804.png',  insideImage: '/Y-3804_inside.png' },
+      { id: 3805,  name: 'Slotted Leather Card Case',        sku: 'Y-3805', collection: 'Yaali Small Goods · Slots',      frontImage: '/Y-3805.png',  insideImage: '/Y-3805_inside.png' },
+      { id: 3810,  name: 'Card Case Pouch · ID Slot',        sku: 'Y-3810', collection: 'Yaali Small Goods · Pouch',      frontImage: '/Y-3810.png',  insideImage: '/Y-3810_inside.png' },
+      { id: 3833,  name: 'Zip-around Card Case · ID Window', sku: 'Y-3833', collection: 'Yaali Small Goods · Zip-around', frontImage: '/Y-3833.png',  insideImage: '/Y-3833_inside.png' },
+    ],
+    'money-clip': [
+      { id: 103,   name: 'Sleek Card Case · Money Clip',     sku: 'Y-103',  collection: 'Yaali Small Goods · Money Clip', frontImage: '/Y-103.png',   insideImage: '/Y-103_inside.png' },
+      { id: 993,   name: 'Card Case · Metal Money Clip',     sku: 'Y-993',  collection: 'Yaali Small Goods · Money Clip', frontImage: '/Y-993.png',   insideImage: '/Y-993_inside.png' },
+      { id: 3814,  name: 'Cardholder · Metal Clip',          sku: 'Y-3814', collection: 'Yaali Small Goods · Money Clip', frontImage: '/Y-3814.png',  insideImage: '/Y-3814_inside.png' },
+    ],
+    'coin-cases': [
+      { id: 131,   name: 'Ladies Coin Case',                 sku: 'Y-131',  collection: 'Yaali Small Goods · Coin',       frontImage: '/Y-131.png' },
+      { id: 132,   name: 'Ladies Coin Case',                 sku: 'Y-132',  collection: 'Yaali Small Goods · Coin',       frontImage: '/Y-132.png' },
+      { id: 133,   name: 'Ladies Coin Case',                 sku: 'Y-133',  collection: 'Yaali Small Goods · Coin',       frontImage: '/Y-133.png' },
+      { id: 134,   name: 'Ladies Coin Case',                 sku: 'Y-134',  collection: 'Yaali Small Goods · Coin',       frontImage: '/Y-134.png' },
+    ],
+  },
   travel: [
     { id: 45, name: 'Zip Passport Holder',     sku: 'YL-45', collection: 'Yaali Travel · Smooth Black',    frontImage: '/YL-45.png', insideImage: '/YL-45_inside.png' },
     { id: 47, name: 'Vintage Passport Holder', sku: 'YL-47', collection: 'Yaali Travel · Vintage Brown',   frontImage: '/YL-47.png', insideImage: '/YL-47_inside.png' },
@@ -146,8 +158,8 @@ const PRODUCTS = {
 const MAIN_CATEGORIES = [
   { id: 'wallets',           label: 'Wallets',              icon: '👛', desc: 'Bifold · Trifold · Note Case · Zip-around' },
   { id: 'bags',              label: 'Bags',                 icon: '🎒', desc: 'Messenger · Laptop · Duffel · Briefcase' },
-  { id: 'small-accessories', label: 'Small Accessories',    icon: '🔑', desc: 'Key holders · Card cases · Belts · Straps' },
-  { id: 'travel',            label: 'Travel Accessories',   icon: '✈️', desc: 'Passport · Organizers · Luggage tags' },
+  { id: 'small-accessories', label: 'Small Accessories',    icon: '💳', desc: 'Card Cases · Money Clip · Coin Cases' },
+  { id: 'travel',            label: 'Travel Accessories',   icon: '✈️', desc: 'Passport Holders · Travel Wallets' },
 ];
 
 const WALLET_SUBS = [
@@ -157,12 +169,19 @@ const WALLET_SUBS = [
   { id: 'zip-around', label: 'Zip-around' },
 ];
 
+const SMALL_ACC_SUBS = [
+  { id: 'card-cases', label: 'Card Cases' },
+  { id: 'money-clip', label: 'Money Clip' },
+  { id: 'coin-cases', label: 'Coin Cases' },
+];
+
 /* ─── App ───────────────────────────────────────────────────────────────────── */
 export default function BrandioLeatherWebsite() {
   const [isMenuOpen,       setIsMenuOpen]       = useState(false);
   const [activeSection,    setActiveSection]    = useState('home');
   const [mainCategory,     setMainCategory]     = useState('wallets');
   const [walletSub,        setWalletSub]        = useState('bifold');
+  const [smallAccSub,      setSmallAccSub]      = useState('card-cases');
   const [currentSlide,     setCurrentSlide]     = useState(0);
 
   const heroSlides = [
@@ -179,9 +198,10 @@ export default function BrandioLeatherWebsite() {
   const goTo = section => { setActiveSection(section); setIsMenuOpen(false); };
 
   /* derive product list for current selection */
-  const visibleProducts = mainCategory === 'wallets'
-    ? PRODUCTS.wallets[walletSub]
-    : PRODUCTS[mainCategory];
+  let visibleProducts;
+  if (mainCategory === 'wallets')                visibleProducts = PRODUCTS.wallets[walletSub];
+  else if (mainCategory === 'small-accessories') visibleProducts = PRODUCTS['small-accessories'][smallAccSub];
+  else                                           visibleProducts = PRODUCTS[mainCategory];
 
   return (
     <div className="bg-gradient-to-b from-amber-50 via-white to-amber-50 text-gray-900 min-h-screen">
@@ -313,7 +333,11 @@ export default function BrandioLeatherWebsite() {
               {MAIN_CATEGORIES.map(cat => (
                 <button
                   key={cat.id}
-                  onClick={() => { setMainCategory(cat.id); if (cat.id === 'wallets') setWalletSub('bifold'); }}
+                  onClick={() => {
+                    setMainCategory(cat.id);
+                    if (cat.id === 'wallets')           setWalletSub('bifold');
+                    if (cat.id === 'small-accessories') setSmallAccSub('card-cases');
+                  }}
                   className={`p-5 rounded-xl text-left transition-all duration-200 ${
                     mainCategory === cat.id
                       ? 'bg-amber-900 text-white shadow-lg scale-105'
@@ -329,7 +353,7 @@ export default function BrandioLeatherWebsite() {
               ))}
             </div>
 
-            {/* ── Level 2: wallet subcategory tabs (only visible when Wallets selected) ── */}
+            {/* ── Level 2: subcategory pills (Wallets / Small Accessories) ── */}
             {mainCategory === 'wallets' && (
               <div className="flex flex-wrap gap-2 mb-8 border-b border-amber-100 pb-6">
                 {WALLET_SUBS.map(sub => (
@@ -338,6 +362,23 @@ export default function BrandioLeatherWebsite() {
                     onClick={() => setWalletSub(sub.id)}
                     className={`px-5 py-2 rounded-full font-semibold text-sm transition-all ${
                       walletSub === sub.id
+                        ? 'bg-amber-700 text-white shadow'
+                        : 'bg-amber-100 text-amber-900 hover:bg-amber-200'
+                    }`}
+                  >
+                    {sub.label}
+                  </button>
+                ))}
+              </div>
+            )}
+            {mainCategory === 'small-accessories' && (
+              <div className="flex flex-wrap gap-2 mb-8 border-b border-amber-100 pb-6">
+                {SMALL_ACC_SUBS.map(sub => (
+                  <button
+                    key={sub.id}
+                    onClick={() => setSmallAccSub(sub.id)}
+                    className={`px-5 py-2 rounded-full font-semibold text-sm transition-all ${
+                      smallAccSub === sub.id
                         ? 'bg-amber-700 text-white shadow'
                         : 'bg-amber-100 text-amber-900 hover:bg-amber-200'
                     }`}
@@ -361,6 +402,14 @@ export default function BrandioLeatherWebsite() {
                   </span>
                 </>
               )}
+              {mainCategory === 'small-accessories' && (
+                <>
+                  <ChevronRightSm size={14} />
+                  <span className="font-medium text-amber-700">
+                    {SMALL_ACC_SUBS.find(s => s.id === smallAccSub)?.label}
+                  </span>
+                </>
+              )}
             </div>
 
             {/* ── Product grid ── */}
@@ -369,7 +418,6 @@ export default function BrandioLeatherWebsite() {
                 <ProductCard
                   key={product.id}
                   product={product}
-                  onInquire={() => goTo('contact')}
                   imageMode={mainCategory === 'travel' ? 'contain' : 'cover'}
                 />
               ))}
@@ -395,6 +443,7 @@ export default function BrandioLeatherWebsite() {
                 { code: 'MI', name: 'Micro Collection',   size: 'American Size', material: 'Textured Black · Leather',  styles: 'Bifold · Trifold · Zip-around', hero: '/MI-2106.png', desc: 'Compact black wallets with a textured weave panel and smooth leather trim. Subtle Branded mark, urban edge.' },
                 { code: 'CN', name: 'Canton Collection',  size: 'American Size', material: 'Classic Black Leather',     styles: 'Bifold · Trifold · Zip-around', hero: '/CN-1146.png', desc: 'Pure black leather wallets with diagonal corner stitching. Understated Brandio branding for a clean, professional look.' },
                 { code: 'CA', name: 'Cancun Collection',  size: 'American Size', material: 'Dimbill · Red & Navy Stripe', styles: 'Bifold · Trifold · Zip-around', hero: '/CA-5006.png', desc: 'Black leather wallets with a bold red, cream, and navy striped accent. The signature Dimbill line, vibrant and refined.' },
+                { code: 'YL', name: 'Yaali Small Goods',  size: 'Compact',        material: 'Card Cases · Money Clip · Coin', styles: '17 styles across 3 categories', hero: '/Y-103.png',     desc: 'Card holders, money-clip wallets, RFID cases, and ladies coin cases — the everyday-carry range, refined.', cat: 'small-accessories', ctaLabel: 'View Small Goods' },
               ].map(col => (
                 <div key={col.code} className="bg-white border border-amber-200 rounded-xl overflow-hidden hover:shadow-lg transition flex flex-col">
                   <div className="h-48 bg-amber-50 overflow-hidden">
@@ -414,8 +463,16 @@ export default function BrandioLeatherWebsite() {
                     <h3 className="text-2xl font-bold text-amber-900 mb-2">{col.name}</h3>
                     <p className="text-gray-600 leading-relaxed text-sm mb-4">{col.desc}</p>
                     <p className="text-xs text-gray-500 mb-4 mt-auto">{col.styles}</p>
-                    <button onClick={() => { setMainCategory('wallets'); goTo('products'); }} className="px-5 py-2 bg-amber-900 text-white rounded-lg text-sm font-semibold hover:bg-amber-800 transition self-start">
-                      View Wallets
+                    <button
+                      onClick={() => {
+                        const cat = col.cat || 'wallets';
+                        setMainCategory(cat);
+                        if (cat === 'small-accessories') setSmallAccSub('card-cases');
+                        goTo('products');
+                      }}
+                      className="px-5 py-2 bg-amber-900 text-white rounded-lg text-sm font-semibold hover:bg-amber-800 transition self-start"
+                    >
+                      {col.ctaLabel || 'View Wallets'}
                     </button>
                   </div>
                 </div>
