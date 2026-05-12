@@ -418,7 +418,7 @@ export default function BrandioLeatherWebsite() {
                 <ProductCard
                   key={product.id}
                   product={product}
-                  imageMode={mainCategory === 'travel' ? 'contain' : 'cover'}
+                  imageMode={(mainCategory === 'travel' || mainCategory === 'small-accessories') ? 'contain' : 'cover'}
                 />
               ))}
             </div>
