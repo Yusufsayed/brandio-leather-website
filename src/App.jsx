@@ -15,8 +15,15 @@ const NAV_ITEMS = [
 ];
 
 /* ─── Product card ─────────────────────────────────────────────────────────── */
-function ProductCard({ product, onInquire }) {
+function ProductCard({ product, onInquire, imageMode = 'cover' }) {
   const [flipped, setFlipped] = useState(false);
+
+  const imgBox = imageMode === 'contain'
+    ? 'h-64 bg-gradient-to-br from-amber-50 to-white'
+    : 'h-48 bg-amber-50';
+  const imgFit = imageMode === 'contain'
+    ? 'object-contain p-3'
+    : 'object-cover';
 
   if (product.frontImage) {
     return (
@@ -26,16 +33,16 @@ function ProductCard({ product, onInquire }) {
         onMouseLeave={() => setFlipped(false)}
         onClick={() => setFlipped(f => !f)}
       >
-        <div className="h-64 relative overflow-hidden bg-gradient-to-br from-amber-50 to-white">
+        <div className={`relative overflow-hidden ${imgBox}`}>
           <img
             src={product.frontImage}
             alt={product.name}
-            className={`absolute inset-0 w-full h-full object-contain p-3 transition-opacity duration-300 ${flipped ? 'opacity-0' : 'opacity-100'}`}
+            className={`absolute inset-0 w-full h-full ${imgFit} transition-opacity duration-300 ${flipped ? 'opacity-0' : 'opacity-100'}`}
           />
           <img
             src={product.insideImage}
             alt={`${product.name} inside`}
-            className={`absolute inset-0 w-full h-full object-contain p-3 transition-opacity duration-300 ${flipped ? 'opacity-100' : 'opacity-0'}`}
+            className={`absolute inset-0 w-full h-full ${imgFit} transition-opacity duration-300 ${flipped ? 'opacity-100' : 'opacity-0'}`}
           />
           <div className={`absolute bottom-2 right-2 text-xs px-2 py-1 rounded bg-black/50 text-white transition-opacity duration-300 ${flipped ? 'opacity-100' : 'opacity-0'}`}>
             Inside View
@@ -359,7 +366,12 @@ export default function BrandioLeatherWebsite() {
             {/* ── Product grid ── */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {visibleProducts?.map(product => (
-                <ProductCard key={product.id} product={product} onInquire={() => goTo('contact')} />
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  onInquire={() => goTo('contact')}
+                  imageMode={mainCategory === 'travel' ? 'contain' : 'cover'}
+                />
               ))}
             </div>
           </div>
@@ -385,8 +397,13 @@ export default function BrandioLeatherWebsite() {
                 { code: 'CA', name: 'Cancun Collection',  size: 'American Size', material: 'Dimbill · Red & Navy Stripe', styles: 'Bifold · Trifold · Zip-around', hero: '/CA-5006.png', desc: 'Black leather wallets with a bold red, cream, and navy striped accent. The signature Dimbill line, vibrant and refined.' },
               ].map(col => (
                 <div key={col.code} className="bg-white border border-amber-200 rounded-xl overflow-hidden hover:shadow-lg transition flex flex-col">
-                  <div className="h-56 bg-gradient-to-br from-amber-50 to-white overflow-hidden flex items-center justify-center p-4">
-                    <img src={col.hero} alt={col.name} className="max-w-full max-h-full object-contain" />
+                  <div className="h-48 bg-amber-50 overflow-hidden">
+                    <img
+                      src={col.hero}
+                      alt={col.name}
+                      className="w-full h-full object-cover"
+                      style={{ objectPosition: '50% 75%' }}
+                    />
                   </div>
                   <div className="p-6 flex-1 flex flex-col">
                     <div className="flex items-center gap-2 mb-3 flex-wrap">
