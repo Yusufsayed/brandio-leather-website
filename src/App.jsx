@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, ChevronLeft, ChevronRight, Phone, Mail, MapPin, ChevronRight as ChevronRightSm } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const LOGO = 'https://raw.githubusercontent.com/Yusufsayed/brandio-leather-website/main/brandio-logo-final.png';
 const FACTORY_FRONT = 'https://raw.githubusercontent.com/Yusufsayed/brandio-leather-website/main/42545c7a-e2a7-4009-82f2-f1dc6a009b4c.JPG';
@@ -15,7 +16,7 @@ const NAV_ITEMS = [
 ];
 
 /* ─── Product card ─────────────────────────────────────────────────────────── */
-function ProductCard({ product, imageMode = 'cover' }) {
+function ProductCard({ product, imageMode = 'cover', index = 0 }) {
   const [flipped, setFlipped] = useState(false);
   const hasInside = Boolean(product.insideImage);
 
@@ -28,7 +29,13 @@ function ProductCard({ product, imageMode = 'cover' }) {
 
   if (product.frontImage) {
     return (
-      <div
+      <motion.div
+        layout
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -12 }}
+        transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1], delay: Math.min(index * 0.05, 0.4) }}
+        whileHover={{ y: -4 }}
         className={`bg-white rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-amber-100 ${hasInside ? 'cursor-pointer' : ''}`}
         onMouseEnter={hasInside ? () => setFlipped(true)  : undefined}
         onMouseLeave={hasInside ? () => setFlipped(false) : undefined}
@@ -62,7 +69,7 @@ function ProductCard({ product, imageMode = 'cover' }) {
           <h3 className="font-bold text-gray-900 leading-snug">{product.name}</h3>
           {product.collection && <p className="text-xs text-amber-700 mt-1">{product.collection}</p>}
         </div>
-      </div>
+      </motion.div>
     );
   }
 
@@ -282,20 +289,45 @@ export default function BrandioLeatherWebsite() {
           ))}
           <div className="relative z-10 flex items-center justify-center h-full text-center px-4">
             <div className="max-w-4xl mx-auto">
-              <h1 className="text-5xl md:text-7xl font-bold mb-6 text-white leading-tight">
-                {heroSlides[currentSlide].title}
-              </h1>
-              <p className="text-xl md:text-2xl text-gray-200 mb-8 font-light">
-                {heroSlides[currentSlide].subtitle}
-              </p>
-              <div className="flex gap-4 justify-center flex-wrap">
-                <button onClick={() => goTo('products')} className="px-8 py-3 bg-gradient-to-r from-amber-700 to-yellow-600 text-white rounded-lg font-semibold hover:shadow-lg transition transform hover:scale-105">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentSlide}
+                  initial={{ opacity: 0, y: 24 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -16 }}
+                  transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <h1 className="text-5xl md:text-7xl font-bold mb-6 text-white leading-tight">
+                    {heroSlides[currentSlide].title}
+                  </h1>
+                  <p className="text-xl md:text-2xl text-gray-200 mb-8 font-light">
+                    {heroSlides[currentSlide].subtitle}
+                  </p>
+                </motion.div>
+              </AnimatePresence>
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="flex gap-4 justify-center flex-wrap"
+              >
+                <motion.button
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() => goTo('products')}
+                  className="px-8 py-3 bg-gradient-to-r from-amber-700 to-yellow-600 text-white rounded-lg font-semibold shadow hover:shadow-lg transition"
+                >
                   Explore Products
-                </button>
-                <button onClick={() => goTo('contact')} className="px-8 py-3 border-2 border-white text-white rounded-lg font-semibold hover:bg-white/10 transition">
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() => goTo('contact')}
+                  className="px-8 py-3 border-2 border-white text-white rounded-lg font-semibold hover:bg-white/10 transition"
+                >
                   Get in Touch
-                </button>
-              </div>
+                </motion.button>
+              </motion.div>
             </div>
           </div>
           <button onClick={() => setCurrentSlide(p => (p - 1 + heroSlides.length) % heroSlides.length)} className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-2 bg-white/20 rounded-full hover:bg-white/40 transition">
@@ -457,15 +489,21 @@ export default function BrandioLeatherWebsite() {
             </div>
 
             {/* ── Product grid ── */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {visibleProducts?.map(product => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  imageMode={(mainCategory === 'travel' || mainCategory === 'small-accessories' || mainCategory === 'bags') ? 'contain' : 'cover'}
-                />
-              ))}
-            </div>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={`${mainCategory}-${walletSub}-${smallAccSub}-${bagSub}`}
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+              >
+                {visibleProducts?.map((product, i) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    index={i}
+                    imageMode={(mainCategory === 'travel' || mainCategory === 'small-accessories' || mainCategory === 'bags') ? 'contain' : 'cover'}
+                  />
+                ))}
+              </motion.div>
+            </AnimatePresence>
           </div>
         </section>
       )}
@@ -489,8 +527,16 @@ export default function BrandioLeatherWebsite() {
                 { code: 'CA', name: 'Cancun Collection',  size: 'American Size', material: 'Dimbill · Red & Navy Stripe', styles: 'Bifold · Trifold · Zip-around', hero: '/CA-5006.png', desc: 'Black leather wallets with a bold red, cream, and navy striped accent. The signature Dimbill line, vibrant and refined.' },
                 { code: 'YL', name: 'Yaali Small Goods',  size: 'Compact',        material: 'Card Cases · Money Clip · Coin', styles: '17 styles across 3 categories', hero: '/Y-103.png',     desc: 'Card holders, money-clip wallets, RFID cases, and ladies coin cases — the everyday-carry range, refined.', cat: 'small-accessories', ctaLabel: 'View Small Goods' },
                 { code: 'B',  name: 'Brandio Bags',       size: 'Full Size',      material: 'Briefcase · Crossbody · Sling',  styles: '9 styles across 3 categories',   hero: '/B-8061.png',    desc: 'Full-grain leather briefcases, crossbody bags, and sling/waist pieces — engineered to carry the whole day.',          cat: 'bags',              ctaLabel: 'View Bags' },
-              ].map(col => (
-                <div key={col.code} className="bg-white border border-amber-200 rounded-xl overflow-hidden hover:shadow-lg transition flex flex-col">
+              ].map((col, i) => (
+                <motion.div
+                  key={col.code}
+                  initial={{ opacity: 0, y: 32 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-80px' }}
+                  transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1], delay: (i % 2) * 0.08 }}
+                  whileHover={{ y: -6 }}
+                  className="bg-white border border-amber-200 rounded-xl overflow-hidden hover:shadow-lg transition flex flex-col"
+                >
                   <div className="h-48 bg-amber-50 overflow-hidden">
                     <img
                       src={col.hero}
@@ -521,7 +567,7 @@ export default function BrandioLeatherWebsite() {
                       {col.ctaLabel || 'View Wallets'}
                     </button>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
@@ -548,7 +594,15 @@ export default function BrandioLeatherWebsite() {
                 { code: 'MI', name: 'Micro — Branded Gift Box',   desc: 'Premium blue gift box for the Micro textured-black range. RFID protected.', image: '/Branded_Packaging.png' },
                 { code: 'CA', name: 'Cancun — Dimbill Box',       desc: 'Dimbill-branded gift box for the Cancun striped-accent range.', image: '/Dimbill_Packaging.png' },
               ].map((item, i) => (
-                <div key={i} className="bg-white border border-amber-200 rounded-xl overflow-hidden hover:shadow-lg transition group">
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 28 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-60px' }}
+                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: (i % 3) * 0.08 }}
+                  whileHover={{ y: -4 }}
+                  className="bg-white border border-amber-200 rounded-xl overflow-hidden hover:shadow-lg transition group"
+                >
                   <div className="h-64 bg-gradient-to-br from-amber-50 to-white overflow-hidden flex items-center justify-center p-4">
                     <img src={item.image} alt={item.name} className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-500" />
                   </div>
@@ -559,7 +613,7 @@ export default function BrandioLeatherWebsite() {
                     </div>
                     <p className="text-gray-600 text-sm leading-relaxed">{item.desc}</p>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
 
