@@ -1,6 +1,72 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Menu, X, ChevronLeft, ChevronRight, Phone, Mail, MapPin, ChevronRight as ChevronRightSm } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
+
+/* ─── Reusable motion helpers ──────────────────────────────────────────────── */
+
+// 3D cursor-tracked tilt — the Apple signature
+function useTilt(intensity = 8, springCfg = { stiffness: 220, damping: 22 }) {
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const rX = useTransform(y, [-0.5, 0.5], [intensity, -intensity]);
+  const rY = useTransform(x, [-0.5, 0.5], [-intensity, intensity]);
+  const rotateX = useSpring(rX, springCfg);
+  const rotateY = useSpring(rY, springCfg);
+
+  const handlers = {
+    onMouseMove: e => {
+      const r = e.currentTarget.getBoundingClientRect();
+      x.set((e.clientX - r.left) / r.width  - 0.5);
+      y.set((e.clientY - r.top)  / r.height - 0.5);
+    },
+    onMouseLeave: () => { x.set(0); y.set(0); },
+  };
+  return { rotateX, rotateY, handlers };
+}
+
+// Magnetic button — cursor pull-in
+function MagneticButton({ children, className, onClick, strength = 0.3 }) {
+  const x  = useMotionValue(0);
+  const y  = useMotionValue(0);
+  const sx = useSpring(x, { stiffness: 200, damping: 14 });
+  const sy = useSpring(y, { stiffness: 200, damping: 14 });
+
+  return (
+    <motion.button
+      style={{ x: sx, y: sy }}
+      onMouseMove={e => {
+        const r = e.currentTarget.getBoundingClientRect();
+        x.set((e.clientX - (r.left + r.width  / 2)) * strength);
+        y.set((e.clientY - (r.top  + r.height / 2)) * strength);
+      }}
+      onMouseLeave={() => { x.set(0); y.set(0); }}
+      whileTap={{ scale: 0.95 }}
+      onClick={onClick}
+      className={className}
+    >
+      {children}
+    </motion.button>
+  );
+}
+
+// Word-by-word stagger for hero titles
+function StaggerWords({ text, className, delayBase = 0 }) {
+  return (
+    <span className={className}>
+      {text.split(' ').map((word, i) => (
+        <motion.span
+          key={`${text}-${i}`}
+          style={{ display: 'inline-block', marginRight: '0.28em', willChange: 'transform, opacity' }}
+          initial={{ opacity: 0, y: 28 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: delayBase + i * 0.07 }}
+        >
+          {word}
+        </motion.span>
+      ))}
+    </span>
+  );
+}
 
 const LOGO = 'https://raw.githubusercontent.com/Yusufsayed/brandio-leather-website/main/brandio-logo-final.png';
 const FACTORY_FRONT = 'https://raw.githubusercontent.com/Yusufsayed/brandio-leather-website/main/42545c7a-e2a7-4009-82f2-f1dc6a009b4c.JPG';
@@ -15,10 +81,74 @@ const NAV_ITEMS = [
   { id: 'contact',     label: 'Contact' },
 ];
 
+/* ─── Collection card (Collections page) ──────────────────────────────────── */
+function CollectionCard({ col, index, onCta }) {
+  const [hovered, setHovered] = useState(false);
+  const { rotateX, rotateY, handlers } = useTilt(6);
+
+  return (
+    <div style={{ perspective: 1400 }}>
+      <motion.div
+        initial={{ opacity: 0, y: 32 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-80px' }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: (index % 2) * 0.08 }}
+        style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={e => { setHovered(false); handlers.onMouseLeave(e); }}
+        onMouseMove={handlers.onMouseMove}
+        className={`bg-white border border-amber-200 rounded-2xl overflow-hidden flex flex-col transition-shadow duration-500 ${hovered ? 'shadow-2xl' : 'shadow-sm'}`}
+      >
+        <div className="h-48 bg-amber-50 overflow-hidden relative" style={{ transformStyle: 'preserve-3d' }}>
+          <motion.img
+            src={col.hero}
+            alt={col.name}
+            animate={{ scale: hovered ? 1.08 : 1 }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            style={{ objectPosition: '50% 75%', translateZ: 30 }}
+            className="w-full h-full object-cover"
+          />
+          <motion.div
+            aria-hidden
+            animate={{ opacity: hovered ? 0.22 : 0 }}
+            transition={{ duration: 0.4 }}
+            style={{ translateZ: 50 }}
+            className="absolute inset-0 bg-gradient-to-tr from-white via-transparent to-transparent pointer-events-none"
+          />
+          <motion.span
+            style={{ translateZ: 60 }}
+            className="absolute top-3 left-3 text-xs font-mono font-bold bg-amber-900 text-white px-2 py-1 rounded shadow"
+          >
+            {col.code}
+          </motion.span>
+        </div>
+        <div className="p-6 flex-1 flex flex-col" style={{ transformStyle: 'preserve-3d' }}>
+          <motion.div style={{ translateZ: 20 }} className="flex items-center gap-2 mb-3 flex-wrap">
+            <span className="text-xs font-semibold bg-amber-100 text-amber-800 px-2 py-1 rounded-full">{col.size}</span>
+            <span className="text-xs font-semibold bg-amber-50 text-amber-700 px-2 py-1 rounded-full border border-amber-200">{col.material}</span>
+          </motion.div>
+          <motion.h3 style={{ translateZ: 24 }} className="text-2xl font-bold text-amber-900 mb-2">{col.name}</motion.h3>
+          <motion.p  style={{ translateZ: 18 }} className="text-gray-600 leading-relaxed text-sm mb-4">{col.desc}</motion.p>
+          <motion.p  style={{ translateZ: 14 }} className="text-xs text-gray-500 mb-4 mt-auto">{col.styles}</motion.p>
+          <MagneticButton
+            onClick={onCta}
+            strength={0.25}
+            className="px-5 py-2 bg-amber-900 text-white rounded-lg text-sm font-semibold hover:bg-amber-800 transition-colors self-start"
+          >
+            {col.ctaLabel || 'View Wallets'}
+          </MagneticButton>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
 /* ─── Product card ─────────────────────────────────────────────────────────── */
 function ProductCard({ product, imageMode = 'cover', index = 0 }) {
   const [flipped, setFlipped] = useState(false);
+  const [hovered, setHovered] = useState(false);
   const hasInside = Boolean(product.insideImage);
+  const { rotateX, rotateY, handlers } = useTilt(7);
 
   const imgBox = imageMode === 'contain'
     ? 'h-64 bg-gradient-to-br from-amber-50 to-white'
@@ -29,47 +159,89 @@ function ProductCard({ product, imageMode = 'cover', index = 0 }) {
 
   if (product.frontImage) {
     return (
-      <motion.div
-        layout
-        initial={{ opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -12 }}
-        transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1], delay: Math.min(index * 0.05, 0.4) }}
-        whileHover={{ y: -4 }}
-        className={`bg-white rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-amber-100 ${hasInside ? 'cursor-pointer' : ''}`}
-        onMouseEnter={hasInside ? () => setFlipped(true)  : undefined}
-        onMouseLeave={hasInside ? () => setFlipped(false) : undefined}
-        onClick={hasInside ? () => setFlipped(f => !f)    : undefined}
-      >
-        <div className={`relative overflow-hidden ${imgBox}`}>
-          <img
-            src={product.frontImage}
-            alt={product.name}
-            className={`absolute inset-0 w-full h-full ${imgFit} transition-opacity duration-300 ${flipped ? 'opacity-0' : 'opacity-100'}`}
-          />
-          {hasInside && (
-            <img
-              src={product.insideImage}
-              alt={`${product.name} inside`}
-              className={`absolute inset-0 w-full h-full ${imgFit} transition-opacity duration-300 ${flipped ? 'opacity-100' : 'opacity-0'}`}
+      <div style={{ perspective: 1200 }} className="will-change-transform">
+        <motion.div
+          layout
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -12 }}
+          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1], delay: Math.min(index * 0.04, 0.3) }}
+          style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
+          onMouseEnter={() => { setHovered(true);  if (hasInside) setFlipped(true);  }}
+          onMouseLeave={e => { setHovered(false); if (hasInside) setFlipped(false); handlers.onMouseLeave(e); }}
+          onMouseMove={handlers.onMouseMove}
+          onClick={hasInside ? () => setFlipped(f => !f) : undefined}
+          className={`bg-white rounded-xl overflow-hidden border border-amber-100 transition-shadow duration-300 ${hovered ? 'shadow-2xl' : 'shadow-sm'} ${hasInside ? 'cursor-pointer' : ''}`}
+        >
+          <div className={`relative overflow-hidden ${imgBox}`} style={{ transformStyle: 'preserve-3d' }}>
+            <motion.img
+              src={product.frontImage}
+              alt={product.name}
+              animate={{ scale: hovered ? 1.08 : 1, opacity: flipped ? 0 : 1 }}
+              transition={{ scale: { duration: 0.6, ease: [0.22, 1, 0.36, 1] }, opacity: { duration: 0.3 } }}
+              style={{ translateZ: 40 }}
+              className={`absolute inset-0 w-full h-full ${imgFit}`}
             />
-          )}
-          {hasInside && (
-            <div className={`absolute bottom-2 right-2 text-xs px-2 py-1 rounded bg-black/50 text-white transition-opacity duration-300 ${flipped ? 'opacity-100' : 'opacity-0'}`}>
-              {product.altLabel || 'Inside View'}
-            </div>
-          )}
-          {product.sku && (
-            <div className="absolute top-2 left-2 text-xs px-2 py-1 rounded bg-amber-900/80 text-white font-mono">
-              {product.sku}
-            </div>
-          )}
-        </div>
-        <div className="p-4">
-          <h3 className="font-bold text-gray-900 leading-snug">{product.name}</h3>
-          {product.collection && <p className="text-xs text-amber-700 mt-1">{product.collection}</p>}
-        </div>
-      </motion.div>
+            {hasInside && (
+              <motion.img
+                src={product.insideImage}
+                alt={`${product.name} inside`}
+                animate={{ scale: hovered ? 1.08 : 1, opacity: flipped ? 1 : 0 }}
+                transition={{ scale: { duration: 0.6, ease: [0.22, 1, 0.36, 1] }, opacity: { duration: 0.3 } }}
+                style={{ translateZ: 40 }}
+                className={`absolute inset-0 w-full h-full ${imgFit}`}
+              />
+            )}
+
+            {/* glossy highlight that follows tilt */}
+            <motion.div
+              aria-hidden
+              style={{ translateZ: 60 }}
+              animate={{ opacity: hovered ? 0.18 : 0 }}
+              transition={{ duration: 0.4 }}
+              className="absolute inset-0 bg-gradient-to-br from-white via-transparent to-transparent pointer-events-none"
+            />
+
+            {hasInside && (
+              <motion.div
+                style={{ translateZ: 70 }}
+                animate={{ opacity: flipped ? 1 : 0, y: flipped ? 0 : 6 }}
+                transition={{ duration: 0.3 }}
+                className="absolute bottom-2 right-2 text-xs px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-sm text-white"
+              >
+                {product.altLabel || 'Inside View'}
+              </motion.div>
+            )}
+            {product.sku && (
+              <motion.div
+                style={{ translateZ: 70 }}
+                initial={false}
+                animate={{ y: hovered ? 0 : -2, opacity: 1 }}
+                className="absolute top-2 left-2 text-[10px] px-2 py-1 rounded bg-amber-900/85 backdrop-blur-sm text-white font-mono tracking-wide"
+              >
+                {product.sku}
+              </motion.div>
+            )}
+          </div>
+
+          <div className="p-4 relative" style={{ transformStyle: 'preserve-3d' }}>
+            <motion.h3
+              style={{ translateZ: 20 }}
+              className="font-bold text-gray-900 leading-snug"
+            >
+              {product.name}
+            </motion.h3>
+            {product.collection && (
+              <motion.p
+                style={{ translateZ: 20 }}
+                className="text-xs text-amber-700 mt-1"
+              >
+                {product.collection}
+              </motion.p>
+            )}
+          </div>
+        </motion.div>
+      </div>
     );
   }
 
@@ -244,13 +416,18 @@ export default function BrandioLeatherWebsite() {
               <button
                 key={id}
                 onClick={() => goTo(id)}
-                className={`font-medium transition-colors text-sm ${
-                  activeSection === id
-                    ? 'text-amber-900 border-b-2 border-amber-600 pb-0.5'
-                    : 'text-gray-700 hover:text-amber-900'
+                className={`font-medium text-sm relative pb-1 transition-colors ${
+                  activeSection === id ? 'text-amber-900' : 'text-gray-700 hover:text-amber-900'
                 }`}
               >
                 {label}
+                {activeSection === id && (
+                  <motion.span
+                    layoutId="nav-underline"
+                    className="absolute left-0 right-0 -bottom-0.5 h-0.5 bg-amber-700 rounded-full"
+                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                  />
+                )}
               </button>
             ))}
           </div>
@@ -290,43 +467,39 @@ export default function BrandioLeatherWebsite() {
           <div className="relative z-10 flex items-center justify-center h-full text-center px-4">
             <div className="max-w-4xl mx-auto">
               <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentSlide}
-                  initial={{ opacity: 0, y: 24 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -16 }}
-                  transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  <h1 className="text-5xl md:text-7xl font-bold mb-6 text-white leading-tight">
-                    {heroSlides[currentSlide].title}
+                <motion.div key={currentSlide}>
+                  <h1 className="text-5xl md:text-7xl font-bold mb-6 text-white leading-tight overflow-hidden">
+                    <StaggerWords text={heroSlides[currentSlide].title} />
                   </h1>
-                  <p className="text-xl md:text-2xl text-gray-200 mb-8 font-light">
+                  <motion.p
+                    initial={{ opacity: 0, y: 18 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.7, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                    className="text-xl md:text-2xl text-gray-200 mb-8 font-light"
+                  >
                     {heroSlides[currentSlide].subtitle}
-                  </p>
+                  </motion.p>
                 </motion.div>
               </AnimatePresence>
               <motion.div
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
+                transition={{ duration: 0.7, delay: 0.55, ease: [0.22, 1, 0.36, 1] }}
                 className="flex gap-4 justify-center flex-wrap"
               >
-                <motion.button
-                  whileHover={{ scale: 1.04 }}
-                  whileTap={{ scale: 0.97 }}
+                <MagneticButton
                   onClick={() => goTo('products')}
-                  className="px-8 py-3 bg-gradient-to-r from-amber-700 to-yellow-600 text-white rounded-lg font-semibold shadow hover:shadow-lg transition"
+                  className="px-8 py-3 bg-gradient-to-r from-amber-700 to-yellow-600 text-white rounded-lg font-semibold shadow-lg hover:shadow-amber-500/30 transition-shadow"
                 >
                   Explore Products
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.04 }}
-                  whileTap={{ scale: 0.97 }}
+                </MagneticButton>
+                <MagneticButton
                   onClick={() => goTo('contact')}
-                  className="px-8 py-3 border-2 border-white text-white rounded-lg font-semibold hover:bg-white/10 transition"
+                  className="px-8 py-3 border-2 border-white text-white rounded-lg font-semibold hover:bg-white/10 transition-colors"
                 >
                   Get in Touch
-                </motion.button>
+                </MagneticButton>
               </motion.div>
             </div>
           </div>
@@ -528,46 +701,13 @@ export default function BrandioLeatherWebsite() {
                 { code: 'YL', name: 'Yaali Small Goods',  size: 'Compact',        material: 'Card Cases · Money Clip · Coin', styles: '17 styles across 3 categories', hero: '/Y-103.png',     desc: 'Card holders, money-clip wallets, RFID cases, and ladies coin cases — the everyday-carry range, refined.', cat: 'small-accessories', ctaLabel: 'View Small Goods' },
                 { code: 'B',  name: 'Brandio Bags',       size: 'Full Size',      material: 'Briefcase · Crossbody · Sling',  styles: '9 styles across 3 categories',   hero: '/B-8061.png',    desc: 'Full-grain leather briefcases, crossbody bags, and sling/waist pieces — engineered to carry the whole day.',          cat: 'bags',              ctaLabel: 'View Bags' },
               ].map((col, i) => (
-                <motion.div
-                  key={col.code}
-                  initial={{ opacity: 0, y: 32 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-80px' }}
-                  transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1], delay: (i % 2) * 0.08 }}
-                  whileHover={{ y: -6 }}
-                  className="bg-white border border-amber-200 rounded-xl overflow-hidden hover:shadow-lg transition flex flex-col"
-                >
-                  <div className="h-48 bg-amber-50 overflow-hidden">
-                    <img
-                      src={col.hero}
-                      alt={col.name}
-                      className="w-full h-full object-cover"
-                      style={{ objectPosition: '50% 75%' }}
-                    />
-                  </div>
-                  <div className="p-6 flex-1 flex flex-col">
-                    <div className="flex items-center gap-2 mb-3 flex-wrap">
-                      <span className="text-xs font-mono font-bold bg-amber-900 text-white px-2 py-1 rounded">{col.code}</span>
-                      <span className="text-xs font-semibold bg-amber-100 text-amber-800 px-2 py-1 rounded-full">{col.size}</span>
-                      <span className="text-xs font-semibold bg-amber-50 text-amber-700 px-2 py-1 rounded-full border border-amber-200">{col.material}</span>
-                    </div>
-                    <h3 className="text-2xl font-bold text-amber-900 mb-2">{col.name}</h3>
-                    <p className="text-gray-600 leading-relaxed text-sm mb-4">{col.desc}</p>
-                    <p className="text-xs text-gray-500 mb-4 mt-auto">{col.styles}</p>
-                    <button
-                      onClick={() => {
-                        const cat = col.cat || 'wallets';
-                        setMainCategory(cat);
-                        if (cat === 'small-accessories') setSmallAccSub('card-cases');
-                        if (cat === 'bags')              setBagSub('briefcase');
-                        goTo('products');
-                      }}
-                      className="px-5 py-2 bg-amber-900 text-white rounded-lg text-sm font-semibold hover:bg-amber-800 transition self-start"
-                    >
-                      {col.ctaLabel || 'View Wallets'}
-                    </button>
-                  </div>
-                </motion.div>
+                <CollectionCard key={col.code} col={col} index={i} onCta={() => {
+                  const cat = col.cat || 'wallets';
+                  setMainCategory(cat);
+                  if (cat === 'small-accessories') setSmallAccSub('card-cases');
+                  if (cat === 'bags')              setBagSub('briefcase');
+                  goTo('products');
+                }} />
               ))}
             </div>
           </div>
