@@ -49,7 +49,7 @@ function ProductCard({ product, imageMode = 'cover' }) {
           )}
           {hasInside && (
             <div className={`absolute bottom-2 right-2 text-xs px-2 py-1 rounded bg-black/50 text-white transition-opacity duration-300 ${flipped ? 'opacity-100' : 'opacity-0'}`}>
-              Inside View
+              {product.altLabel || 'Inside View'}
             </div>
           )}
           {product.sku && (
@@ -115,13 +115,23 @@ const PRODUCTS = {
       { id: 5008, name: 'American Size Zip-around', sku: 'CA-5008', collection: 'Cancun Collection · Dimbill Stripe',  frontImage: '/CA-5008.png',  insideImage: '/CA-5008_inside.png' },
     ],
   },
-  bags: [
-    { id: 1, name: 'Classic Leather Messenger', image: '🎒' },
-    { id: 2, name: 'Premium Laptop Bag',         image: '💼' },
-    { id: 3, name: 'Vintage Travel Duffel',      image: '👜' },
-    { id: 4, name: 'Leather Crossbody',          image: '🎒' },
-    { id: 5, name: 'Business Briefcase',         image: '💼' },
-  ],
+  bags: {
+    briefcase: [
+      { id: 8061, name: 'Tan Leather Laptop Briefcase',     sku: 'B-8061', collection: 'Brandio Bags · Briefcase',  frontImage: '/B-8061.png', insideImage: '/B-8061_inside.png', altLabel: 'Inside View' },
+      { id: 8062, name: 'Black Leather Laptop Bag',         sku: 'B-8062', collection: 'Brandio Bags · Briefcase',  frontImage: '/B-8062.png', insideImage: '/B-8062_back.png',   altLabel: 'Back View'   },
+      { id: 8067, name: 'Vintage Brown Briefcase',          sku: 'B-8067', collection: 'Brandio Bags · Briefcase',  frontImage: '/B-8067.png', insideImage: '/B-8067_inside.png', altLabel: 'Inside View' },
+      { id: 8098, name: 'Cognac Polished Briefcase',        sku: 'B-8098', collection: 'Brandio Bags · Briefcase',  frontImage: '/B-8098.png', insideImage: '/B-8098_inside.png', altLabel: 'Inside View' },
+    ],
+    crossbody: [
+      { id: 8066, name: 'Tan Crossbody Shoulder Bag',       sku: 'B-8066', collection: 'Brandio Bags · Crossbody',  frontImage: '/B-8066.png', insideImage: '/B-8066_inside.png', altLabel: 'Inside View' },
+      { id: 8068, name: 'Vintage Brown Crossbody',          sku: 'B-8068', collection: 'Brandio Bags · Crossbody',  frontImage: '/B-8068.png', insideImage: '/B-8068_back.png',   altLabel: 'Back View'   },
+      { id: 9004, name: 'Brown Flap Crossbody',             sku: 'B-9004', collection: 'Brandio Bags · Crossbody',  frontImage: '/B-9004.png', insideImage: '/B-9004_back.png',   altLabel: 'Back View'   },
+    ],
+    'sling-waist': [
+      { id: 8008, name: 'Black Leather Waist Bag',          sku: 'B-8008', collection: 'Brandio Bags · Waist',      frontImage: '/B-8008.png', insideImage: '/B-8008_back.png',   altLabel: 'Back View'   },
+      { id: 9002, name: 'Black Leather Chest Sling',        sku: 'B-9002', collection: 'Brandio Bags · Sling',      frontImage: '/B-9002.png', insideImage: '/B-9002_side.png',   altLabel: 'Side View'   },
+    ],
+  },
   'small-accessories': {
     'card-cases': [
       { id: 991,   name: 'Card Case · Magnet + ID Window', sku: 'ML-991',  collection: 'Yaali Small Goods · Magnet',     frontImage: '/ML-991.png',  insideImage: '/ML-991_inside.png' },
@@ -157,7 +167,7 @@ const PRODUCTS = {
 
 const MAIN_CATEGORIES = [
   { id: 'wallets',           label: 'Wallets',              icon: '👛', desc: 'Bifold · Trifold · Note Case · Zip-around' },
-  { id: 'bags',              label: 'Bags',                 icon: '🎒', desc: 'Messenger · Laptop · Duffel · Briefcase' },
+  { id: 'bags',              label: 'Bags',                 icon: '🎒', desc: 'Briefcase · Crossbody · Sling & Waist' },
   { id: 'small-accessories', label: 'Small Accessories',    icon: '💳', desc: 'Card Cases · Money Clip · Coin Cases' },
   { id: 'travel',            label: 'Travel Accessories',   icon: '✈️', desc: 'Passport Holders · Travel Wallets' },
 ];
@@ -175,6 +185,12 @@ const SMALL_ACC_SUBS = [
   { id: 'coin-cases', label: 'Coin Cases' },
 ];
 
+const BAG_SUBS = [
+  { id: 'briefcase',   label: 'Briefcase' },
+  { id: 'crossbody',   label: 'Crossbody' },
+  { id: 'sling-waist', label: 'Sling & Waist' },
+];
+
 /* ─── App ───────────────────────────────────────────────────────────────────── */
 export default function BrandioLeatherWebsite() {
   const [isMenuOpen,       setIsMenuOpen]       = useState(false);
@@ -182,6 +198,7 @@ export default function BrandioLeatherWebsite() {
   const [mainCategory,     setMainCategory]     = useState('wallets');
   const [walletSub,        setWalletSub]        = useState('bifold');
   const [smallAccSub,      setSmallAccSub]      = useState('card-cases');
+  const [bagSub,           setBagSub]           = useState('briefcase');
   const [currentSlide,     setCurrentSlide]     = useState(0);
 
   const heroSlides = [
@@ -201,6 +218,7 @@ export default function BrandioLeatherWebsite() {
   let visibleProducts;
   if (mainCategory === 'wallets')                visibleProducts = PRODUCTS.wallets[walletSub];
   else if (mainCategory === 'small-accessories') visibleProducts = PRODUCTS['small-accessories'][smallAccSub];
+  else if (mainCategory === 'bags')              visibleProducts = PRODUCTS.bags[bagSub];
   else                                           visibleProducts = PRODUCTS[mainCategory];
 
   return (
@@ -337,6 +355,7 @@ export default function BrandioLeatherWebsite() {
                     setMainCategory(cat.id);
                     if (cat.id === 'wallets')           setWalletSub('bifold');
                     if (cat.id === 'small-accessories') setSmallAccSub('card-cases');
+                    if (cat.id === 'bags')              setBagSub('briefcase');
                   }}
                   className={`p-5 rounded-xl text-left transition-all duration-200 ${
                     mainCategory === cat.id
@@ -388,6 +407,23 @@ export default function BrandioLeatherWebsite() {
                 ))}
               </div>
             )}
+            {mainCategory === 'bags' && (
+              <div className="flex flex-wrap gap-2 mb-8 border-b border-amber-100 pb-6">
+                {BAG_SUBS.map(sub => (
+                  <button
+                    key={sub.id}
+                    onClick={() => setBagSub(sub.id)}
+                    className={`px-5 py-2 rounded-full font-semibold text-sm transition-all ${
+                      bagSub === sub.id
+                        ? 'bg-amber-700 text-white shadow'
+                        : 'bg-amber-100 text-amber-900 hover:bg-amber-200'
+                    }`}
+                  >
+                    {sub.label}
+                  </button>
+                ))}
+              </div>
+            )}
 
             {/* ── Breadcrumb ── */}
             <div className="flex items-center gap-1.5 text-sm text-gray-500 mb-6">
@@ -410,6 +446,14 @@ export default function BrandioLeatherWebsite() {
                   </span>
                 </>
               )}
+              {mainCategory === 'bags' && (
+                <>
+                  <ChevronRightSm size={14} />
+                  <span className="font-medium text-amber-700">
+                    {BAG_SUBS.find(s => s.id === bagSub)?.label}
+                  </span>
+                </>
+              )}
             </div>
 
             {/* ── Product grid ── */}
@@ -418,7 +462,7 @@ export default function BrandioLeatherWebsite() {
                 <ProductCard
                   key={product.id}
                   product={product}
-                  imageMode={(mainCategory === 'travel' || mainCategory === 'small-accessories') ? 'contain' : 'cover'}
+                  imageMode={(mainCategory === 'travel' || mainCategory === 'small-accessories' || mainCategory === 'bags') ? 'contain' : 'cover'}
                 />
               ))}
             </div>
@@ -444,6 +488,7 @@ export default function BrandioLeatherWebsite() {
                 { code: 'CN', name: 'Canton Collection',  size: 'American Size', material: 'Classic Black Leather',     styles: 'Bifold · Trifold · Zip-around', hero: '/CN-1146.png', desc: 'Pure black leather wallets with diagonal corner stitching. Understated Brandio branding for a clean, professional look.' },
                 { code: 'CA', name: 'Cancun Collection',  size: 'American Size', material: 'Dimbill · Red & Navy Stripe', styles: 'Bifold · Trifold · Zip-around', hero: '/CA-5006.png', desc: 'Black leather wallets with a bold red, cream, and navy striped accent. The signature Dimbill line, vibrant and refined.' },
                 { code: 'YL', name: 'Yaali Small Goods',  size: 'Compact',        material: 'Card Cases · Money Clip · Coin', styles: '17 styles across 3 categories', hero: '/Y-103.png',     desc: 'Card holders, money-clip wallets, RFID cases, and ladies coin cases — the everyday-carry range, refined.', cat: 'small-accessories', ctaLabel: 'View Small Goods' },
+                { code: 'B',  name: 'Brandio Bags',       size: 'Full Size',      material: 'Briefcase · Crossbody · Sling',  styles: '9 styles across 3 categories',   hero: '/B-8061.png',    desc: 'Full-grain leather briefcases, crossbody bags, and sling/waist pieces — engineered to carry the whole day.',          cat: 'bags',              ctaLabel: 'View Bags' },
               ].map(col => (
                 <div key={col.code} className="bg-white border border-amber-200 rounded-xl overflow-hidden hover:shadow-lg transition flex flex-col">
                   <div className="h-48 bg-amber-50 overflow-hidden">
@@ -468,6 +513,7 @@ export default function BrandioLeatherWebsite() {
                         const cat = col.cat || 'wallets';
                         setMainCategory(cat);
                         if (cat === 'small-accessories') setSmallAccSub('card-cases');
+                        if (cat === 'bags')              setBagSub('briefcase');
                         goTo('products');
                       }}
                       className="px-5 py-2 bg-amber-900 text-white rounded-lg text-sm font-semibold hover:bg-amber-800 transition self-start"
