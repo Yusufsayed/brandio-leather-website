@@ -1,6 +1,257 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Menu, X, ChevronLeft, ChevronRight, Phone, Mail, MapPin, ChevronRight as ChevronRightSm } from 'lucide-react';
-import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, useScroll } from 'framer-motion';
+
+/* ─── Custom cursor (desktop only) ─────────────────────────────────────────── */
+function CustomCursor() {
+  const x  = useMotionValue(-100);
+  const y  = useMotionValue(-100);
+  const sx = useSpring(x, { stiffness: 600, damping: 40, mass: 0.4 });
+  const sy = useSpring(y, { stiffness: 600, damping: 40, mass: 0.4 });
+  const [grow, setGrow] = useState(false);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (window.matchMedia('(pointer: coarse)').matches) return;
+    document.documentElement.classList.add('custom-cursor');
+    const onMove = e => {
+      x.set(e.clientX);
+      y.set(e.clientY);
+      setVisible(true);
+      const t = e.target;
+      setGrow(!!(t && t.closest && t.closest('button, a, [data-grow]')));
+    };
+    const onLeave = () => setVisible(false);
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseleave', onLeave);
+    return () => {
+      document.documentElement.classList.remove('custom-cursor');
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseleave', onLeave);
+    };
+  }, []);
+
+  return (
+    <>
+      <style>{`
+        @media (pointer: fine) {
+          html.custom-cursor, html.custom-cursor * { cursor: none !important; }
+        }
+      `}</style>
+      <motion.div
+        aria-hidden
+        style={{ x: sx, y: sy, opacity: visible ? 1 : 0 }}
+        animate={{ scale: grow ? 2.6 : 1 }}
+        transition={{ scale: { type: 'spring', stiffness: 360, damping: 28 } }}
+        className="pointer-events-none fixed top-0 left-0 w-3 h-3 -ml-1.5 -mt-1.5 rounded-full bg-amber-700 mix-blend-difference z-[9999] hidden md:block"
+      />
+      <motion.div
+        aria-hidden
+        style={{ x: sx, y: sy, opacity: visible ? 0.5 : 0 }}
+        animate={{ scale: grow ? 1.6 : 1 }}
+        transition={{ scale: { type: 'spring', stiffness: 200, damping: 22 } }}
+        className="pointer-events-none fixed top-0 left-0 w-10 h-10 -ml-5 -mt-5 rounded-full border border-amber-700 z-[9998] hidden md:block"
+      />
+    </>
+  );
+}
+
+/* ─── Loading sequence ─────────────────────────────────────────────────────── */
+function LoadingReveal({ logo }) {
+  const [gone, setGone] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setGone(true), 1900);
+    return () => clearTimeout(t);
+  }, []);
+
+  return (
+    <AnimatePresence>
+      {!gone && (
+        <motion.div
+          initial={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          className="fixed inset-0 z-[10000] bg-gradient-to-b from-amber-950 via-amber-900 to-amber-950 flex items-center justify-center"
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.04 }}
+            transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
+            className="flex flex-col items-center"
+          >
+            <img src={logo} alt="" className="h-20 md:h-24 mb-6 invert brightness-200 opacity-95" />
+            <motion.div
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ duration: 1.3, ease: [0.22, 1, 0.36, 1], delay: 0.25 }}
+              style={{ originX: 0 }}
+              className="h-px w-48 bg-amber-200/60"
+            />
+            <motion.p
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 0.85, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.7 }}
+              className="text-amber-100 text-xs tracking-[0.4em] mt-6 font-light"
+            >
+              CRAFTED LEATHER · SINCE 2010
+            </motion.p>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+/* ─── Product Alcove Modal — luxury detail view ────────────────────────────── */
+function ProductAlcove({ product, onClose }) {
+  const [showInside, setShowInside] = useState(false);
+  const hasInside = Boolean(product?.insideImage);
+
+  useEffect(() => {
+    const onKey = e => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
+  }, [onClose]);
+
+  return (
+    <AnimatePresence>
+      {product && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          className="fixed inset-0 z-[9990] bg-black/85 backdrop-blur-md flex items-center justify-center p-4 md:p-12"
+          onClick={onClose}
+        >
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            onClick={onClose}
+            className="absolute top-6 right-6 text-white/80 hover:text-white p-2 rounded-full hover:bg-white/10 transition z-10"
+            aria-label="Close"
+            data-grow
+          >
+            <X size={28} />
+          </motion.button>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.94, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.97, y: -10 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            onClick={e => e.stopPropagation()}
+            className="relative w-full max-w-5xl bg-gradient-to-b from-amber-950 to-stone-950 rounded-2xl overflow-hidden shadow-2xl flex flex-col md:flex-row max-h-[90vh]"
+          >
+            {/* Image side */}
+            <div className="relative md:w-3/5 aspect-square md:aspect-auto bg-gradient-to-br from-amber-100/10 to-stone-900 overflow-hidden">
+              <AnimatePresence mode="wait">
+                <motion.img
+                  key={showInside && hasInside ? 'inside' : 'front'}
+                  src={showInside && hasInside ? product.insideImage : product.frontImage}
+                  alt={product.name}
+                  initial={{ opacity: 0, scale: 1.05 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.97 }}
+                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                  className="absolute inset-0 w-full h-full object-contain p-6 md:p-12"
+                />
+              </AnimatePresence>
+              {product.sku && (
+                <div className="absolute top-5 left-5 text-[10px] tracking-[0.3em] text-amber-200/70 font-mono">
+                  {product.sku}
+                </div>
+              )}
+              {hasInside && (
+                <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex gap-1 bg-white/10 backdrop-blur-md rounded-full p-1">
+                  {['Front', product.altLabel?.replace(' View', '') || 'Inside'].map((label, i) => (
+                    <button
+                      key={label}
+                      onClick={() => setShowInside(i === 1)}
+                      data-grow
+                      className={`px-4 py-1.5 rounded-full text-xs font-semibold transition ${
+                        (i === 1) === showInside ? 'bg-white text-stone-900' : 'text-white/80 hover:text-white'
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Info side */}
+            <div className="md:w-2/5 p-8 md:p-12 flex flex-col text-amber-50 overflow-y-auto">
+              {product.collection && (
+                <motion.p
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.25 }}
+                  className="text-[10px] tracking-[0.35em] text-amber-300/80 uppercase mb-3"
+                >
+                  {product.collection}
+                </motion.p>
+              )}
+              <motion.h2
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.32, ease: [0.22, 1, 0.36, 1] }}
+                className="text-3xl md:text-4xl font-bold leading-tight mb-6"
+              >
+                {product.name}
+              </motion.h2>
+              <motion.div
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ duration: 0.7, delay: 0.45 }}
+                style={{ originX: 0 }}
+                className="h-px w-16 bg-amber-300/40 mb-6"
+              />
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.55 }}
+                className="text-amber-100/80 text-sm leading-relaxed space-y-3 mb-8"
+              >
+                <p>Premium full-grain leather, hand-finished by our artisans. Engineered for daily luxury and built to last decades.</p>
+                <ul className="text-xs space-y-1.5 text-amber-200/70 pt-2">
+                  <li>· Genuine top-grain leather</li>
+                  <li>· Reinforced edge stitching</li>
+                  <li>· Custom branding & packaging available</li>
+                  <li>· MOQ &amp; bulk pricing on request</li>
+                </ul>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.7 }}
+                className="mt-auto pt-6"
+              >
+                <a
+                  href="#contact"
+                  onClick={onClose}
+                  data-grow
+                  className="block w-full text-center px-6 py-3 bg-gradient-to-r from-amber-600 to-yellow-500 text-stone-950 rounded-lg font-bold text-sm tracking-wide hover:shadow-lg hover:shadow-amber-500/30 transition"
+                >
+                  Request a Sample
+                </a>
+                <p className="text-[10px] text-amber-200/40 text-center mt-3 tracking-wider">
+                  ESC OR CLICK OUTSIDE TO CLOSE
+                </p>
+              </motion.div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
 
 /* ─── Reusable motion helpers ──────────────────────────────────────────────── */
 
@@ -144,7 +395,7 @@ function CollectionCard({ col, index, onCta }) {
 }
 
 /* ─── Product card ─────────────────────────────────────────────────────────── */
-function ProductCard({ product, imageMode = 'cover', index = 0 }) {
+function ProductCard({ product, imageMode = 'cover', index = 0, onOpen }) {
   const [flipped, setFlipped] = useState(false);
   const [hovered, setHovered] = useState(false);
   const hasInside = Boolean(product.insideImage);
@@ -170,8 +421,9 @@ function ProductCard({ product, imageMode = 'cover', index = 0 }) {
           onMouseEnter={() => { setHovered(true);  if (hasInside) setFlipped(true);  }}
           onMouseLeave={e => { setHovered(false); if (hasInside) setFlipped(false); handlers.onMouseLeave(e); }}
           onMouseMove={handlers.onMouseMove}
-          onClick={hasInside ? () => setFlipped(f => !f) : undefined}
-          className={`bg-white rounded-xl overflow-hidden border border-amber-100 transition-shadow duration-300 ${hovered ? 'shadow-2xl' : 'shadow-sm'} ${hasInside ? 'cursor-pointer' : ''}`}
+          onClick={() => onOpen && onOpen(product)}
+          data-grow
+          className={`bg-white rounded-xl overflow-hidden border border-amber-100 transition-shadow duration-300 cursor-pointer ${hovered ? 'shadow-2xl' : 'shadow-sm'}`}
         >
           <div className={`relative overflow-hidden ${imgBox}`} style={{ transformStyle: 'preserve-3d' }}>
             <motion.img
@@ -379,6 +631,13 @@ export default function BrandioLeatherWebsite() {
   const [smallAccSub,      setSmallAccSub]      = useState('card-cases');
   const [bagSub,           setBagSub]           = useState('briefcase');
   const [currentSlide,     setCurrentSlide]     = useState(0);
+  const [alcoveProduct,    setAlcoveProduct]    = useState(null);
+  const heroRef = useRef(null);
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
+  const heroImgScale   = useTransform(scrollYProgress, [0, 1], [1, 1.2]);
+  const heroImgOpacity = useTransform(scrollYProgress, [0, 1], [1, 0.25]);
+  const heroTextY      = useTransform(scrollYProgress, [0, 1], [0, -120]);
+  const heroTextOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
 
   const heroSlides = [
     { image: FACTORY_FRONT, title: 'Timeless Leather Craftsmanship',  subtitle: "Handcrafted leather goods by Brandio Leather Pvt Ltd. Since 2010, we've exported premium leather accessories to over 30 countries." },
@@ -402,6 +661,9 @@ export default function BrandioLeatherWebsite() {
 
   return (
     <div className="bg-gradient-to-b from-amber-50 via-white to-amber-50 text-gray-900 min-h-screen">
+      <LoadingReveal logo={LOGO} />
+      <CustomCursor />
+      <ProductAlcove product={alcoveProduct} onClose={() => setAlcoveProduct(null)} />
 
       {/* ── Navigation ──────────────────────────────────────────────────────── */}
       <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-amber-200 shadow-sm">
@@ -457,14 +719,27 @@ export default function BrandioLeatherWebsite() {
 
       {/* ── Hero Carousel ────────────────────────────────────────────────────── */}
       {activeSection === 'home' && (
-        <section className="relative h-screen overflow-hidden">
+        <>
+        <section ref={heroRef} className="relative h-screen overflow-hidden">
           {heroSlides.map((slide, i) => (
-            <div key={i} className="absolute inset-0 transition-opacity duration-1000" style={{ opacity: currentSlide === i ? 1 : 0 }}>
-              <img src={slide.image} alt={slide.title} className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-black/50" />
-            </div>
+            <motion.div
+              key={i}
+              className="absolute inset-0 transition-opacity duration-1000"
+              style={{ opacity: currentSlide === i ? 1 : 0, scale: heroImgScale }}
+            >
+              <motion.img
+                src={slide.image}
+                alt={slide.title}
+                style={{ opacity: heroImgOpacity }}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/55 to-black/70" />
+            </motion.div>
           ))}
-          <div className="relative z-10 flex items-center justify-center h-full text-center px-4">
+          <motion.div
+            style={{ y: heroTextY, opacity: heroTextOpacity }}
+            className="relative z-10 flex items-center justify-center h-full text-center px-4"
+          >
             <div className="max-w-4xl mx-auto">
               <AnimatePresence mode="wait">
                 <motion.div key={currentSlide}>
@@ -502,19 +777,144 @@ export default function BrandioLeatherWebsite() {
                 </MagneticButton>
               </motion.div>
             </div>
-          </div>
+          </motion.div>
           <button onClick={() => setCurrentSlide(p => (p - 1 + heroSlides.length) % heroSlides.length)} className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-2 bg-white/20 rounded-full hover:bg-white/40 transition">
             <ChevronLeft size={32} className="text-white" />
           </button>
           <button onClick={() => setCurrentSlide(p => (p + 1) % heroSlides.length)} className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-2 bg-white/20 rounded-full hover:bg-white/40 transition">
             <ChevronRight size={32} className="text-white" />
           </button>
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-3">
+          <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-20 flex gap-3">
             {heroSlides.map((_, i) => (
               <button key={i} onClick={() => setCurrentSlide(i)} className={`h-3 rounded-full transition-all ${currentSlide === i ? 'bg-white w-8' : 'bg-white/50 w-3'}`} />
             ))}
           </div>
+          {/* scroll hint */}
+          <motion.div
+            animate={{ y: [0, 8, 0], opacity: [0.6, 1, 0.6] }}
+            transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+            style={{ opacity: heroTextOpacity }}
+            className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 text-white/80 text-[10px] tracking-[0.35em] flex flex-col items-center gap-2 pointer-events-none"
+          >
+            <span>SCROLL</span>
+            <span className="block w-px h-6 bg-white/40" />
+          </motion.div>
         </section>
+
+        {/* ── Philosophy strip — dark cinematic transition ─────────────────── */}
+        <section className="relative bg-stone-950 text-amber-50 py-32 md:py-44 overflow-hidden">
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 0.12 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.4 }}
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${FACTORY_SIDE})` }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-stone-950 via-stone-950/85 to-stone-950" />
+          <div className="relative max-w-5xl mx-auto px-6">
+            <motion.p
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-80px' }}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+              className="text-[10px] md:text-xs tracking-[0.45em] text-amber-300/80 uppercase mb-6"
+            >
+              The Brandio Standard
+            </motion.p>
+            <motion.h2
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-80px' }}
+              transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+              className="text-4xl md:text-6xl lg:text-7xl font-light leading-[1.05] tracking-tight mb-8"
+            >
+              Leather, finished by hand.<br />
+              <span className="text-amber-200/90 italic font-extralight">Engineered to outlive the trend cycle.</span>
+            </motion.h2>
+            <motion.div
+              initial={{ scaleX: 0 }}
+              whileInView={{ scaleX: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1, delay: 0.3 }}
+              style={{ originX: 0 }}
+              className="h-px w-24 bg-amber-300/40 mb-8"
+            />
+            <motion.p
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-80px' }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="text-lg md:text-xl text-amber-100/70 font-light max-w-2xl leading-relaxed"
+            >
+              Every piece begins with full-grain leather, sourced from tanneries we've worked with for over a decade. Stitched, edged, and finished in our own workshop — then shipped to over thirty countries.
+            </motion.p>
+          </div>
+        </section>
+
+        {/* ── Featured Collections preview ─────────────────────────────────── */}
+        <section className="relative py-24 md:py-32 px-6 bg-gradient-to-b from-amber-50 to-white overflow-hidden">
+          <div className="max-w-7xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-100px' }}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+              className="flex items-end justify-between flex-wrap gap-6 mb-12"
+            >
+              <div>
+                <p className="text-[10px] tracking-[0.4em] text-amber-700/80 uppercase mb-3">Explore</p>
+                <h2 className="text-4xl md:text-5xl font-bold text-amber-950 leading-tight">Featured Collections</h2>
+              </div>
+              <MagneticButton
+                onClick={() => goTo('products')}
+                className="px-6 py-2.5 border border-amber-900 text-amber-900 rounded-full text-sm font-semibold hover:bg-amber-900 hover:text-white transition-colors"
+              >
+                View All Products
+              </MagneticButton>
+            </motion.div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+              {MAIN_CATEGORIES.map((cat, i) => (
+                <motion.button
+                  key={cat.id}
+                  initial={{ opacity: 0, y: 28 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-60px' }}
+                  transition={{ duration: 0.7, delay: (i % 2) * 0.1, ease: [0.22, 1, 0.36, 1] }}
+                  whileHover={{ y: -6 }}
+                  onClick={() => { setMainCategory(cat.id); goTo('products'); }}
+                  data-grow
+                  className="group relative aspect-[4/3] md:aspect-[16/10] overflow-hidden rounded-2xl bg-stone-100 text-left shadow-sm hover:shadow-2xl transition-shadow duration-500"
+                >
+                  <motion.img
+                    src={cat.image}
+                    alt={cat.label}
+                    initial={false}
+                    whileHover={{ scale: 1.08 }}
+                    transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+                    className="absolute inset-0 w-full h-full object-contain p-12 md:p-16 transition-all duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-stone-950/85 via-stone-950/10 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-7 md:p-10 text-white">
+                    <p className="text-[10px] tracking-[0.35em] text-amber-300/80 uppercase mb-2">{cat.desc}</p>
+                    <div className="flex items-end justify-between gap-4">
+                      <h3 className="text-3xl md:text-4xl font-bold leading-tight">{cat.label}</h3>
+                      <motion.span
+                        initial={{ opacity: 0.6, x: 0 }}
+                        whileHover={{ opacity: 1, x: 6 }}
+                        className="shrink-0 text-xs tracking-[0.3em] flex items-center gap-2 pb-1"
+                      >
+                        DISCOVER <ChevronRightSm size={14} />
+                      </motion.span>
+                    </div>
+                  </div>
+                </motion.button>
+              ))}
+            </div>
+          </div>
+        </section>
+        </>
       )}
 
       {/* ── About ────────────────────────────────────────────────────────────── */}
@@ -714,6 +1114,7 @@ export default function BrandioLeatherWebsite() {
                     product={product}
                     index={i}
                     imageMode="contain"
+                    onOpen={setAlcoveProduct}
                   />
                 ))}
               </motion.div>
