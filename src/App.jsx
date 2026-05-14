@@ -1277,32 +1277,52 @@ export default function BrandioLeatherWebsite() {
       )}
 
       {/* ── Footer ───────────────────────────────────────────────────────────── */}
-      <footer className="bg-gradient-to-r from-amber-900 to-yellow-800 text-white py-12 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-3 gap-8 mb-8">
+      <footer className="relative bg-gradient-to-b from-amber-900 via-amber-950 to-stone-950 text-white pt-16 pb-10 px-4 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(252,211,77,0.15),transparent_55%)] pointer-events-none" />
+        <div className="relative max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-10 mb-10">
             <div>
-              <img src={LOGO} alt="Brandio Leather" className="h-14 mb-4 brightness-200 rounded" />
-              <p className="text-amber-100">Premium leather goods manufacturer and exporter since 2010.</p>
+              <img src={LOGO} alt="Brandio Leather" className="h-14 mb-5 drop-shadow-lg" />
+              <p className="text-amber-100/85 text-sm leading-relaxed max-w-xs">
+                Premium leather goods manufacturer and exporter since 2010. Crafted by hand, shipped to over thirty countries.
+              </p>
             </div>
             <div>
-              <h4 className="font-bold mb-4">Quick Links</h4>
-              <ul className="space-y-2 text-amber-100">
+              <h4 className="text-[10px] tracking-[0.35em] text-amber-300/80 uppercase mb-5">Quick Links</h4>
+              <ul className="space-y-2.5">
                 {NAV_ITEMS.map(({ id, label }) => (
-                  <li key={id}><button onClick={() => goTo(id)} className="hover:text-white transition">{label}</button></li>
+                  <li key={id}>
+                    <button
+                      onClick={() => goTo(id)}
+                      data-grow
+                      className="text-amber-100/90 hover:text-white text-sm transition relative group"
+                    >
+                      {label}
+                      <span className="absolute -bottom-0.5 left-0 w-0 h-px bg-amber-300 group-hover:w-full transition-all duration-300" />
+                    </button>
+                  </li>
                 ))}
               </ul>
             </div>
             <div>
-              <h4 className="font-bold mb-4">Follow Us</h4>
-              <div className="flex gap-4">
-                <button className="hover:text-yellow-200 transition">Facebook</button>
-                <button className="hover:text-yellow-200 transition">Instagram</button>
-                <button className="hover:text-yellow-200 transition">LinkedIn</button>
+              <h4 className="text-[10px] tracking-[0.35em] text-amber-300/80 uppercase mb-5">Follow Us</h4>
+              <div className="flex flex-col gap-2.5">
+                {['Facebook', 'Instagram', 'LinkedIn'].map(s => (
+                  <button
+                    key={s}
+                    data-grow
+                    className="text-amber-100/90 hover:text-white text-sm text-left transition relative group w-fit"
+                  >
+                    {s}
+                    <span className="absolute -bottom-0.5 left-0 w-0 h-px bg-amber-300 group-hover:w-full transition-all duration-300" />
+                  </button>
+                ))}
               </div>
             </div>
           </div>
-          <div className="border-t border-amber-700 pt-8 text-center text-amber-100">
-            <p>&copy; 2024 Brandio Leather Pvt Ltd. All rights reserved. | Premium Leather Goods Exporter</p>
+          <div className="border-t border-amber-800/40 pt-7 flex flex-wrap items-center justify-between gap-3 text-amber-200/60 text-xs tracking-wide">
+            <p>&copy; {new Date().getFullYear()} Brandio Leather Pvt Ltd. All rights reserved.</p>
+            <p className="text-amber-300/50">Premium Leather Goods Exporter</p>
           </div>
         </div>
       </footer>
