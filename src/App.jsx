@@ -71,7 +71,7 @@ function LoadingReveal({ logo }) {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className="fixed inset-0 z-[10000] bg-gradient-to-b from-amber-950 via-amber-900 to-amber-950 flex items-center justify-center"
+          className="fixed inset-0 z-[10000] bg-gradient-to-b from-amber-100 via-amber-50 to-white flex items-center justify-center"
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.92 }}
@@ -82,22 +82,21 @@ function LoadingReveal({ logo }) {
           >
             <img
               src={logo}
-              alt=""
-              className="h-20 md:h-24 mb-6 opacity-95"
-              style={{ filter: 'brightness(0) invert(1)' }}
+              alt="Brandio"
+              className="h-24 md:h-28 mb-6 drop-shadow-md"
             />
             <motion.div
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
               transition={{ duration: 1.3, ease: [0.22, 1, 0.36, 1], delay: 0.25 }}
               style={{ originX: 0 }}
-              className="h-px w-48 bg-amber-200/60"
+              className="h-px w-48 bg-amber-900/25"
             />
             <motion.p
               initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 0.85, y: 0 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.7 }}
-              className="text-amber-100 text-xs tracking-[0.4em] mt-6 font-light"
+              className="text-amber-900 text-xs tracking-[0.4em] mt-6 font-light"
             >
               CRAFTED LEATHER · SINCE 2010
             </motion.p>
