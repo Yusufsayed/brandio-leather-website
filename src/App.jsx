@@ -713,7 +713,7 @@ export default function BrandioLeatherWebsite() {
                     key={product.id}
                     product={product}
                     index={i}
-                    imageMode={(mainCategory === 'travel' || mainCategory === 'small-accessories' || mainCategory === 'bags') ? 'contain' : 'cover'}
+                    imageMode="contain"
                   />
                 ))}
               </motion.div>
