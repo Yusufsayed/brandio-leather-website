@@ -80,7 +80,12 @@ function LoadingReveal({ logo }) {
             transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
             className="flex flex-col items-center"
           >
-            <img src={logo} alt="" className="h-20 md:h-24 mb-6 invert brightness-200 opacity-95" />
+            <img
+              src={logo}
+              alt=""
+              className="h-20 md:h-24 mb-6 opacity-95"
+              style={{ filter: 'brightness(0) invert(1)' }}
+            />
             <motion.div
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
@@ -109,6 +114,7 @@ function ProductAlcove({ product, onClose }) {
   const hasInside = Boolean(product?.insideImage);
 
   useEffect(() => {
+    if (!product) return;            // ← only lock scroll when the modal is open
     const onKey = e => { if (e.key === 'Escape') onClose(); };
     window.addEventListener('keydown', onKey);
     document.body.style.overflow = 'hidden';
@@ -116,7 +122,7 @@ function ProductAlcove({ product, onClose }) {
       window.removeEventListener('keydown', onKey);
       document.body.style.overflow = '';
     };
-  }, [onClose]);
+  }, [product, onClose]);
 
   return (
     <AnimatePresence>
