@@ -1,0 +1,248 @@
+# Brandio Leather — Project Guide for Claude
+
+This file is the single source of truth for any future Claude (or developer)
+working on this site. Read this first.
+
+## What this is
+
+A single-page React + Vite marketing site for **Brandio Leather Pvt Ltd**, a
+B2B leather goods exporter. The site is hosted on **Vercel** and auto-deploys
+from the `main` branch on every push.
+
+- **Repo**: https://github.com/Yusufsayed/brandio-leather-website
+- **Stack**: React 18 · Vite · Tailwind CSS (CDN) · Framer Motion · Lucide icons
+- **Source of truth**: `src/App.jsx` (single file — everything is in here)
+- **Product images**: `public/` directory (referenced as `/FILENAME.png` at runtime)
+- **Deploy**: `git push origin main` → Vercel rebuilds automatically
+
+## File map
+
+```
+src/App.jsx           ← the whole site (data, components, sections)
+public/               ← every product / packaging image, served at /
+public/MC-0064.png    ← example: a wallet front shot
+public/MC-0064_inside.png ← its hover-flip target (inside view)
+package.json          ← deps
+vite.config.js        ← build config
+vercel.json           ← deploy config (vite preset)
+```
+
+There is **no** routing library. The site is one page with conditional
+sections gated by `activeSection` state (`home | about | products | collections
+| packaging | contact`).
+
+## How content is structured
+
+Inside `src/App.jsx`, near the top:
+
+### `PRODUCTS` — the product catalog
+
+```js
+const PRODUCTS = {
+  wallets: {
+    bifold:     [ { id, name, sku, collection, frontImage, insideImage }, ... ],
+    trifold:    [ ... ],
+    'note-case':[ ... ],
+    'zip-around':[ ... ],
+  },
+  bags: {
+    briefcase:     [ ... ],
+    crossbody:     [ ... ],
+    'sling-waist': [ ... ],
+  },
+  'small-accessories': {
+    'card-cases': [ ... ],
+    'money-clip': [ ... ],
+    'coin-cases': [ ... ],
+  },
+  travel: [ ... ],   // flat array, no subcategories
+};
+```
+
+### `MAIN_CATEGORIES` — the 4 top-level tiles on the Products page
+
+```js
+{ id: 'wallets', label: 'Wallets', image: '/MC-0064.png', desc: '...' }
+```
+
+The tile shows a real product thumbnail (not an emoji). The chosen image is
+the "hero" for that category — pick the cleanest product photo when adding
+new ones.
+
+### `WALLET_SUBS`, `SMALL_ACC_SUBS`, `BAG_SUBS`
+
+Subcategory pill definitions for the three categories that have sub-tabs.
+
+### `NAV_ITEMS`
+
+The 6-item top nav. Each id matches an `activeSection` value.
+
+### Collections page — inline array
+
+In the Collections section JSX (~line 580+) there's a big inline array of
+collection definitions used to render `<CollectionCard>` instances. Add a new
+collection card here. Each row:
+
+```js
+{
+  code: 'MC',                         // 2-letter prefix shown as a badge
+  name: 'Massini Collection',
+  size: 'European Size',              // OR 'American Size' / 'Compact' / 'Full Size'
+  material: 'Paper Packaging',
+  styles: 'Note Case · Bifold · Trifold',
+  hero: '/MC-0064.png',               // representative photo
+  desc: '...',                         // 1-2 sentence elevator pitch
+  cat: 'wallets',                     // OPTIONAL — which Products tab the CTA opens
+  ctaLabel: 'View Wallets',           // OPTIONAL — label for the View button
+}
+```
+
+### Packaging page — inline array
+
+Similar pattern — array of `{ code, name, desc, image }` rendered as cards.
+
+## How to add a new product
+
+1. Drop the photo files into the project's working folder (the user usually
+   adds them to `/Users/apple/brandio-leather-website/` or a subfolder).
+2. Copy them into `public/` with a clean filename:
+   - `SKU.png` for the front view
+   - `SKU_inside.png` for the hover-flip target
+   - Or `SKU_back.png` / `SKU_side.png` for bags (add `altLabel` to the product
+     entry so the flip badge reads "Back View" or "Side View").
+3. Add an entry to the right `PRODUCTS[mainCat][subCat]` array:
+   ```js
+   { id: <unique>, name: 'American Size Bifold', sku: 'NEW-1234',
+     collection: 'Foo Collection · Material', frontImage: '/NEW-1234.png',
+     insideImage: '/NEW-1234_inside.png' }
+   ```
+4. If you're starting a NEW collection, also add a CollectionCard entry in the
+   Collections section JSX with a representative `hero` image.
+5. Build & commit:
+   ```
+   npm run build
+   git add public/ src/App.jsx
+   git commit -m "Add ..."
+   git push origin main
+   ```
+
+## How to add a new collection
+
+Just add a row to the Collections-section inline array. Use the existing rows
+as the template. If the collection has its own packaging photos, add cards to
+the Packaging-section inline array too.
+
+## Naming conventions
+
+- **SKU prefixes** = collection identifiers:
+  `MC` Massini · `OS` Osaka · `PA` Palermo · `MN` Munich · `CH` Chicago ·
+  `BA` Bali · `MI` Micro · `CN` Canton · `CA` Cancun · `YL` / `Y-` / `ML`
+  Yaali Small Goods · `B-` Brandio Bags
+- **Size** always reads "European Size" or "American Size" — never "ES"/"AS"
+- **Image filenames** in `public/` use hyphens for the SKU and underscores for
+  view suffixes: `MC-0064.png`, `MC-0064_inside.png`
+- Source files often arrive with **spaces** in filenames — always rename to
+  underscores when copying to `public/`
+
+## Animation primitives (in `src/App.jsx`)
+
+Three reusable helpers at the top of the file. Use them; don't reinvent.
+
+### `useTilt(intensity)` — Apple-style 3D cursor tilt
+
+```jsx
+const { rotateX, rotateY, handlers } = useTilt(7);
+
+<div style={{ perspective: 1200 }}>
+  <motion.div
+    {...handlers}
+    style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
+  >
+    {/* child elements can use translateZ to pop forward */}
+  </motion.div>
+</div>
+```
+
+### `MagneticButton`
+
+Drop-in for `<button>`. Pulls toward the cursor when hovered.
+
+```jsx
+<MagneticButton onClick={...} className="..." strength={0.3}>
+  Click me
+</MagneticButton>
+```
+
+### `StaggerWords`
+
+Drop-in for headlines. Reveals words one at a time.
+
+```jsx
+<h1><StaggerWords text="Some Big Headline" /></h1>
+```
+
+### Other patterns already in use
+
+- **Product grid stagger** — `AnimatePresence` keyed by the active
+  category+subcategory tuple. Each `ProductCard` has its own
+  initial/animate/exit and an index-based delay (capped at 0.3s).
+- **Scroll-into-view reveal** — `whileInView` with `viewport={{ once: true,
+  margin: '-80px' }}` on Collections and Packaging cards.
+- **Section page transition** — each non-home `<section>` is a
+  `motion.section` keyed by `activeSection`, with a 0.45s fade-and-rise on
+  mount.
+- **Shared layout underline** — desktop nav uses
+  `<motion.span layoutId="nav-underline">` so the active indicator slides
+  smoothly between items. The wallet/small-acc/bag pill tabs use the same
+  trick with `layoutId="wallet-pill"`, `"sa-pill"`, `"bag-pill"`.
+
+## Easing curve
+
+All "premium" easing uses `[0.22, 1, 0.36, 1]`. Keep it consistent — that
+single curve is what makes the motion language feel unified across the site.
+
+## Common gotchas
+
+- **Build before pushing** — `npm run build` to confirm no JSX/TS errors.
+- **Rebase main before pushing** — `git fetch origin main && git rebase
+  origin/main` because the main branch is what Vercel deploys from, and we
+  push directly to it.
+- **Image cropping** — small accessories, bags, and travel use
+  `imageMode='contain'` so portrait product shots don't get clipped. Wallets
+  use the default `imageMode='cover'` because their photos are roughly square.
+- **Coin cases (Y-131 to Y-134)** have only a front photo. `ProductCard`
+  detects missing `insideImage` and renders a static card (no flip, no
+  pointer cursor). Don't add a fake inside image for these.
+- **Vercel auto-deploys main** — every push to main is live within ~2 minutes.
+
+## Continuing this work in a new Claude session
+
+If the user opens a fresh Claude chat and wants to continue working on this
+site, point Claude to:
+
+1. The local checkout at `/Users/apple/brandio-leather-website/`
+2. This `CLAUDE.md` file (Claude will read it automatically if it's at the
+   repo root and the user invokes Claude inside this folder)
+3. The GitHub repo for full history: `Yusufsayed/brandio-leather-website`
+
+The repo IS the project. Nothing about the site lives only in chat context.
+As long as the code is on GitHub, the work survives forever and any developer
+or AI assistant can pick up where the previous one left off.
+
+## Quick task recipes
+
+**Rename a product**: edit the `name` field in `PRODUCTS[...]`, commit, push.
+
+**Swap two SKUs between subcategories**: move the entry from one array to the
+other inside `PRODUCTS[mainCat]`. Keep the same id/sku/imageRefs.
+
+**Replace a category's hero thumbnail**: update the `image` field in
+`MAIN_CATEGORIES`.
+
+**Add a brand-new top-level category**: requires more work — add a
+`MAIN_CATEGORIES` entry, a `PRODUCTS` slot, optionally `*_SUBS` constants
+and a state hook + pill block in the Products section. Use Wallets as the
+template.
+
+**Tweak animation intensity**: change `useTilt(7)` → `useTilt(5)` for less
+tilt; adjust `translateZ(40)` for less depth pop.

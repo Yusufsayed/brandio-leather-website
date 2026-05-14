@@ -345,10 +345,10 @@ const PRODUCTS = {
 };
 
 const MAIN_CATEGORIES = [
-  { id: 'wallets',           label: 'Wallets',              icon: '👛', desc: 'Bifold · Trifold · Note Case · Zip-around' },
-  { id: 'bags',              label: 'Bags',                 icon: '🎒', desc: 'Briefcase · Crossbody · Sling & Waist' },
-  { id: 'small-accessories', label: 'Small Accessories',    icon: '💳', desc: 'Card Cases · Money Clip · Coin Cases' },
-  { id: 'travel',            label: 'Travel Accessories',   icon: '✈️', desc: 'Passport Holders · Travel Wallets' },
+  { id: 'wallets',           label: 'Wallets',              image: '/MC-0064.png', desc: 'Bifold · Trifold · Note Case · Zip-around' },
+  { id: 'bags',              label: 'Bags',                 image: '/B-8061.png',  desc: 'Briefcase · Crossbody · Sling & Waist' },
+  { id: 'small-accessories', label: 'Small Accessories',    image: '/Y-103.png',   desc: 'Card Cases · Money Clip · Coin Cases' },
+  { id: 'travel',            label: 'Travel Accessories',   image: '/YL-45.png',   desc: 'Passport Holders · Travel Wallets' },
 ];
 
 const WALLET_SUBS = [
@@ -519,7 +519,13 @@ export default function BrandioLeatherWebsite() {
 
       {/* ── About ────────────────────────────────────────────────────────────── */}
       {activeSection === 'about' && (
-        <section className="py-20 px-4">
+        <motion.section
+          key={activeSection}
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          className="py-20 px-4"
+        >
           <div className="max-w-4xl mx-auto">
             <h2 className="text-5xl font-bold mb-8 text-amber-900">Our Story</h2>
             <div className="space-y-6 text-lg text-gray-700">
@@ -541,39 +547,56 @@ export default function BrandioLeatherWebsite() {
               ))}
             </div>
           </div>
-        </section>
+        </motion.section>
       )}
 
       {/* ── Products ─────────────────────────────────────────────────────────── */}
       {activeSection === 'products' && (
-        <section className="py-20 px-4">
+        <motion.section
+          key={activeSection}
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          className="py-20 px-4"
+        >
           <div className="max-w-6xl mx-auto">
             <h2 className="text-5xl font-bold mb-2 text-amber-900">Our Products</h2>
             <p className="text-gray-600 mb-10 text-lg">Premium leather goods crafted for quality and style.</p>
 
             {/* ── Level 1: 4 main categories ── */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-              {MAIN_CATEGORIES.map(cat => (
-                <button
+              {MAIN_CATEGORIES.map((cat, i) => (
+                <motion.button
                   key={cat.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] }}
+                  whileHover={{ y: -4 }}
+                  whileTap={{ scale: 0.97 }}
                   onClick={() => {
                     setMainCategory(cat.id);
                     if (cat.id === 'wallets')           setWalletSub('bifold');
                     if (cat.id === 'small-accessories') setSmallAccSub('card-cases');
                     if (cat.id === 'bags')              setBagSub('briefcase');
                   }}
-                  className={`p-5 rounded-xl text-left transition-all duration-200 ${
+                  className={`p-4 rounded-xl text-left transition-all duration-300 flex items-center gap-4 ${
                     mainCategory === cat.id
-                      ? 'bg-amber-900 text-white shadow-lg scale-105'
+                      ? 'bg-amber-900 text-white shadow-xl'
                       : 'bg-white border border-amber-200 text-amber-900 hover:border-amber-500 hover:shadow-md'
                   }`}
                 >
-                  <div className="text-2xl mb-2">{cat.icon}</div>
-                  <div className="font-bold text-sm">{cat.label}</div>
-                  <div className={`text-xs mt-1 leading-tight ${mainCategory === cat.id ? 'text-amber-200' : 'text-gray-500'}`}>
-                    {cat.desc}
+                  <div className={`shrink-0 w-16 h-16 rounded-lg overflow-hidden flex items-center justify-center transition-colors ${
+                    mainCategory === cat.id ? 'bg-amber-50' : 'bg-amber-50'
+                  }`}>
+                    <img src={cat.image} alt={cat.label} className="w-full h-full object-contain p-1" />
                   </div>
-                </button>
+                  <div className="min-w-0">
+                    <div className="font-bold text-sm leading-tight">{cat.label}</div>
+                    <div className={`text-[10px] mt-1 leading-tight ${mainCategory === cat.id ? 'text-amber-200' : 'text-gray-500'}`}>
+                      {cat.desc}
+                    </div>
+                  </div>
+                </motion.button>
               ))}
             </div>
 
@@ -581,51 +604,69 @@ export default function BrandioLeatherWebsite() {
             {mainCategory === 'wallets' && (
               <div className="flex flex-wrap gap-2 mb-8 border-b border-amber-100 pb-6">
                 {WALLET_SUBS.map(sub => (
-                  <button
+                  <motion.button
                     key={sub.id}
                     onClick={() => setWalletSub(sub.id)}
-                    className={`px-5 py-2 rounded-full font-semibold text-sm transition-all ${
+                    whileHover={{ y: -2, scale: 1.04 }}
+                    whileTap={{ scale: 0.96 }}
+                    transition={{ type: 'spring', stiffness: 380, damping: 22 }}
+                    className={`px-5 py-2 rounded-full font-semibold text-sm relative ${
                       walletSub === sub.id
-                        ? 'bg-amber-700 text-white shadow'
+                        ? 'text-white shadow'
                         : 'bg-amber-100 text-amber-900 hover:bg-amber-200'
                     }`}
                   >
-                    {sub.label}
-                  </button>
+                    {walletSub === sub.id && (
+                      <motion.span layoutId="wallet-pill" transition={{ type: 'spring', stiffness: 380, damping: 30 }} className="absolute inset-0 bg-amber-700 rounded-full -z-0" style={{ zIndex: -1 }} />
+                    )}
+                    <span className="relative z-10">{sub.label}</span>
+                  </motion.button>
                 ))}
               </div>
             )}
             {mainCategory === 'small-accessories' && (
               <div className="flex flex-wrap gap-2 mb-8 border-b border-amber-100 pb-6">
                 {SMALL_ACC_SUBS.map(sub => (
-                  <button
+                  <motion.button
                     key={sub.id}
                     onClick={() => setSmallAccSub(sub.id)}
-                    className={`px-5 py-2 rounded-full font-semibold text-sm transition-all ${
+                    whileHover={{ y: -2, scale: 1.04 }}
+                    whileTap={{ scale: 0.96 }}
+                    transition={{ type: 'spring', stiffness: 380, damping: 22 }}
+                    className={`px-5 py-2 rounded-full font-semibold text-sm relative ${
                       smallAccSub === sub.id
-                        ? 'bg-amber-700 text-white shadow'
+                        ? 'text-white shadow'
                         : 'bg-amber-100 text-amber-900 hover:bg-amber-200'
                     }`}
                   >
-                    {sub.label}
-                  </button>
+                    {smallAccSub === sub.id && (
+                      <motion.span layoutId="sa-pill" transition={{ type: 'spring', stiffness: 380, damping: 30 }} className="absolute inset-0 bg-amber-700 rounded-full" style={{ zIndex: -1 }} />
+                    )}
+                    <span className="relative z-10">{sub.label}</span>
+                  </motion.button>
                 ))}
               </div>
             )}
             {mainCategory === 'bags' && (
               <div className="flex flex-wrap gap-2 mb-8 border-b border-amber-100 pb-6">
                 {BAG_SUBS.map(sub => (
-                  <button
+                  <motion.button
                     key={sub.id}
                     onClick={() => setBagSub(sub.id)}
-                    className={`px-5 py-2 rounded-full font-semibold text-sm transition-all ${
+                    whileHover={{ y: -2, scale: 1.04 }}
+                    whileTap={{ scale: 0.96 }}
+                    transition={{ type: 'spring', stiffness: 380, damping: 22 }}
+                    className={`px-5 py-2 rounded-full font-semibold text-sm relative ${
                       bagSub === sub.id
-                        ? 'bg-amber-700 text-white shadow'
+                        ? 'text-white shadow'
                         : 'bg-amber-100 text-amber-900 hover:bg-amber-200'
                     }`}
                   >
-                    {sub.label}
-                  </button>
+                    {bagSub === sub.id && (
+                      <motion.span layoutId="bag-pill" transition={{ type: 'spring', stiffness: 380, damping: 30 }} className="absolute inset-0 bg-amber-700 rounded-full" style={{ zIndex: -1 }} />
+                    )}
+                    <span className="relative z-10">{sub.label}</span>
+                  </motion.button>
                 ))}
               </div>
             )}
@@ -678,12 +719,18 @@ export default function BrandioLeatherWebsite() {
               </motion.div>
             </AnimatePresence>
           </div>
-        </section>
+        </motion.section>
       )}
 
       {/* ── Collections ──────────────────────────────────────────────────────── */}
       {activeSection === 'collections' && (
-        <section className="py-20 px-4">
+        <motion.section
+          key={activeSection}
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          className="py-20 px-4"
+        >
           <div className="max-w-5xl mx-auto">
             <h2 className="text-5xl font-bold mb-4 text-amber-900">Collections</h2>
             <p className="text-gray-600 mb-12 text-lg">Curated leather ranges crafted around a unified design language.</p>
@@ -699,7 +746,6 @@ export default function BrandioLeatherWebsite() {
                 { code: 'CN', name: 'Canton Collection',  size: 'American Size', material: 'Classic Black Leather',     styles: 'Bifold · Trifold · Zip-around', hero: '/CN-1146.png', desc: 'Pure black leather wallets with diagonal corner stitching. Understated Brandio branding for a clean, professional look.' },
                 { code: 'CA', name: 'Cancun Collection',  size: 'American Size', material: 'Dimbill · Red & Navy Stripe', styles: 'Bifold · Trifold · Zip-around', hero: '/CA-5006.png', desc: 'Black leather wallets with a bold red, cream, and navy striped accent. The signature Dimbill line, vibrant and refined.' },
                 { code: 'YL', name: 'Yaali Small Goods',  size: 'Compact',        material: 'Card Cases · Money Clip · Coin', styles: '17 styles across 3 categories', hero: '/Y-103.png',     desc: 'Card holders, money-clip wallets, RFID cases, and ladies coin cases — the everyday-carry range, refined.', cat: 'small-accessories', ctaLabel: 'View Small Goods' },
-                { code: 'B',  name: 'Brandio Bags',       size: 'Full Size',      material: 'Briefcase · Crossbody · Sling',  styles: '9 styles across 3 categories',   hero: '/B-8061.png',    desc: 'Full-grain leather briefcases, crossbody bags, and sling/waist pieces — engineered to carry the whole day.',          cat: 'bags',              ctaLabel: 'View Bags' },
               ].map((col, i) => (
                 <CollectionCard key={col.code} col={col} index={i} onCta={() => {
                   const cat = col.cat || 'wallets';
@@ -711,12 +757,18 @@ export default function BrandioLeatherWebsite() {
               ))}
             </div>
           </div>
-        </section>
+        </motion.section>
       )}
 
       {/* ── Packaging ────────────────────────────────────────────────────────── */}
       {activeSection === 'packaging' && (
-        <section className="py-20 px-4">
+        <motion.section
+          key={activeSection}
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          className="py-20 px-4"
+        >
           <div className="max-w-6xl mx-auto">
             <h2 className="text-5xl font-bold mb-4 text-amber-900">Packaging</h2>
             <p className="text-gray-600 mb-12 text-lg">Each collection ships in its own branded presentation. Real packaging from our current production runs.</p>
@@ -765,12 +817,18 @@ export default function BrandioLeatherWebsite() {
               </button>
             </div>
           </div>
-        </section>
+        </motion.section>
       )}
 
       {/* ── Contact ──────────────────────────────────────────────────────────── */}
       {activeSection === 'contact' && (
-        <section className="py-20 px-4">
+        <motion.section
+          key={activeSection}
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          className="py-20 px-4"
+        >
           <div className="max-w-4xl mx-auto">
             <h2 className="text-5xl font-bold mb-12 text-amber-900">Get In Touch</h2>
             <div className="grid md:grid-cols-2 gap-12">
@@ -809,7 +867,7 @@ export default function BrandioLeatherWebsite() {
               </div>
             </div>
           </div>
-        </section>
+        </motion.section>
       )}
 
       {/* ── Footer ───────────────────────────────────────────────────────────── */}
