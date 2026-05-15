@@ -109,8 +109,21 @@ function LoadingReveal({ logo }) {
 
 /* ─── Product Alcove Modal — luxury detail view ────────────────────────────── */
 function ProductAlcove({ product, onClose }) {
-  const [showInside, setShowInside] = useState(false);
-  const hasInside = Boolean(product?.insideImage);
+  const [viewIndex, setViewIndex] = useState(0);
+
+  // build the list of views: explicit `views` array, else front + inside fallback
+  const views = product?.views
+    ? product.views
+    : product?.insideImage
+      ? [
+          { src: product.frontImage,  label: 'Front' },
+          { src: product.insideImage, label: (product.altLabel || 'Inside View').replace(' View', '') },
+        ]
+      : product?.frontImage
+        ? [{ src: product.frontImage, label: 'Front' }]
+        : [];
+
+  useEffect(() => { setViewIndex(0); }, [product]);
 
   useEffect(() => {
     if (!product) return;            // ← only lock scroll when the modal is open
@@ -158,8 +171,8 @@ function ProductAlcove({ product, onClose }) {
             <div className="relative md:w-3/5 aspect-square md:aspect-auto bg-gradient-to-br from-amber-100/10 to-stone-900 overflow-hidden">
               <AnimatePresence mode="wait">
                 <motion.img
-                  key={showInside && hasInside ? 'inside' : 'front'}
-                  src={showInside && hasInside ? product.insideImage : product.frontImage}
+                  key={viewIndex}
+                  src={views[viewIndex]?.src || product.frontImage}
                   alt={product.name}
                   initial={{ opacity: 0, scale: 1.05 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -173,18 +186,18 @@ function ProductAlcove({ product, onClose }) {
                   {product.sku}
                 </div>
               )}
-              {hasInside && (
+              {views.length > 1 && (
                 <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex gap-1 bg-white/10 backdrop-blur-md rounded-full p-1">
-                  {['Front', product.altLabel?.replace(' View', '') || 'Inside'].map((label, i) => (
+                  {views.map((v, i) => (
                     <button
-                      key={label}
-                      onClick={() => setShowInside(i === 1)}
+                      key={v.label}
+                      onClick={() => setViewIndex(i)}
                       data-grow
                       className={`px-4 py-1.5 rounded-full text-xs font-semibold transition ${
-                        (i === 1) === showInside ? 'bg-white text-stone-900' : 'text-white/80 hover:text-white'
+                        i === viewIndex ? 'bg-white text-stone-900' : 'text-white/80 hover:text-white'
                       }`}
                     >
-                      {label}
+                      {v.label}
                     </button>
                   ))}
                 </div>
@@ -399,6 +412,56 @@ function CollectionCard({ col, index, onCta }) {
   );
 }
 
+/* ─── Packaging card — hover-flip between box & in-box views ───────────────── */
+function PackagingCard({ item, index }) {
+  const [flipped, setFlipped] = useState(false);
+  const hasInside = Boolean(item.insideImage);
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 28 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-60px' }}
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: (index % 3) * 0.08 }}
+      whileHover={{ y: -4 }}
+      onMouseEnter={() => hasInside && setFlipped(true)}
+      onMouseLeave={() => hasInside && setFlipped(false)}
+      onClick={() => hasInside && setFlipped(f => !f)}
+      data-grow
+      className={`bg-white border border-amber-200 rounded-xl overflow-hidden hover:shadow-xl transition-shadow group ${hasInside ? 'cursor-pointer' : ''}`}
+    >
+      <div className="relative h-64 bg-gradient-to-br from-amber-50 to-white overflow-hidden">
+        <img
+          src={item.frontImage}
+          alt={item.name}
+          className={`absolute inset-0 w-full h-full object-contain p-4 transition-opacity duration-300 ${flipped ? 'opacity-0' : 'opacity-100'}`}
+        />
+        {hasInside && (
+          <img
+            src={item.insideImage}
+            alt={`${item.name} in box`}
+            className={`absolute inset-0 w-full h-full object-contain p-4 transition-opacity duration-300 ${flipped ? 'opacity-100' : 'opacity-0'}`}
+          />
+        )}
+        {hasInside && (
+          <div className={`absolute bottom-2 right-2 text-xs px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-sm text-white transition-opacity duration-300 ${flipped ? 'opacity-100' : 'opacity-0'}`}>
+            In-Box View
+          </div>
+        )}
+      </div>
+      <div className="p-5">
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-xs font-mono font-bold bg-amber-900 text-white px-2 py-0.5 rounded">{item.code}</span>
+          <h3 className="font-bold text-amber-900">{item.name}</h3>
+        </div>
+        <p className="text-gray-600 text-sm leading-relaxed mb-3">{item.desc}</p>
+        <p className="text-xs font-semibold text-amber-700 border-t border-amber-100 pt-3">
+          Available as: Tin box or corrugated paper box
+        </p>
+      </div>
+    </motion.div>
+  );
+}
+
 /* ─── Product card ─────────────────────────────────────────────────────────── */
 function ProductCard({ product, imageMode = 'cover', index = 0, onOpen }) {
   const [flipped, setFlipped] = useState(false);
@@ -481,7 +544,7 @@ function ProductCard({ product, imageMode = 'cover', index = 0, onOpen }) {
             )}
           </div>
 
-          <div className="p-4 relative" style={{ transformStyle: 'preserve-3d' }}>
+          <div className="p-4 relative flex flex-col justify-start min-h-[92px]" style={{ transformStyle: 'preserve-3d' }}>
             <motion.h3
               style={{ translateZ: 20 }}
               className="font-bold text-gray-900 leading-snug"
@@ -516,88 +579,88 @@ function ProductCard({ product, imageMode = 'cover', index = 0, onOpen }) {
 const PRODUCTS = {
   wallets: {
     bifold: [
-      { id: 64,   name: 'European Size Bifold', sku: 'MC-0064', collection: 'Massini Collection · Paper',              frontImage: '/MC-0064.png',  insideImage: '/MC-0064_inside.png' },
-      { id: 123,  name: 'American Size Bifold', sku: 'OS-0123', collection: 'Osaka Collection · Carbon Fiber',         frontImage: '/OS-0123.png',  insideImage: '/OS-0123_inside.png' },
-      { id: 3035, name: 'American Size Bifold', sku: 'PA-3035', collection: 'Palermo Collection · Yaali New York',     frontImage: '/PA-3035.png',  insideImage: '/PA-3035_inside.png' },
-      { id: 2286, name: 'American Size Bifold', sku: 'MN-2286', collection: 'Munich Collection · Yacht',               frontImage: '/MN-2286.png',  insideImage: '/MN-2286_inside.png' },
-      { id: 2255, name: 'American Size Bifold', sku: 'CH-2255', collection: 'Chicago Collection · Massini Woven',      frontImage: '/CH-2255.png',  insideImage: '/CH-2255_inside.png' },
-      { id: 2232, name: 'American Size Bifold', sku: 'BA-2232', collection: 'Bali Collection · Brown Stripe',          frontImage: '/BA-2232.png',  insideImage: '/BA-2232_inside.png' },
-      { id: 2106, name: 'American Size Bifold', sku: 'MI-2106', collection: 'Micro Collection · Textured Black',       frontImage: '/MI-2106.png',  insideImage: '/MI-2106_inside.png' },
-      { id: 1146, name: 'American Size Bifold', sku: 'CN-1146', collection: 'Canton Collection · Classic Black',       frontImage: '/CN-1146.png',  insideImage: '/CN-1146_inside.png' },
-      { id: 5006, name: 'American Size Bifold', sku: 'CA-5006', collection: 'Cancun Collection · Dimbill Stripe',      frontImage: '/CA-5006.png',  insideImage: '/CA-5006_inside.png' },
+      { id: 64,   name: 'European Size Bifold', sku: 'MC-0064', collection: 'Massini Collection · Cow NDM',         frontImage: '/MC-0064.png',  insideImage: '/MC-0064_inside.png' },
+      { id: 65,   name: 'European Size Bifold', sku: 'MC-0065', collection: 'Massini Collection · Cow NDM',         frontImage: '/MC-0065.png',  insideImage: '/MC-0065_inside.png' },
+      { id: 123,  name: 'American Size Bifold', sku: 'OS-0123', collection: 'Osaka Collection · Cow Carbon Fibre',  frontImage: '/OS-0123.png',  insideImage: '/OS-0123_inside.png' },
+      { id: 3035, name: 'American Size Bifold', sku: 'PA-3035', collection: 'Palermo Collection · Cow PDM',         frontImage: '/PA-3035.png',  insideImage: '/PA-3035_inside.png' },
+      { id: 2286, name: 'American Size Bifold', sku: 'MN-2286', collection: 'Munich Collection · Cow DD',           frontImage: '/MN-2286.png',  insideImage: '/MN-2286_inside.png' },
+      { id: 2255, name: 'American Size Bifold', sku: 'CH-2255', collection: 'Chicago Collection · Cow Nappa',       frontImage: '/CH-2255.png',  insideImage: '/CH-2255_inside.png' },
+      { id: 2232, name: 'American Size Bifold', sku: 'BA-2232', collection: 'Bali Collection · Cow NDM',            frontImage: '/BA-2232.png',  insideImage: '/BA-2232_inside.png' },
+      { id: 2106, name: 'American Size Bifold', sku: 'MI-2106', collection: 'Micro Collection · Textured Polyester + Cow NDM', frontImage: '/MI-2106.png',  insideImage: '/MI-2106_inside.png' },
+      { id: 1146, name: 'American Size Bifold', sku: 'CN-1146', collection: 'Canton Collection · New Zealand Lamb', frontImage: '/CN-1146.png',  insideImage: '/CN-1146_inside.png' },
+      { id: 5006, name: 'American Size Bifold', sku: 'CA-5006', collection: 'Cancun Collection · Cow DD Polished',  frontImage: '/CA-5006.png',  insideImage: '/CA-5006_inside.png' },
     ],
     trifold: [
-      { id: 65,   name: 'European Size Trifold', sku: 'MC-0065', collection: 'Massini Collection · Paper',              frontImage: '/MC-0065.png',  insideImage: '/MC-0065_inside.png' },
-      { id: 124,  name: 'American Size Trifold', sku: 'OS-0124', collection: 'Osaka Collection · Carbon Fiber',         frontImage: '/OS-0124.png',  insideImage: '/OS-0124_inside.png' },
-      { id: 3036, name: 'American Size Trifold', sku: 'PA-3036', collection: 'Palermo Collection · Yaali New York',     frontImage: '/PA-3036.png',  insideImage: '/PA-3036_inside.png' },
-      { id: 2287, name: 'American Size Trifold', sku: 'MN-2287', collection: 'Munich Collection · Yacht',               frontImage: '/MN-2287.png',  insideImage: '/MN-2287_inside.png' },
-      { id: 2256, name: 'American Size Trifold', sku: 'CH-2256', collection: 'Chicago Collection · Massini Woven',      frontImage: '/CH-2256.png',  insideImage: '/CH-2256_inside.png' },
-      { id: 2233, name: 'American Size Trifold', sku: 'BA-2233', collection: 'Bali Collection · Brown Stripe',          frontImage: '/BA-2233.png',  insideImage: '/BA-2233_inside.png' },
-      { id: 2107, name: 'American Size Trifold', sku: 'MI-2107', collection: 'Micro Collection · Textured Black',       frontImage: '/MI-2107.png',  insideImage: '/MI-2107_inside.png' },
-      { id: 1147, name: 'American Size Trifold', sku: 'CN-1147', collection: 'Canton Collection · Classic Black',       frontImage: '/CN-1147.png',  insideImage: '/CN-1147_inside.png' },
-      { id: 5007, name: 'American Size Trifold', sku: 'CA-5007', collection: 'Cancun Collection · Dimbill Stripe',      frontImage: '/CA-5007.png',  insideImage: '/CA-5007_inside.png' },
+      { id: 124,  name: 'American Size Trifold', sku: 'OS-0124', collection: 'Osaka Collection · Cow Carbon Fibre',  frontImage: '/OS-0124.png',  insideImage: '/OS-0124_inside.png' },
+      { id: 3036, name: 'American Size Trifold', sku: 'PA-3036', collection: 'Palermo Collection · Cow PDM',         frontImage: '/PA-3036.png',  insideImage: '/PA-3036_inside.png' },
+      { id: 2287, name: 'American Size Trifold', sku: 'MN-2287', collection: 'Munich Collection · Cow DD',           frontImage: '/MN-2287.png',  insideImage: '/MN-2287_inside.png' },
+      { id: 2256, name: 'American Size Trifold', sku: 'CH-2256', collection: 'Chicago Collection · Cow Nappa',       frontImage: '/CH-2256.png',  insideImage: '/CH-2256_inside.png' },
+      { id: 2233, name: 'American Size Trifold', sku: 'BA-2233', collection: 'Bali Collection · Cow NDM',            frontImage: '/BA-2233.png',  insideImage: '/BA-2233_inside.png' },
+      { id: 2107, name: 'American Size Trifold', sku: 'MI-2107', collection: 'Micro Collection · Textured Polyester + Cow NDM', frontImage: '/MI-2107.png',  insideImage: '/MI-2107_inside.png' },
+      { id: 1147, name: 'American Size Trifold', sku: 'CN-1147', collection: 'Canton Collection · New Zealand Lamb', frontImage: '/CN-1147.png',  insideImage: '/CN-1147_inside.png' },
+      { id: 5007, name: 'American Size Trifold', sku: 'CA-5007', collection: 'Cancun Collection · Cow DD Polished',  frontImage: '/CA-5007.png',  insideImage: '/CA-5007_inside.png' },
     ],
     'note-case': [
-      { id: 61,   name: 'European Size Note Case', sku: 'MC-0061', collection: 'Massini Collection · Paper',            frontImage: '/MC-0061.png',  insideImage: '/MC-0061_inside.png' },
+      { id: 61,   name: 'European Size Note Case', sku: 'MC-0061', collection: 'Massini Collection · Cow NDM',       frontImage: '/MC-0061.png',  insideImage: '/MC-0061_inside.png' },
     ],
     'zip-around': [
-      { id: 125,  name: 'American Size Zip-around', sku: 'OS-0125', collection: 'Osaka Collection · Carbon Fiber',     frontImage: '/OS-0125.png',  insideImage: '/OS-0125_inside.png' },
-      { id: 3037, name: 'American Size Zip-around', sku: 'PA-3037', collection: 'Palermo Collection · Yaali New York', frontImage: '/PA-3037.png',  insideImage: '/PA-3037_inside.png' },
-      { id: 2288, name: 'American Size Zip-around', sku: 'MN-2288', collection: 'Munich Collection · Yacht',           frontImage: '/MN-2288.png',  insideImage: '/MN-2288_inside.png' },
-      { id: 2257, name: 'American Size Zip-around', sku: 'CH-2257', collection: 'Chicago Collection · Massini Woven',  frontImage: '/CH-2257.png',  insideImage: '/CH-2257_inside.png' },
-      { id: 2234, name: 'American Size Zip-around', sku: 'BA-2234', collection: 'Bali Collection · Brown Stripe',      frontImage: '/BA-2234.png',  insideImage: '/BA-2234_inside.png' },
-      { id: 2108, name: 'American Size Zip-around', sku: 'MI-2108', collection: 'Micro Collection · Textured Black',   frontImage: '/MI-2108.png',  insideImage: '/MI-2108_inside.png' },
-      { id: 1148, name: 'American Size Zip-around', sku: 'CN-1148', collection: 'Canton Collection · Classic Black',   frontImage: '/CN-1148.png',  insideImage: '/CN-1148_inside.png' },
-      { id: 5008, name: 'American Size Zip-around', sku: 'CA-5008', collection: 'Cancun Collection · Dimbill Stripe',  frontImage: '/CA-5008.png',  insideImage: '/CA-5008_inside.png' },
+      { id: 125,  name: 'American Size Zip-around', sku: 'OS-0125', collection: 'Osaka Collection · Cow Carbon Fibre', frontImage: '/OS-0125.png',  insideImage: '/OS-0125_inside.png' },
+      { id: 3037, name: 'American Size Zip-around', sku: 'PA-3037', collection: 'Palermo Collection · Cow PDM',        frontImage: '/PA-3037.png',  insideImage: '/PA-3037_inside.png' },
+      { id: 2288, name: 'American Size Zip-around', sku: 'MN-2288', collection: 'Munich Collection · Cow DD',          frontImage: '/MN-2288.png',  insideImage: '/MN-2288_inside.png' },
+      { id: 2257, name: 'American Size Zip-around', sku: 'CH-2257', collection: 'Chicago Collection · Cow Nappa',      frontImage: '/CH-2257.png',  insideImage: '/CH-2257_inside.png' },
+      { id: 2234, name: 'American Size Zip-around', sku: 'BA-2234', collection: 'Bali Collection · Cow NDM',           frontImage: '/BA-2234.png',  insideImage: '/BA-2234_inside.png' },
+      { id: 2108, name: 'American Size Zip-around', sku: 'MI-2108', collection: 'Micro Collection · Textured Polyester + Cow NDM', frontImage: '/MI-2108.png',  insideImage: '/MI-2108_inside.png' },
+      { id: 1148, name: 'American Size Zip-around', sku: 'CN-1148', collection: 'Canton Collection · New Zealand Lamb', frontImage: '/CN-1148.png',  insideImage: '/CN-1148_inside.png' },
+      { id: 5008, name: 'American Size Zip-around', sku: 'CA-5008', collection: 'Cancun Collection · Cow DD Polished',  frontImage: '/CA-5008.png',  insideImage: '/CA-5008_inside.png' },
     ],
   },
   bags: {
     briefcase: [
-      { id: 8061, name: 'Tan Leather Laptop Briefcase',     sku: 'B-8061', collection: 'Brandio Bags · Briefcase',  frontImage: '/B-8061.png', insideImage: '/B-8061_inside.png', altLabel: 'Inside View' },
-      { id: 8062, name: 'Black Leather Laptop Bag',         sku: 'B-8062', collection: 'Brandio Bags · Briefcase',  frontImage: '/B-8062.png', insideImage: '/B-8062_back.png',   altLabel: 'Back View'   },
-      { id: 8067, name: 'Vintage Brown Briefcase',          sku: 'B-8067', collection: 'Brandio Bags · Briefcase',  frontImage: '/B-8067.png', insideImage: '/B-8067_inside.png', altLabel: 'Inside View' },
-      { id: 8098, name: 'Cognac Polished Briefcase',        sku: 'B-8098', collection: 'Brandio Bags · Briefcase',  frontImage: '/B-8098.png', insideImage: '/B-8098_inside.png', altLabel: 'Inside View' },
+      { id: 8061, name: 'Tan Leather Laptop Briefcase', sku: 'B-8061', collection: 'Brandio Bags · Briefcase', frontImage: '/B-8061.png', insideImage: '/B-8061_inside.png', altLabel: 'Inside View', views: [{ src: '/B-8061.png', label: 'Front' }, { src: '/B-8061_inside.png', label: 'Inside' }, { src: '/B-8061_side.png', label: 'Side' }] },
+      { id: 8062, name: 'Black Leather Laptop Bag',     sku: 'B-8062', collection: 'Brandio Bags · Briefcase', frontImage: '/B-8062.png', insideImage: '/B-8062_back.png',   altLabel: 'Back View',   views: [{ src: '/B-8062.png', label: 'Front' }, { src: '/B-8062_back.png', label: 'Back' }, { src: '/B-8062_side.png', label: 'Side' }] },
+      { id: 8067, name: 'Vintage Brown Briefcase',      sku: 'B-8067', collection: 'Brandio Bags · Briefcase', frontImage: '/B-8067.png', insideImage: '/B-8067_inside.png', altLabel: 'Inside View', views: [{ src: '/B-8067.png', label: 'Front' }, { src: '/B-8067_back.png', label: 'Back' }, { src: '/B-8067_inside.png', label: 'Inside' }] },
+      { id: 8098, name: 'Cognac Polished Briefcase',    sku: 'B-8098', collection: 'Brandio Bags · Briefcase', frontImage: '/B-8098.png', insideImage: '/B-8098_inside.png', altLabel: 'Inside View', views: [{ src: '/B-8098.png', label: 'Front' }, { src: '/B-8098_back.png', label: 'Back' }, { src: '/B-8098_inside.png', label: 'Inside' }] },
     ],
     crossbody: [
-      { id: 8066, name: 'Tan Crossbody Shoulder Bag',       sku: 'B-8066', collection: 'Brandio Bags · Crossbody',  frontImage: '/B-8066.png', insideImage: '/B-8066_inside.png', altLabel: 'Inside View' },
-      { id: 8068, name: 'Vintage Brown Crossbody',          sku: 'B-8068', collection: 'Brandio Bags · Crossbody',  frontImage: '/B-8068.png', insideImage: '/B-8068_back.png',   altLabel: 'Back View'   },
-      { id: 9004, name: 'Brown Flap Crossbody',             sku: 'B-9004', collection: 'Brandio Bags · Crossbody',  frontImage: '/B-9004.png', insideImage: '/B-9004_back.png',   altLabel: 'Back View'   },
+      { id: 8066, name: 'Tan Crossbody Shoulder Bag',   sku: 'B-8066', collection: 'Brandio Bags · Crossbody', frontImage: '/B-8066.png', insideImage: '/B-8066_inside.png', altLabel: 'Inside View', views: [{ src: '/B-8066.png', label: 'Front' }, { src: '/B-8066_back.png', label: 'Back' }, { src: '/B-8066_inside.png', label: 'Inside' }] },
+      { id: 8068, name: 'Vintage Brown Crossbody',      sku: 'B-8068', collection: 'Brandio Bags · Crossbody', frontImage: '/B-8068.png', insideImage: '/B-8068_back.png',   altLabel: 'Back View',   views: [{ src: '/B-8068.png', label: 'Front' }, { src: '/B-8068_back.png', label: 'Back' }, { src: '/B-8068_side.png', label: 'Side' }] },
+      { id: 9004, name: 'Brown Flap Crossbody',         sku: 'B-9004', collection: 'Brandio Bags · Crossbody', frontImage: '/B-9004.png', insideImage: '/B-9004_back.png',   altLabel: 'Back View',   views: [{ src: '/B-9004.png', label: 'Front' }, { src: '/B-9004_back.png', label: 'Back' }, { src: '/B-9004_side.png', label: 'Side' }] },
     ],
     'sling-waist': [
-      { id: 8008, name: 'Black Leather Waist Bag',          sku: 'B-8008', collection: 'Brandio Bags · Waist',      frontImage: '/B-8008.png', insideImage: '/B-8008_back.png',   altLabel: 'Back View'   },
-      { id: 9002, name: 'Black Leather Chest Sling',        sku: 'B-9002', collection: 'Brandio Bags · Sling',      frontImage: '/B-9002.png', insideImage: '/B-9002_side.png',   altLabel: 'Side View'   },
+      { id: 8008, name: 'Black Leather Waist Bag',      sku: 'B-8008', collection: 'Brandio Bags · Waist',     frontImage: '/B-8008.png', insideImage: '/B-8008_back.png',   altLabel: 'Back View',   views: [{ src: '/B-8008.png', label: 'Front' }, { src: '/B-8008_back.png', label: 'Back' }, { src: '/B-8008_side.png', label: 'Side' }] },
+      { id: 9002, name: 'Black Leather Chest Sling',    sku: 'B-9002', collection: 'Brandio Bags · Sling',     frontImage: '/B-9002.png', insideImage: '/B-9002_side.png',   altLabel: 'Side View',   views: [{ src: '/B-9002.png', label: 'Front' }, { src: '/B-9002_inside.png', label: 'Inside' }, { src: '/B-9002_side.png', label: 'Side' }] },
     ],
   },
   'small-accessories': {
     'card-cases': [
-      { id: 991,   name: 'Card Case · Magnet + ID Window', sku: 'ML-991',  collection: 'Yaali Small Goods · Magnet',     frontImage: '/ML-991.png',  insideImage: '/ML-991_inside.png' },
-      { id: 996,   name: 'Card Case · Magnet Close',        sku: 'ML-996',  collection: 'Yaali Small Goods · Magnet',     frontImage: '/ML-996.png',  insideImage: '/ML-996_inside.png' },
-      { id: 102,   name: 'Black Leather Card Case',          sku: 'Y-102',  collection: 'Yaali Small Goods · Classic',    frontImage: '/Y-102.png',   insideImage: '/Y-102_inside.png' },
-      { id: 109,   name: 'RFID Cardholder',                  sku: 'Y-109',  collection: 'Yaali Small Goods · RFID',       frontImage: '/Y-109.png',   insideImage: '/Y-109_inside.png' },
-      { id: 114,   name: 'Card Case with ID Slot',           sku: 'Y-114',  collection: 'Yaali Small Goods · ID Slot',    frontImage: '/Y-114.png',   insideImage: '/Y-114_inside.png' },
-      { id: 115,   name: 'Metal Card Holder',                sku: 'Y-115',  collection: 'Yaali Small Goods · Metal',      frontImage: '/Y-115.png',   insideImage: '/Y-115_inside.png' },
-      { id: 3804,  name: 'Card Case with ID Slot',           sku: 'Y-3804', collection: 'Yaali Small Goods · ID Slot',    frontImage: '/Y-3804.png',  insideImage: '/Y-3804_inside.png' },
-      { id: 3805,  name: 'Slotted Leather Card Case',        sku: 'Y-3805', collection: 'Yaali Small Goods · Slots',      frontImage: '/Y-3805.png',  insideImage: '/Y-3805_inside.png' },
-      { id: 3810,  name: 'Card Case Pouch · ID Slot',        sku: 'Y-3810', collection: 'Yaali Small Goods · Pouch',      frontImage: '/Y-3810.png',  insideImage: '/Y-3810_inside.png' },
-      { id: 3833,  name: 'Zip-around Card Case · ID Window', sku: 'Y-3833', collection: 'Yaali Small Goods · Zip-around', frontImage: '/Y-3833.png',  insideImage: '/Y-3833_inside.png' },
+      { id: 991,   name: 'Card Case · Magnet + ID Window', sku: 'ML-991',  collection: 'New Zealand Lamb', frontImage: '/ML-991.png',  insideImage: '/ML-991_inside.png' },
+      { id: 996,   name: 'Card Case · Magnet Close',        sku: 'ML-996',  collection: 'New Zealand Lamb', frontImage: '/ML-996.png',  insideImage: '/ML-996_inside.png' },
+      { id: 102,   name: 'Black Leather Card Case',          sku: 'Y-102',  collection: 'New Zealand Lamb', frontImage: '/Y-102.png',   insideImage: '/Y-102_inside.png' },
+      { id: 109,   name: 'RFID Cardholder',                  sku: 'Y-109',  collection: 'New Zealand Lamb', frontImage: '/Y-109.png',   insideImage: '/Y-109_inside.png' },
+      { id: 114,   name: 'Card Case with ID Slot',           sku: 'Y-114',  collection: 'New Zealand Lamb', frontImage: '/Y-114.png',   insideImage: '/Y-114_inside.png' },
+      { id: 115,   name: 'Metal Card Holder',                sku: 'Y-115',  collection: 'New Zealand Lamb', frontImage: '/Y-115.png',   insideImage: '/Y-115_inside.png' },
+      { id: 3804,  name: 'Card Case with ID Slot',           sku: 'Y-3804', collection: 'New Zealand Lamb', frontImage: '/Y-3804.png',  insideImage: '/Y-3804_inside.png' },
+      { id: 3805,  name: 'Slotted Leather Card Case',        sku: 'Y-3805', collection: 'New Zealand Lamb', frontImage: '/Y-3805.png',  insideImage: '/Y-3805_inside.png' },
+      { id: 3810,  name: 'Card Case Pouch · ID Slot',        sku: 'Y-3810', collection: 'New Zealand Lamb', frontImage: '/Y-3810.png',  insideImage: '/Y-3810_inside.png' },
+      { id: 3833,  name: 'Zip-around Card Case · ID Window', sku: 'Y-3833', collection: 'New Zealand Lamb', frontImage: '/Y-3833.png',  insideImage: '/Y-3833_inside.png' },
     ],
     'money-clip': [
-      { id: 103,   name: 'Sleek Card Case · Money Clip',     sku: 'Y-103',  collection: 'Yaali Small Goods · Money Clip', frontImage: '/Y-103.png',   insideImage: '/Y-103_inside.png' },
-      { id: 993,   name: 'Card Case · Metal Money Clip',     sku: 'Y-993',  collection: 'Yaali Small Goods · Money Clip', frontImage: '/Y-993.png',   insideImage: '/Y-993_inside.png' },
-      { id: 3814,  name: 'Cardholder · Metal Clip',          sku: 'Y-3814', collection: 'Yaali Small Goods · Money Clip', frontImage: '/Y-3814.png',  insideImage: '/Y-3814_inside.png' },
+      { id: 103,   name: 'Sleek Card Case · Money Clip',     sku: 'Y-103',  collection: 'New Zealand Lamb', frontImage: '/Y-103.png',   insideImage: '/Y-103_inside.png' },
+      { id: 993,   name: 'Card Case · Metal Money Clip',     sku: 'Y-993',  collection: 'New Zealand Lamb', frontImage: '/Y-993.png',   insideImage: '/Y-993_inside.png' },
+      { id: 3814,  name: 'Cardholder · Metal Clip',          sku: 'Y-3814', collection: 'New Zealand Lamb', frontImage: '/Y-3814.png',  insideImage: '/Y-3814_inside.png' },
     ],
     'coin-cases': [
-      { id: 131,   name: 'Ladies Coin Case',                 sku: 'Y-131',  collection: 'Yaali Small Goods · Coin',       frontImage: '/Y-131.png' },
-      { id: 132,   name: 'Ladies Coin Case',                 sku: 'Y-132',  collection: 'Yaali Small Goods · Coin',       frontImage: '/Y-132.png' },
-      { id: 133,   name: 'Ladies Coin Case',                 sku: 'Y-133',  collection: 'Yaali Small Goods · Coin',       frontImage: '/Y-133.png' },
-      { id: 134,   name: 'Ladies Coin Case',                 sku: 'Y-134',  collection: 'Yaali Small Goods · Coin',       frontImage: '/Y-134.png' },
+      { id: 131,   name: 'Ladies Coin Case',                 sku: 'Y-131',  collection: 'New Zealand Lamb', frontImage: '/Y-131.png' },
+      { id: 132,   name: 'Ladies Coin Case',                 sku: 'Y-132',  collection: 'New Zealand Lamb', frontImage: '/Y-132.png' },
+      { id: 133,   name: 'Ladies Coin Case',                 sku: 'Y-133',  collection: 'New Zealand Lamb', frontImage: '/Y-133.png' },
+      { id: 134,   name: 'Ladies Coin Case',                 sku: 'Y-134',  collection: 'New Zealand Lamb', frontImage: '/Y-134.png' },
     ],
   },
   travel: [
-    { id: 45, name: 'Zip Passport Holder',     sku: 'YL-45', collection: 'Yaali Travel · Smooth Black',    frontImage: '/YL-45.png', insideImage: '/YL-45_inside.png' },
-    { id: 47, name: 'Vintage Passport Holder', sku: 'YL-47', collection: 'Yaali Travel · Vintage Brown',   frontImage: '/YL-47.png', insideImage: '/YL-47_inside.png' },
-    { id: 51, name: 'Slim Passport Holder',    sku: 'YL-51', collection: 'Yaali Travel · Classic Black',   frontImage: '/YL-51.png', insideImage: '/YL-51_inside.png' },
-    { id: 77, name: 'Zip Travel Wallet',       sku: 'YL-77', collection: 'Yaali Travel · Minimal Black',   frontImage: '/YL-77.png', insideImage: '/YL-77_inside.png' },
+    { id: 45, name: 'Zip Passport Holder',     sku: 'YL-45', collection: 'New Zealand Lamb',     frontImage: '/YL-45.png', insideImage: '/YL-45_inside.png' },
+    { id: 47, name: 'Vintage Passport Holder', sku: 'YL-47', collection: 'Buff Hunter Leather',  frontImage: '/YL-47.png', insideImage: '/YL-47_inside.png' },
+    { id: 51, name: 'Slim Passport Holder',    sku: 'YL-51', collection: 'New Zealand Lamb',     frontImage: '/YL-51.png', insideImage: '/YL-51_inside.png' },
+    { id: 77, name: 'Zip Travel Wallet',       sku: 'YL-77', collection: 'New Zealand Lamb',     frontImage: '/YL-77.png', insideImage: '/YL-77_inside.png' },
   ],
 };
 
@@ -806,17 +869,20 @@ export default function BrandioLeatherWebsite() {
           </motion.div>
         </section>
 
-        {/* ── Philosophy strip — dark cinematic transition ─────────────────── */}
-        <section className="relative bg-stone-950 text-amber-50 py-32 md:py-44 overflow-hidden">
+        {/* ── Philosophy strip — muted brown cinematic transition ──────────── */}
+        <section className="relative text-amber-50 py-32 md:py-44 overflow-hidden" style={{ backgroundColor: '#2d231a' }}>
           <motion.div
             initial={{ opacity: 0 }}
-            whileInView={{ opacity: 0.12 }}
+            whileInView={{ opacity: 0.14 }}
             viewport={{ once: true }}
             transition={{ duration: 1.4 }}
             className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: `url(${FACTORY_SIDE})` }}
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-stone-950 via-stone-950/85 to-stone-950" />
+          <div
+            className="absolute inset-0"
+            style={{ background: 'linear-gradient(to bottom, #322619, rgba(45,35,26,0.82), #241c14)' }}
+          />
           <div className="relative max-w-5xl mx-auto px-6">
             <motion.p
               initial={{ opacity: 0, y: 12 }}
@@ -869,7 +935,7 @@ export default function BrandioLeatherWebsite() {
             >
               <div>
                 <p className="text-[10px] tracking-[0.4em] text-amber-700/80 uppercase mb-3">Explore</p>
-                <h2 className="text-4xl md:text-5xl font-bold text-amber-950 leading-tight">Featured Collections</h2>
+                <h2 className="text-4xl md:text-5xl font-bold text-amber-950 leading-tight">Featured Products</h2>
               </div>
               <MagneticButton
                 onClick={() => goTo('products')}
@@ -1177,41 +1243,20 @@ export default function BrandioLeatherWebsite() {
         >
           <div className="max-w-6xl mx-auto">
             <h2 className="text-5xl font-bold mb-4 text-amber-900">Packaging</h2>
-            <p className="text-gray-600 mb-12 text-lg">Each collection ships in its own branded presentation. Real packaging from our current production runs.</p>
+            <p className="text-gray-600 mb-3 text-lg">Each collection ships in its own branded presentation. Hover any box to see the wallet seated inside.</p>
+            <p className="text-sm font-semibold text-amber-700 mb-12">Every range is available as a <span className="text-amber-900">tin box</span> or a <span className="text-amber-900">corrugated paper box</span>.</p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[
-                { code: 'OS', name: 'Osaka — Tin Box',           desc: 'Premium tin-box packaging for the Osaka carbon-fiber range.', image: '/OS_tin_box_packaging.png' },
-                { code: 'PA', name: 'Palermo — Yaali New York',  desc: 'Yaali New York branded gift box for the Palermo range.',     image: '/PA_packaging.png' },
-                { code: 'PA', name: 'Palermo — In-Box View',     desc: 'Palermo wallet seated in its Yaali New York presentation box.', image: '/PA_in_box.png' },
-                { code: 'MN', name: 'Munich — Yacht Box',        desc: 'Yacht-line presentation box for the Munich black collection.', image: '/MN_packaging.png' },
-                { code: 'MN', name: 'Munich — In-Box View',      desc: 'Munich wallet seated in its Yacht-line presentation box.',    image: '/MN_in_box.png' },
-                { code: 'CH', name: 'Chicago — Brandio New York', desc: 'Brandio New York branded box for the Chicago woven range.',  image: '/CH_packaging.png' },
-                { code: 'CH', name: 'Chicago — In-Box View',     desc: 'Chicago woven wallet seated in its Brandio New York box.',    image: '/CH_in_box.png' },
-                { code: 'BA', name: 'Bali — Brandio Box',         desc: 'Branded Brandio gift box for the Bali brown-stripe range.',  image: '/Brandio_Packaging.png' },
-                { code: 'MI', name: 'Micro — Branded Gift Box',   desc: 'Premium blue gift box for the Micro textured-black range. RFID protected.', image: '/Branded_Packaging.png' },
-                { code: 'CA', name: 'Cancun — Dimbill Box',       desc: 'Dimbill-branded gift box for the Cancun striped-accent range.', image: '/Dimbill_Packaging.png' },
+                { code: 'OS', name: 'Osaka — Tin Box',            desc: 'Premium tin-box packaging for the Osaka carbon-fibre range.', frontImage: '/OS_tin_box_packaging.png', insideImage: '/OS-0123_in_box.png' },
+                { code: 'PA', name: 'Palermo — Yaali New York',   desc: 'Yaali New York branded gift box for the Palermo range.',      frontImage: '/PA_packaging.png',         insideImage: '/PA_in_box.png' },
+                { code: 'MN', name: 'Munich — Yacht Box',         desc: 'Yacht-line presentation box for the Munich black collection.', frontImage: '/MN_packaging.png',         insideImage: '/MN_in_box.png' },
+                { code: 'CH', name: 'Chicago — Brandio New York', desc: 'Brandio New York branded box for the Chicago woven range.',   frontImage: '/CH_packaging.png',         insideImage: '/CH_in_box.png' },
+                { code: 'BA', name: 'Bali — Brandio Box',         desc: 'Branded Brandio gift box for the Bali range.',                frontImage: '/Brandio_Packaging.png' },
+                { code: 'MI', name: 'Micro — Branded Gift Box',   desc: 'Premium gift box for the Micro range, RFID protected.',       frontImage: '/Branded_Packaging.png' },
+                { code: 'CA', name: 'Cancun — Dimbill Box',       desc: 'Dimbill-branded gift box for the Cancun range.',              frontImage: '/Dimbill_Packaging.png' },
               ].map((item, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 28 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-60px' }}
-                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: (i % 3) * 0.08 }}
-                  whileHover={{ y: -4 }}
-                  className="bg-white border border-amber-200 rounded-xl overflow-hidden hover:shadow-lg transition group"
-                >
-                  <div className="h-64 bg-gradient-to-br from-amber-50 to-white overflow-hidden flex items-center justify-center p-4">
-                    <img src={item.image} alt={item.name} className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-500" />
-                  </div>
-                  <div className="p-5">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-xs font-mono font-bold bg-amber-900 text-white px-2 py-0.5 rounded">{item.code}</span>
-                      <h3 className="font-bold text-amber-900">{item.name}</h3>
-                    </div>
-                    <p className="text-gray-600 text-sm leading-relaxed">{item.desc}</p>
-                  </div>
-                </motion.div>
+                <PackagingCard key={i} item={item} index={i} />
               ))}
             </div>
 
@@ -1257,7 +1302,7 @@ export default function BrandioLeatherWebsite() {
                     </div>
                     <div className="flex items-start gap-4">
                       <Mail className="text-amber-900 mt-1 flex-shrink-0" size={24} />
-                      <div><p className="font-semibold text-gray-900">Email</p><p className="text-gray-600">hello@brandio.com</p></div>
+                      <div><p className="font-semibold text-gray-900">Email</p><p className="text-gray-600">Fiza@brandio.com</p></div>
                     </div>
                     <div className="flex items-start gap-4">
                       <MapPin className="text-amber-900 mt-1 flex-shrink-0" size={24} />
