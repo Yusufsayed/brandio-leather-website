@@ -237,9 +237,16 @@ function ProductAlcove({ product, onClose }) {
                 transition={{ duration: 0.6, delay: 0.55 }}
                 className="text-amber-100/80 text-sm leading-relaxed space-y-3 mb-8"
               >
-                <p>Premium full-grain leather, hand-finished by our artisans. Engineered for daily luxury and built to last decades.</p>
+                <p>Premium leather, hand-finished by our artisans. Engineered for daily luxury and built to last decades.</p>
+                {product.colors && (
+                  <div className="flex flex-wrap gap-x-6 gap-y-1 pt-1 text-xs">
+                    {product.collection && (
+                      <span><span className="text-amber-300/60">Leather&nbsp;</span><span className="text-amber-100">{product.collection}</span></span>
+                    )}
+                    <span><span className="text-amber-300/60">Colours&nbsp;</span><span className="text-amber-100">{product.colors}</span></span>
+                  </div>
+                )}
                 <ul className="text-xs space-y-1.5 text-amber-200/70 pt-2">
-                  <li>· Genuine top-grain leather</li>
                   <li>· Reinforced edge stitching</li>
                   <li>· Custom branding & packaging available</li>
                   <li>· MOQ &amp; bulk pricing on request</li>
@@ -616,19 +623,19 @@ const PRODUCTS = {
   },
   bags: {
     briefcase: [
-      { id: 8061, name: 'Tan Leather Laptop Briefcase', sku: 'B-8061', collection: 'Brandio Bags · Briefcase', frontImage: '/B-8061.png', insideImage: '/B-8061_inside.png', altLabel: 'Inside View', views: [{ src: '/B-8061.png', label: 'Front' }, { src: '/B-8061_inside.png', label: 'Inside' }, { src: '/B-8061_side.png', label: 'Side' }] },
-      { id: 8062, name: 'Black Leather Laptop Bag',     sku: 'B-8062', collection: 'Brandio Bags · Briefcase', frontImage: '/B-8062.png', insideImage: '/B-8062_back.png',   altLabel: 'Back View',   views: [{ src: '/B-8062.png', label: 'Front' }, { src: '/B-8062_back.png', label: 'Back' }, { src: '/B-8062_side.png', label: 'Side' }] },
-      { id: 8067, name: 'Vintage Brown Briefcase',      sku: 'B-8067', collection: 'Brandio Bags · Briefcase', frontImage: '/B-8067.png', insideImage: '/B-8067_inside.png', altLabel: 'Inside View', views: [{ src: '/B-8067.png', label: 'Front' }, { src: '/B-8067_back.png', label: 'Back' }, { src: '/B-8067_inside.png', label: 'Inside' }] },
-      { id: 8098, name: 'Cognac Polished Briefcase',    sku: 'B-8098', collection: 'Brandio Bags · Briefcase', frontImage: '/B-8098.png', insideImage: '/B-8098_inside.png', altLabel: 'Inside View', views: [{ src: '/B-8098.png', label: 'Front' }, { src: '/B-8098_back.png', label: 'Back' }, { src: '/B-8098_inside.png', label: 'Inside' }] },
+      { id: 8061, name: 'Tan Leather Laptop Briefcase', sku: 'B-8061', collection: 'Buff VT Leather',      colors: 'Black · Brown · Tan',     frontImage: '/B-8061.png', insideImage: '/B-8061_inside.png', altLabel: 'Inside View', views: [{ src: '/B-8061.png', label: 'Front' }, { src: '/B-8061_inside.png', label: 'Inside' }, { src: '/B-8061_side.png', label: 'Side' }] },
+      { id: 8062, name: 'Black Leather Laptop Bag',     sku: 'B-8062', collection: 'Cow YDM Leather',      colors: 'All colours',             frontImage: '/B-8062.png', insideImage: '/B-8062_back.png',   altLabel: 'Back View',   views: [{ src: '/B-8062.png', label: 'Front' }, { src: '/B-8062_back.png', label: 'Back' }, { src: '/B-8062_side.png', label: 'Side' }] },
+      { id: 8067, name: 'Vintage Brown Briefcase',      sku: 'B-8067', collection: 'Cow Hunter Leather',   colors: 'Any colour',              frontImage: '/B-8067.png', insideImage: '/B-8067_inside.png', altLabel: 'Inside View', views: [{ src: '/B-8067.png', label: 'Front' }, { src: '/B-8067_back.png', label: 'Back' }, { src: '/B-8067_inside.png', label: 'Inside' }] },
+      { id: 8098, name: 'Cognac Polished Briefcase',    sku: 'B-8098', collection: 'Cow VT Leather',       colors: 'Black · Brown · Cognac',  frontImage: '/B-8098.png', insideImage: '/B-8098_inside.png', altLabel: 'Inside View', views: [{ src: '/B-8098.png', label: 'Front' }, { src: '/B-8098_back.png', label: 'Back' }, { src: '/B-8098_inside.png', label: 'Inside' }] },
     ],
     crossbody: [
-      { id: 8066, name: 'Tan Crossbody Shoulder Bag',   sku: 'B-8066', collection: 'Brandio Bags · Crossbody', frontImage: '/B-8066.png', insideImage: '/B-8066_inside.png', altLabel: 'Inside View', views: [{ src: '/B-8066.png', label: 'Front' }, { src: '/B-8066_back.png', label: 'Back' }, { src: '/B-8066_inside.png', label: 'Inside' }] },
-      { id: 8068, name: 'Vintage Brown Crossbody',      sku: 'B-8068', collection: 'Brandio Bags · Crossbody', frontImage: '/B-8068.png', insideImage: '/B-8068_back.png',   altLabel: 'Back View',   views: [{ src: '/B-8068.png', label: 'Front' }, { src: '/B-8068_back.png', label: 'Back' }, { src: '/B-8068_side.png', label: 'Side' }] },
-      { id: 9004, name: 'Brown Flap Crossbody',         sku: 'B-9004', collection: 'Brandio Bags · Crossbody', frontImage: '/B-9004.png', insideImage: '/B-9004_back.png',   altLabel: 'Back View',   views: [{ src: '/B-9004.png', label: 'Front' }, { src: '/B-9004_back.png', label: 'Back' }, { src: '/B-9004_side.png', label: 'Side' }] },
+      { id: 8066, name: 'Tan Crossbody Shoulder Bag',   sku: 'B-8066', collection: 'Cow DD Softy Leather', colors: 'Any colour',              frontImage: '/B-8066.png', insideImage: '/B-8066_inside.png', altLabel: 'Inside View', views: [{ src: '/B-8066.png', label: 'Front' }, { src: '/B-8066_back.png', label: 'Back' }, { src: '/B-8066_inside.png', label: 'Inside' }] },
+      { id: 8068, name: 'Vintage Brown Crossbody',      sku: 'B-8068', collection: 'Cow Hunter Leather',   colors: 'Any colour',              frontImage: '/B-8068.png', insideImage: '/B-8068_back.png',   altLabel: 'Back View',   views: [{ src: '/B-8068.png', label: 'Front' }, { src: '/B-8068_back.png', label: 'Back' }, { src: '/B-8068_side.png', label: 'Side' }] },
+      { id: 9004, name: 'Brown Flap Crossbody',         sku: 'B-9004', collection: 'Cow Plain Crunch Leather', colors: 'All colours',         frontImage: '/B-9004.png', insideImage: '/B-9004_back.png',   altLabel: 'Back View',   views: [{ src: '/B-9004.png', label: 'Front' }, { src: '/B-9004_back.png', label: 'Back' }, { src: '/B-9004_side.png', label: 'Side' }] },
     ],
     'sling-waist': [
-      { id: 8008, name: 'Black Leather Waist Bag',      sku: 'B-8008', collection: 'Brandio Bags · Waist',     frontImage: '/B-8008.png', insideImage: '/B-8008_back.png',   altLabel: 'Back View',   views: [{ src: '/B-8008.png', label: 'Front' }, { src: '/B-8008_back.png', label: 'Back' }, { src: '/B-8008_side.png', label: 'Side' }] },
-      { id: 9002, name: 'Black Leather Chest Sling',    sku: 'B-9002', collection: 'Brandio Bags · Sling',     frontImage: '/B-9002.png', insideImage: '/B-9002_side.png',   altLabel: 'Side View',   views: [{ src: '/B-9002.png', label: 'Front' }, { src: '/B-9002_inside.png', label: 'Inside' }, { src: '/B-9002_side.png', label: 'Side' }] },
+      { id: 8008, name: 'Black Leather Waist Bag',      sku: 'B-8008', collection: 'Cow Nappa Leather',    colors: 'Any colour',              frontImage: '/B-8008.png', insideImage: '/B-8008_back.png',   altLabel: 'Back View',   views: [{ src: '/B-8008.png', label: 'Front' }, { src: '/B-8008_back.png', label: 'Back' }, { src: '/B-8008_side.png', label: 'Side' }] },
+      { id: 9002, name: 'Black Leather Chest Sling',    sku: 'B-9002', collection: 'Cow Fine Milled Nappa Leather', colors: 'Any colour',     frontImage: '/B-9002.png', insideImage: '/B-9002_side.png',   altLabel: 'Side View',   views: [{ src: '/B-9002.png', label: 'Front' }, { src: '/B-9002_inside.png', label: 'Inside' }, { src: '/B-9002_side.png', label: 'Side' }] },
     ],
   },
   'small-accessories': {
