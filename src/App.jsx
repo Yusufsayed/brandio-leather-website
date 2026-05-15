@@ -358,7 +358,7 @@ const NAV_ITEMS = [
 ];
 
 /* ─── Collection card (Collections page) ──────────────────────────────────── */
-function CollectionCard({ col, index, onCta }) {
+function CollectionCard({ col, index, onOpen }) {
   const [hovered, setHovered] = useState(false);
   const { rotateX, rotateY, handlers } = useTilt(6);
 
@@ -368,28 +368,30 @@ function CollectionCard({ col, index, onCta }) {
         initial={{ opacity: 0, y: 32 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: '-80px' }}
-        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: (index % 2) * 0.08 }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: (index % 3) * 0.08 }}
         style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={e => { setHovered(false); handlers.onMouseLeave(e); }}
         onMouseMove={handlers.onMouseMove}
-        className={`bg-white border border-amber-200 rounded-2xl overflow-hidden flex flex-col transition-shadow duration-500 ${hovered ? 'shadow-2xl' : 'shadow-sm'}`}
+        onClick={() => onOpen && onOpen(col)}
+        data-grow
+        className={`bg-white border border-amber-200 rounded-2xl overflow-hidden flex flex-col cursor-pointer transition-shadow duration-500 ${hovered ? 'shadow-2xl' : 'shadow-sm'}`}
       >
-        <div className="h-48 bg-amber-50 overflow-hidden relative" style={{ transformStyle: 'preserve-3d' }}>
+        <div className="aspect-square bg-amber-50 overflow-hidden relative" style={{ transformStyle: 'preserve-3d' }}>
           <motion.img
             src={col.hero}
             alt={col.name}
-            animate={{ scale: hovered ? 1.08 : 1 }}
+            animate={{ scale: hovered ? 1.06 : 1 }}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            style={{ objectPosition: '50% 75%', translateZ: 30 }}
+            style={{ translateZ: 30 }}
             className="w-full h-full object-cover"
           />
           <motion.div
             aria-hidden
-            animate={{ opacity: hovered ? 0.22 : 0 }}
+            animate={{ opacity: hovered ? 1 : 0 }}
             transition={{ duration: 0.4 }}
             style={{ translateZ: 50 }}
-            className="absolute inset-0 bg-gradient-to-tr from-white via-transparent to-transparent pointer-events-none"
+            className="absolute inset-0 bg-gradient-to-t from-stone-950/70 via-transparent to-transparent pointer-events-none"
           />
           <motion.span
             style={{ translateZ: 60 }}
@@ -397,25 +399,139 @@ function CollectionCard({ col, index, onCta }) {
           >
             {col.code}
           </motion.span>
-        </div>
-        <div className="p-6 flex-1 flex flex-col" style={{ transformStyle: 'preserve-3d' }}>
-          <motion.div style={{ translateZ: 20 }} className="flex items-center gap-2 mb-3 flex-wrap">
-            <span className="text-xs font-semibold bg-amber-100 text-amber-800 px-2 py-1 rounded-full">{col.size}</span>
-            <span className="text-xs font-semibold bg-amber-50 text-amber-700 px-2 py-1 rounded-full border border-amber-200">{col.material}</span>
-          </motion.div>
-          <motion.h3 style={{ translateZ: 24 }} className="text-2xl font-bold text-amber-900 mb-2">{col.name}</motion.h3>
-          <motion.p  style={{ translateZ: 18 }} className="text-gray-600 leading-relaxed text-sm mb-4">{col.desc}</motion.p>
-          <motion.p  style={{ translateZ: 14 }} className="text-xs text-gray-500 mb-4 mt-auto">{col.styles}</motion.p>
-          <MagneticButton
-            onClick={onCta}
-            strength={0.25}
-            className="px-5 py-2 bg-amber-900 text-white rounded-lg text-sm font-semibold hover:bg-amber-800 transition-colors self-start"
+          <motion.div
+            style={{ translateZ: 60 }}
+            animate={{ opacity: hovered ? 1 : 0, y: hovered ? 0 : 8 }}
+            transition={{ duration: 0.35 }}
+            className="absolute bottom-3 left-1/2 -translate-x-1/2 text-[10px] tracking-[0.3em] text-white bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full whitespace-nowrap"
           >
-            {col.ctaLabel || 'View Wallets'}
-          </MagneticButton>
+            VIEW COLLECTION
+          </motion.div>
+        </div>
+        <div className="p-5 flex-1 flex flex-col" style={{ transformStyle: 'preserve-3d' }}>
+          <motion.h3 style={{ translateZ: 24 }} className="text-xl font-bold text-amber-900 mb-1">{col.name}</motion.h3>
+          <motion.p style={{ translateZ: 20 }} className="text-xs text-amber-700 mb-3">{col.size} · {col.material}</motion.p>
+          <motion.p style={{ translateZ: 14 }} className="text-xs text-gray-500 mt-auto">{col.styles}</motion.p>
         </div>
       </motion.div>
     </div>
+  );
+}
+
+/* ─── Collection Modal — full catalogue view ──────────────────────────────── */
+function CollectionModal({ collection, onClose, onView }) {
+  useEffect(() => {
+    if (!collection) return;
+    const onKey = e => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
+  }, [collection, onClose]);
+
+  return (
+    <AnimatePresence>
+      {collection && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          className="fixed inset-0 z-[9990] bg-black/85 backdrop-blur-md flex items-center justify-center p-4 md:p-12"
+          onClick={onClose}
+        >
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            onClick={onClose}
+            className="absolute top-6 right-6 text-white/80 hover:text-white p-2 rounded-full hover:bg-white/10 transition z-10"
+            aria-label="Close"
+            data-grow
+          >
+            <X size={28} />
+          </motion.button>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.94, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.97, y: -10 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            onClick={e => e.stopPropagation()}
+            className="relative w-full max-w-5xl bg-gradient-to-b from-amber-950 to-stone-950 rounded-2xl overflow-hidden shadow-2xl flex flex-col md:flex-row max-h-[90vh]"
+          >
+            {/* Image side */}
+            <div className="relative md:w-3/5 bg-gradient-to-br from-amber-100/10 to-stone-900 overflow-hidden flex items-center justify-center">
+              <motion.img
+                key={collection.code}
+                src={collection.hero}
+                alt={collection.name}
+                initial={{ opacity: 0, scale: 1.05 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                className="w-full h-full object-contain p-4 md:p-8 max-h-[50vh] md:max-h-[90vh]"
+              />
+              <div className="absolute top-5 left-5 text-[10px] tracking-[0.3em] text-amber-200/70 font-mono">
+                {collection.code}
+              </div>
+            </div>
+
+            {/* Info side */}
+            <div className="md:w-2/5 p-8 md:p-12 flex flex-col text-amber-50 overflow-y-auto">
+              <motion.p
+                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.25 }}
+                className="text-[10px] tracking-[0.35em] text-amber-300/80 uppercase mb-3"
+              >
+                Brandio Collection
+              </motion.p>
+              <motion.h2
+                initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.32, ease: [0.22, 1, 0.36, 1] }}
+                className="text-3xl md:text-4xl font-bold leading-tight mb-6"
+              >
+                {collection.name}
+              </motion.h2>
+              <motion.div
+                initial={{ scaleX: 0 }} animate={{ scaleX: 1 }}
+                transition={{ duration: 0.7, delay: 0.45 }} style={{ originX: 0 }}
+                className="h-px w-16 bg-amber-300/40 mb-6"
+              />
+              <motion.div
+                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.55 }}
+                className="text-amber-100/80 text-sm leading-relaxed mb-6"
+              >
+                <p>{collection.desc}</p>
+                <div className="flex flex-wrap gap-x-6 gap-y-1 pt-4 text-xs">
+                  <span><span className="text-amber-300/60">Size&nbsp;</span><span className="text-amber-100">{collection.size}</span></span>
+                  <span><span className="text-amber-300/60">Leather&nbsp;</span><span className="text-amber-100">{collection.material}</span></span>
+                </div>
+                <p className="text-xs text-amber-200/70 pt-2">Styles: {collection.styles}</p>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.7 }}
+                className="mt-auto pt-6"
+              >
+                <button
+                  onClick={onView}
+                  data-grow
+                  className="block w-full text-center px-6 py-3 bg-gradient-to-r from-amber-600 to-yellow-500 text-stone-950 rounded-lg font-bold text-sm tracking-wide hover:shadow-lg hover:shadow-amber-500/30 transition"
+                >
+                  View Wallets in this Collection
+                </button>
+                <p className="text-[10px] text-amber-200/40 text-center mt-3 tracking-wider">
+                  ESC OR CLICK OUTSIDE TO CLOSE
+                </p>
+              </motion.div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
 
@@ -707,6 +823,7 @@ export default function BrandioLeatherWebsite() {
   const [bagSub,           setBagSub]           = useState('briefcase');
   const [currentSlide,     setCurrentSlide]     = useState(0);
   const [alcoveProduct,    setAlcoveProduct]    = useState(null);
+  const [alcoveCollection, setAlcoveCollection] = useState(null);
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
   const heroImgScale   = useTransform(scrollYProgress, [0, 1], [1, 1.2]);
@@ -739,6 +856,11 @@ export default function BrandioLeatherWebsite() {
       <LoadingReveal logo={LOGO} />
       <CustomCursor />
       <ProductAlcove product={alcoveProduct} onClose={() => setAlcoveProduct(null)} />
+      <CollectionModal
+        collection={alcoveCollection}
+        onClose={() => setAlcoveCollection(null)}
+        onView={() => { setAlcoveCollection(null); setMainCategory('wallets'); goTo('products'); }}
+      />
 
       {/* ── Navigation ──────────────────────────────────────────────────────── */}
       <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-amber-200 shadow-sm">
@@ -1213,26 +1335,24 @@ export default function BrandioLeatherWebsite() {
           <div className="max-w-5xl mx-auto">
             <h2 className="text-5xl font-bold mb-4 text-amber-900">Collections</h2>
             <p className="text-gray-600 mb-12 text-lg">Curated leather ranges crafted around a unified design language.</p>
-            <div className="grid md:grid-cols-2 gap-8">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[
-                { code: 'MC', name: 'Massini Collection', size: 'European Size', material: 'Paper Packaging',          styles: 'Note Case · Bifold · Trifold', hero: '/MC-0064.png',  desc: 'European-style wallets with clean lines and premium full-grain leather. Slim profile, maximum function.' },
-                { code: 'OS', name: 'Osaka Collection',   size: 'American Size', material: 'Carbon Fiber · Tin Box',   styles: 'Bifold · Trifold · Zip-around', hero: '/OS-0123.png', desc: 'Modern carbon-fiber-pattern wallets shipped in a premium tin box. Bold, technical, durable.' },
-                { code: 'PA', name: 'Palermo Collection', size: 'American Size', material: 'Black / Burgundy',          styles: 'Bifold · Trifold · Zip-around', hero: '/PA-3035.png', desc: 'Two-tone black and burgundy wallets under the Yaali New York label. Classic colour story, contemporary cut.' },
-                { code: 'MN', name: 'Munich Collection',  size: 'American Size', material: 'Yacht Leather',            styles: 'Bifold · Trifold · Zip-around', hero: '/MN-2286.png', desc: 'Sleek black yacht-leather wallets engineered for daily luxury. Yacht line packaging included.' },
-                { code: 'CH', name: 'Chicago Collection', size: 'American Size', material: 'Massini Woven Leather',     styles: 'Bifold · Trifold · Zip-around', hero: '/CH-2255.png', desc: 'Hand-woven leather wallets in deep black. Texture, depth, and Brandio New York packaging.' },
-                { code: 'BA', name: 'Bali Collection',    size: 'American Size', material: 'Brown Leather · Stripe',    styles: 'Bifold · Trifold · Zip-around', hero: '/BA-2232.png', desc: 'Minimalist brown leather wallets with a signature navy-and-cream stripe detail. Branded with the Brandio mark.' },
-                { code: 'MI', name: 'Micro Collection',   size: 'American Size', material: 'Textured Black · Leather',  styles: 'Bifold · Trifold · Zip-around', hero: '/MI-2106.png', desc: 'Compact black wallets with a textured weave panel and smooth leather trim. Subtle Branded mark, urban edge.' },
-                { code: 'CN', name: 'Canton Collection',  size: 'American Size', material: 'Classic Black Leather',     styles: 'Bifold · Trifold · Zip-around', hero: '/CN-1146.png', desc: 'Pure black leather wallets with diagonal corner stitching. Understated Brandio branding for a clean, professional look.' },
-                { code: 'CA', name: 'Cancun Collection',  size: 'American Size', material: 'Dimbill · Red & Navy Stripe', styles: 'Bifold · Trifold · Zip-around', hero: '/CA-5006.png', desc: 'Black leather wallets with a bold red, cream, and navy striped accent. The signature Dimbill line, vibrant and refined.' },
-                { code: 'YL', name: 'Yaali Small Goods',  size: 'Compact',        material: 'Card Cases · Money Clip · Coin', styles: '17 styles across 3 categories', hero: '/Y-103.png',     desc: 'Card holders, money-clip wallets, RFID cases, and ladies coin cases — the everyday-carry range, refined.', cat: 'small-accessories', ctaLabel: 'View Small Goods' },
+                { code: 'MC', name: 'Massini Collection', size: 'European Size', material: 'Cow NDM',                       styles: 'Note Case · Bifold · Trifold',  hero: '/col-MC.jpg', desc: 'European-style wallets in supple Cow NDM leather. Slim profile, maximum function — presented in a Yaali New York tin.' },
+                { code: 'OS', name: 'Osaka Collection',   size: 'American Size', material: 'Cow Carbon Fibre',              styles: 'Bifold · Trifold · Zip-around', hero: '/col-OS.jpg', desc: 'Carbon-fibre-textured wallets shipped in a premium MURA tin box. Bold, technical, durable.' },
+                { code: 'PA', name: 'Palermo Collection', size: 'American Size', material: 'Cow PDM',                       styles: 'Bifold · Trifold · Zip-around', hero: '/col-PA.jpg', desc: 'Two-tone black and burgundy wallets under the Yaali New York label. A classic colour story, contemporary cut.' },
+                { code: 'MN', name: 'Munich Collection',  size: 'American Size', material: 'Cow DD',                        styles: 'Bifold · Trifold · Zip-around', hero: '/col-MN.jpg', desc: 'Sleek black wallets engineered for daily luxury, finished with the Yacht-line crest packaging.' },
+                { code: 'CH', name: 'Chicago Collection', size: 'American Size', material: 'Cow Nappa',                     styles: 'Bifold · Trifold · Zip-around', hero: '/col-CH.jpg', desc: 'Hand-woven Nappa leather wallets in deep black. Texture, depth, and Brandio New York packaging.' },
+                { code: 'BA', name: 'Bali Collection',    size: 'American Size', material: 'Cow NDM',                       styles: 'Bifold · Trifold · Zip-around', hero: '/col-BA.jpg', desc: 'Brown leather wallets with a signature navy-and-cream stripe, boxed in the red Brandio New York set.' },
+                { code: 'MI', name: 'Micro Collection',   size: 'American Size', material: 'Textured Polyester + Cow NDM',  styles: 'Bifold · Trifold · Zip-around', hero: '/col-MI.jpg', desc: 'Compact textured wallets with a smooth leather trim and the Branded mark. Urban edge, RFID protected.' },
+                { code: 'CN', name: 'Canton Collection',  size: 'American Size', material: 'New Zealand Lamb',               styles: 'Bifold · Trifold · Zip-around', hero: '/col-CN.jpg', desc: 'Pure black lambskin wallets with diagonal corner stitching — clean, professional, understated.' },
+                { code: 'CA', name: 'Cancun Collection',  size: 'American Size', material: 'Cow DD Polished',               styles: 'Bifold · Trifold · Zip-around', hero: '/col-CA.jpg', desc: 'Black wallets with a bold red, cream, and navy striped accent — the signature Dimbill line, vibrant and refined.' },
               ].map((col, i) => (
-                <CollectionCard key={col.code} col={col} index={i} onCta={() => {
-                  const cat = col.cat || 'wallets';
-                  setMainCategory(cat);
-                  if (cat === 'small-accessories') setSmallAccSub('card-cases');
-                  if (cat === 'bags')              setBagSub('briefcase');
-                  goTo('products');
-                }} />
+                <CollectionCard
+                  key={col.code}
+                  col={col}
+                  index={i}
+                  onOpen={() => setAlcoveCollection(col)}
+                />
               ))}
             </div>
           </div>
