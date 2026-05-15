@@ -378,20 +378,23 @@ function CollectionCard({ col, index, onOpen }) {
         className={`bg-white border border-amber-200 rounded-2xl overflow-hidden flex flex-col cursor-pointer transition-shadow duration-500 ${hovered ? 'shadow-2xl' : 'shadow-sm'}`}
       >
         <div className="aspect-square bg-amber-50 overflow-hidden relative" style={{ transformStyle: 'preserve-3d' }}>
+          {/* default — wallet cover */}
+          <motion.img
+            src={col.cover}
+            alt={col.name}
+            animate={{ opacity: hovered ? 0 : 1, scale: hovered ? 1.06 : 1 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            style={{ translateZ: 30 }}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          {/* hover reveal — full collection catalogue photo */}
           <motion.img
             src={col.hero}
-            alt={col.name}
-            animate={{ scale: hovered ? 1.06 : 1 }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            alt={`${col.name} catalogue`}
+            animate={{ opacity: hovered ? 1 : 0, scale: hovered ? 1 : 1.06 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             style={{ translateZ: 30 }}
-            className="w-full h-full object-cover"
-          />
-          <motion.div
-            aria-hidden
-            animate={{ opacity: hovered ? 1 : 0 }}
-            transition={{ duration: 0.4 }}
-            style={{ translateZ: 50 }}
-            className="absolute inset-0 bg-gradient-to-t from-stone-950/70 via-transparent to-transparent pointer-events-none"
+            className="absolute inset-0 w-full h-full object-cover"
           />
           <motion.span
             style={{ translateZ: 60 }}
@@ -403,7 +406,7 @@ function CollectionCard({ col, index, onOpen }) {
             style={{ translateZ: 60 }}
             animate={{ opacity: hovered ? 1 : 0, y: hovered ? 0 : 8 }}
             transition={{ duration: 0.35 }}
-            className="absolute bottom-3 left-1/2 -translate-x-1/2 text-[10px] tracking-[0.3em] text-white bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full whitespace-nowrap"
+            className="absolute bottom-3 left-1/2 -translate-x-1/2 text-[10px] tracking-[0.3em] text-white bg-black/55 backdrop-blur-sm px-3 py-1.5 rounded-full whitespace-nowrap"
           >
             VIEW COLLECTION
           </motion.div>
@@ -1337,15 +1340,15 @@ export default function BrandioLeatherWebsite() {
             <p className="text-gray-600 mb-12 text-lg">Curated leather ranges crafted around a unified design language.</p>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[
-                { code: 'MC', name: 'Massini Collection', size: 'European Size', material: 'Cow NDM',                       styles: 'Note Case · Bifold · Trifold',  hero: '/col-MC.jpg', desc: 'European-style wallets in supple Cow NDM leather. Slim profile, maximum function — presented in a Yaali New York tin.' },
-                { code: 'OS', name: 'Osaka Collection',   size: 'American Size', material: 'Cow Carbon Fibre',              styles: 'Bifold · Trifold · Zip-around', hero: '/col-OS.jpg', desc: 'Carbon-fibre-textured wallets shipped in a premium MURA tin box. Bold, technical, durable.' },
-                { code: 'PA', name: 'Palermo Collection', size: 'American Size', material: 'Cow PDM',                       styles: 'Bifold · Trifold · Zip-around', hero: '/col-PA.jpg', desc: 'Two-tone black and burgundy wallets under the Yaali New York label. A classic colour story, contemporary cut.' },
-                { code: 'MN', name: 'Munich Collection',  size: 'American Size', material: 'Cow DD',                        styles: 'Bifold · Trifold · Zip-around', hero: '/col-MN.jpg', desc: 'Sleek black wallets engineered for daily luxury, finished with the Yacht-line crest packaging.' },
-                { code: 'CH', name: 'Chicago Collection', size: 'American Size', material: 'Cow Nappa',                     styles: 'Bifold · Trifold · Zip-around', hero: '/col-CH.jpg', desc: 'Hand-woven Nappa leather wallets in deep black. Texture, depth, and Brandio New York packaging.' },
-                { code: 'BA', name: 'Bali Collection',    size: 'American Size', material: 'Cow NDM',                       styles: 'Bifold · Trifold · Zip-around', hero: '/col-BA.jpg', desc: 'Brown leather wallets with a signature navy-and-cream stripe, boxed in the red Brandio New York set.' },
-                { code: 'MI', name: 'Micro Collection',   size: 'American Size', material: 'Textured Polyester + Cow NDM',  styles: 'Bifold · Trifold · Zip-around', hero: '/col-MI.jpg', desc: 'Compact textured wallets with a smooth leather trim and the Branded mark. Urban edge, RFID protected.' },
-                { code: 'CN', name: 'Canton Collection',  size: 'American Size', material: 'New Zealand Lamb',               styles: 'Bifold · Trifold · Zip-around', hero: '/col-CN.jpg', desc: 'Pure black lambskin wallets with diagonal corner stitching — clean, professional, understated.' },
-                { code: 'CA', name: 'Cancun Collection',  size: 'American Size', material: 'Cow DD Polished',               styles: 'Bifold · Trifold · Zip-around', hero: '/col-CA.jpg', desc: 'Black wallets with a bold red, cream, and navy striped accent — the signature Dimbill line, vibrant and refined.' },
+                { code: 'MC', name: 'Massini Collection', size: 'European Size', material: 'Cow NDM',                       styles: 'Note Case · Bifold · Trifold',  cover: '/MC-0064.png', hero: '/col-MC.jpg', desc: 'European-style wallets in supple Cow NDM leather. Slim profile, maximum function — presented in a Yaali New York tin.' },
+                { code: 'OS', name: 'Osaka Collection',   size: 'American Size', material: 'Cow Carbon Fibre',              styles: 'Bifold · Trifold · Zip-around', cover: '/OS-0123.png', hero: '/col-OS.jpg', desc: 'Carbon-fibre-textured wallets shipped in a premium MURA tin box. Bold, technical, durable.' },
+                { code: 'PA', name: 'Palermo Collection', size: 'American Size', material: 'Cow PDM',                       styles: 'Bifold · Trifold · Zip-around', cover: '/PA-3035.png', hero: '/col-PA.jpg', desc: 'Two-tone black and burgundy wallets under the Yaali New York label. A classic colour story, contemporary cut.' },
+                { code: 'MN', name: 'Munich Collection',  size: 'American Size', material: 'Cow DD',                        styles: 'Bifold · Trifold · Zip-around', cover: '/MN-2286.png', hero: '/col-MN.jpg', desc: 'Sleek black wallets engineered for daily luxury, finished with the Yacht-line crest packaging.' },
+                { code: 'CH', name: 'Chicago Collection', size: 'American Size', material: 'Cow Nappa',                     styles: 'Bifold · Trifold · Zip-around', cover: '/CH-2255.png', hero: '/col-CH.jpg', desc: 'Hand-woven Nappa leather wallets in deep black. Texture, depth, and Brandio New York packaging.' },
+                { code: 'BA', name: 'Bali Collection',    size: 'American Size', material: 'Cow NDM',                       styles: 'Bifold · Trifold · Zip-around', cover: '/BA-2232.png', hero: '/col-BA.jpg', desc: 'Brown leather wallets with a signature navy-and-cream stripe, boxed in the red Brandio New York set.' },
+                { code: 'MI', name: 'Micro Collection',   size: 'American Size', material: 'Textured Polyester + Cow NDM',  styles: 'Bifold · Trifold · Zip-around', cover: '/MI-2106.png', hero: '/col-MI.jpg', desc: 'Compact textured wallets with a smooth leather trim and the Branded mark. Urban edge, RFID protected.' },
+                { code: 'CN', name: 'Canton Collection',  size: 'American Size', material: 'New Zealand Lamb',               styles: 'Bifold · Trifold · Zip-around', cover: '/CN-1146.png', hero: '/col-CN.jpg', desc: 'Pure black lambskin wallets with diagonal corner stitching — clean, professional, understated.' },
+                { code: 'CA', name: 'Cancun Collection',  size: 'American Size', material: 'Cow DD Polished',               styles: 'Bifold · Trifold · Zip-around', cover: '/CA-5006.png', hero: '/col-CA.jpg', desc: 'Black wallets with a bold red, cream, and navy striped accent — the signature Dimbill line, vibrant and refined.' },
               ].map((col, i) => (
                 <CollectionCard
                   key={col.code}
