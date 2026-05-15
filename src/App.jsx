@@ -587,7 +587,6 @@ const PRODUCTS = {
   wallets: {
     bifold: [
       { id: 64,   name: 'European Size Bifold', sku: 'MC-0064', collection: 'Massini Collection · Cow NDM',         frontImage: '/MC-0064.png',  insideImage: '/MC-0064_inside.png' },
-      { id: 65,   name: 'European Size Bifold', sku: 'MC-0065', collection: 'Massini Collection · Cow NDM',         frontImage: '/MC-0065.png',  insideImage: '/MC-0065_inside.png' },
       { id: 123,  name: 'American Size Bifold', sku: 'OS-0123', collection: 'Osaka Collection · Cow Carbon Fibre',  frontImage: '/OS-0123.png',  insideImage: '/OS-0123_inside.png' },
       { id: 3035, name: 'American Size Bifold', sku: 'PA-3035', collection: 'Palermo Collection · Cow PDM',         frontImage: '/PA-3035.png',  insideImage: '/PA-3035_inside.png' },
       { id: 2286, name: 'American Size Bifold', sku: 'MN-2286', collection: 'Munich Collection · Cow DD',           frontImage: '/MN-2286.png',  insideImage: '/MN-2286_inside.png' },
@@ -598,6 +597,7 @@ const PRODUCTS = {
       { id: 5006, name: 'American Size Bifold', sku: 'CA-5006', collection: 'Cancun Collection · Cow DD Polished',  frontImage: '/CA-5006.png',  insideImage: '/CA-5006_inside.png' },
     ],
     trifold: [
+      { id: 65,   name: 'European Size Trifold', sku: 'MC-0065', collection: 'Massini Collection · Cow NDM',         frontImage: '/MC-0065.png',  insideImage: '/MC-0065_inside.png' },
       { id: 124,  name: 'American Size Trifold', sku: 'OS-0124', collection: 'Osaka Collection · Cow Carbon Fibre',  frontImage: '/OS-0124.png',  insideImage: '/OS-0124_inside.png' },
       { id: 3036, name: 'American Size Trifold', sku: 'PA-3036', collection: 'Palermo Collection · Cow PDM',         frontImage: '/PA-3036.png',  insideImage: '/PA-3036_inside.png' },
       { id: 2287, name: 'American Size Trifold', sku: 'MN-2287', collection: 'Munich Collection · Cow DD',           frontImage: '/MN-2287.png',  insideImage: '/MN-2287_inside.png' },
