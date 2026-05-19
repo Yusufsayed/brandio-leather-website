@@ -378,14 +378,14 @@ function CollectionCard({ col, index, onOpen }) {
         className={`bg-white border border-amber-200 rounded-2xl overflow-hidden flex flex-col cursor-pointer transition-shadow duration-500 ${hovered ? 'shadow-2xl' : 'shadow-sm'}`}
       >
         <div className="aspect-square bg-amber-50 overflow-hidden relative" style={{ transformStyle: 'preserve-3d' }}>
-          {/* default — zoomed-in textured wallet */}
+          {/* default — zoomed-in texture + brand crop (lower part of the wallet) */}
           <motion.img
             src={col.cover}
             alt={col.name}
             initial={false}
-            animate={{ opacity: hovered ? 0 : 1, scale: hovered ? 1.5 : 1.42 }}
+            animate={{ opacity: hovered ? 0 : 1, scale: hovered ? 2.35 : 2.25 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            style={{ translateZ: 30 }}
+            style={{ translateZ: 30, transformOrigin: '50% 58%' }}
             className="absolute inset-0 w-full h-full object-cover"
           />
           {/* hover reveal — full collection catalogue photo */}
