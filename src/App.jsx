@@ -378,11 +378,12 @@ function CollectionCard({ col, index, onOpen }) {
         className={`bg-white border border-amber-200 rounded-2xl overflow-hidden flex flex-col cursor-pointer transition-shadow duration-500 ${hovered ? 'shadow-2xl' : 'shadow-sm'}`}
       >
         <div className="aspect-square bg-amber-50 overflow-hidden relative" style={{ transformStyle: 'preserve-3d' }}>
-          {/* default — wallet cover */}
+          {/* default — zoomed-in textured wallet */}
           <motion.img
             src={col.cover}
             alt={col.name}
-            animate={{ opacity: hovered ? 0 : 1, scale: hovered ? 1.06 : 1 }}
+            initial={false}
+            animate={{ opacity: hovered ? 0 : 1, scale: hovered ? 1.5 : 1.42 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             style={{ translateZ: 30 }}
             className="absolute inset-0 w-full h-full object-cover"
@@ -391,6 +392,7 @@ function CollectionCard({ col, index, onOpen }) {
           <motion.img
             src={col.hero}
             alt={`${col.name} catalogue`}
+            initial={false}
             animate={{ opacity: hovered ? 1 : 0, scale: hovered ? 1 : 1.06 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             style={{ translateZ: 30 }}
