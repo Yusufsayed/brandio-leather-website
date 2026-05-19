@@ -377,7 +377,7 @@ function CollectionCard({ col, index, onOpen }) {
         data-grow
         className={`bg-white border border-amber-200 rounded-2xl overflow-hidden flex flex-col cursor-pointer transition-shadow duration-500 ${hovered ? 'shadow-2xl' : 'shadow-sm'}`}
       >
-        <div className="h-52 bg-amber-50 overflow-hidden relative" style={{ transformStyle: 'preserve-3d' }}>
+        <div className="h-56 bg-white overflow-hidden relative" style={{ transformStyle: 'preserve-3d' }}>
           {/* default — wallet band, lower portion (texture + brand) on white */}
           <motion.img
             src={col.cover}
@@ -385,7 +385,7 @@ function CollectionCard({ col, index, onOpen }) {
             initial={false}
             animate={{ opacity: hovered ? 0 : 1 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            style={{ translateZ: 30, objectPosition: '50% 75%' }}
+            style={{ translateZ: 30, objectPosition: '50% 82%' }}
             className="absolute inset-0 w-full h-full object-cover"
           />
           {/* hover reveal — full collection catalogue photo */}
