@@ -377,15 +377,15 @@ function CollectionCard({ col, index, onOpen }) {
         data-grow
         className={`bg-white border border-amber-200 rounded-2xl overflow-hidden flex flex-col cursor-pointer transition-shadow duration-500 ${hovered ? 'shadow-2xl' : 'shadow-sm'}`}
       >
-        <div className="h-56 bg-white overflow-hidden relative" style={{ transformStyle: 'preserve-3d' }}>
-          {/* default — wallet band, lower portion (texture + brand) on white */}
+        <div className="h-48 bg-amber-50 overflow-hidden relative" style={{ transformStyle: 'preserve-3d' }}>
+          {/* default — wallet band, lower portion (texture + brand) — old-commit look */}
           <motion.img
             src={col.cover}
             alt={col.name}
             initial={false}
             animate={{ opacity: hovered ? 0 : 1 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            style={{ translateZ: 30, objectPosition: '50% 82%' }}
+            style={{ translateZ: 30, objectPosition: '50% 75%' }}
             className="absolute inset-0 w-full h-full object-cover"
           />
           {/* hover reveal — full collection catalogue photo */}
@@ -1340,7 +1340,7 @@ export default function BrandioLeatherWebsite() {
           <div className="max-w-5xl mx-auto">
             <h2 className="text-5xl font-bold mb-4 text-amber-900">Collections</h2>
             <p className="text-gray-600 mb-12 text-lg">Curated leather ranges crafted around a unified design language.</p>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-2 gap-6">
               {[
                 { code: 'MC', name: 'Massini Collection', size: 'European Size', material: 'Cow NDM',                       styles: 'Note Case · Bifold · Trifold',  cover: '/cover-MC.png', hero: '/col-MC.jpg', desc: 'European-style wallets in supple Cow NDM leather. Slim profile, maximum function — presented in a Yaali New York tin.' },
                 { code: 'OS', name: 'Osaka Collection',   size: 'American Size', material: 'Cow Carbon Fibre',              styles: 'Bifold · Trifold · Zip-around', cover: '/cover-OS.png', hero: '/col-OS.jpg', desc: 'Carbon-fibre-textured wallets shipped in a premium MURA tin box. Bold, technical, durable.' },
