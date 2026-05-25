@@ -758,6 +758,9 @@ const PRODUCTS = {
       { id: 8008, name: 'Black Leather Waist Bag',      sku: 'B-8008', collection: 'Cow Nappa Leather',    colors: 'Any colour',              frontImage: '/B-8008.png', insideImage: '/B-8008_inside.png', altLabel: 'Inside View', views: [{ src: '/B-8008.png', label: 'Front' }, { src: '/B-8008_inside.png', label: 'Inside' }, { src: '/B-8008_back.png', label: 'Back' }, { src: '/B-8008_side.png', label: 'Side' }] },
       { id: 9002, name: 'Black Leather Chest Sling',    sku: 'B-9002', collection: 'Cow Fine Milled Nappa Leather', colors: 'Any colour',     frontImage: '/B-9002.png', insideImage: '/B-9002_inside.png', altLabel: 'Inside View', views: [{ src: '/B-9002.png', label: 'Front' }, { src: '/B-9002_inside.png', label: 'Inside' }, { src: '/B-9002_side.png', label: 'Side' }] },
     ],
+    duffle: [
+      { id: 9001, name: 'Vintage Brown Weekender Duffle', sku: 'B-9001', collection: 'Cow Crazy Horse Leather', colors: 'Brown · Tan', frontImage: '/B-9001.png', insideImage: '/B-9001_inside.png', altLabel: 'Inside View', views: [{ src: '/B-9001.png', label: 'Front' }, { src: '/B-9001_inside.png', label: 'Inside' }] },
+    ],
   },
   'small-accessories': {
     'card-cases': [
@@ -794,7 +797,7 @@ const PRODUCTS = {
 
 const MAIN_CATEGORIES = [
   { id: 'wallets',           label: 'Wallets',              image: '/MC-0064.png', desc: 'Bifold · Trifold · Note Case · Zip-around' },
-  { id: 'bags',              label: 'Bags',                 image: '/B-8061.png',  desc: 'Briefcase · Crossbody · Sling & Waist' },
+  { id: 'bags',              label: 'Bags',                 image: '/B-8061.png',  desc: 'Briefcase · Crossbody · Sling & Waist · Duffle' },
   { id: 'small-accessories', label: 'Small Accessories',    image: '/Y-103.png',   desc: 'Card Cases · Money Clip · Coin Cases' },
   { id: 'travel',            label: 'Travel Accessories',   image: '/YL-45.png',   desc: 'Passport Holders · Travel Wallets' },
 ];
@@ -816,6 +819,7 @@ const BAG_SUBS = [
   { id: 'briefcase',   label: 'Briefcase' },
   { id: 'crossbody',   label: 'Crossbody' },
   { id: 'sling-waist', label: 'Sling & Waist' },
+  { id: 'duffle',      label: 'Duffle' },
 ];
 
 /* ─── App ───────────────────────────────────────────────────────────────────── */
