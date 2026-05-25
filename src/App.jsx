@@ -1388,9 +1388,9 @@ export default function BrandioLeatherWebsite() {
                 { code: 'PA', name: 'Palermo — Yaali New York',   desc: 'Yaali New York branded gift box for the Palermo range.',      frontImage: '/PA_packaging.png',         insideImage: '/PA_in_box.png' },
                 { code: 'MN', name: 'Munich — Yacht Box',         desc: 'Yacht-line presentation box for the Munich black collection.', frontImage: '/MN_packaging.png',         insideImage: '/MN_in_box.png' },
                 { code: 'CH', name: 'Chicago — Brandio New York', desc: 'Brandio New York branded box for the Chicago woven range.',   frontImage: '/CH_packaging.png',         insideImage: '/CH_in_box.png' },
-                { code: 'BA', name: 'Bali — Brandio Box',         desc: 'Branded Brandio gift box for the Bali range.',                frontImage: '/Brandio_Packaging.png' },
+                { code: 'BA', name: 'Bali — Brandio Box',         desc: 'Branded Brandio gift box for the Bali range.',                frontImage: '/Brandio_Packaging.png', insideImage: '/Brandio_in_box.png' },
                 { code: 'MI', name: 'Micro — Branded Gift Box',   desc: 'Premium gift box for the Micro range, RFID protected.',       frontImage: '/Branded_Packaging.png', insideImage: '/Branded_in_box.png' },
-                { code: 'CA', name: 'Cancun — Dimbill Box',       desc: 'Dimbill-branded gift box for the Cancun range.',              frontImage: '/Dimbill_Packaging.png' },
+                { code: 'CA', name: 'Cancun — Dimbill Box',       desc: 'Dimbill-branded gift box for the Cancun range.',              frontImage: '/Dimbill_Packaging.png',  insideImage: '/Dimbill_in_box.png' },
               ].map((item, i) => (
                 <PackagingCard key={i} item={item} index={i} />
               ))}
