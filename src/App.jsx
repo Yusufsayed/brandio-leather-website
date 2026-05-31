@@ -718,7 +718,6 @@ const PRODUCTS = {
       { id: 5006, name: 'American Size Bifold', sku: 'CA-5006', collection: 'Cancun Collection · Cow DD Polished',  frontImage: '/CA-5006.png',  insideImage: '/CA-5006_inside.png' },
     ],
     trifold: [
-      { id: 65,   name: 'European Size Trifold', sku: 'MC-0065', collection: 'Massini Collection · Cow NDM',         frontImage: '/MC-0065.png',  insideImage: '/MC-0065_inside.png' },
       { id: 124,  name: 'American Size Trifold', sku: 'OS-0124', collection: 'Osaka Collection · Cow Carbon Fibre',  frontImage: '/OS-0124.png',  insideImage: '/OS-0124_inside.png' },
       { id: 3036, name: 'American Size Trifold', sku: 'PA-3036', collection: 'Palermo Collection · Cow PDM',         frontImage: '/PA-3036.png',  insideImage: '/PA-3036_inside.png' },
       { id: 2287, name: 'American Size Trifold', sku: 'MN-2287', collection: 'Munich Collection · Cow DD',           frontImage: '/MN-2287.png',  insideImage: '/MN-2287_inside.png' },
@@ -825,6 +824,7 @@ const BAG_SUBS = [
 /* ─── App ───────────────────────────────────────────────────────────────────── */
 export default function BrandioLeatherWebsite() {
   const [isMenuOpen,       setIsMenuOpen]       = useState(false);
+  const [contactForm,      setContactForm]      = useState({ name: '', email: '', company: '', message: '' });
   const [activeSection,    setActiveSection]    = useState('home');
   const [mainCategory,     setMainCategory]     = useState('wallets');
   const [walletSub,        setWalletSub]        = useState('bifold');
@@ -1419,14 +1419,28 @@ export default function BrandioLeatherWebsite() {
           <div className="max-w-4xl mx-auto">
             <h2 className="text-5xl font-bold mb-12 text-amber-900">Get In Touch</h2>
             <div className="grid md:grid-cols-2 gap-12">
-              <form className="space-y-6">
-                <input type="text"  placeholder="Your Name"     className="w-full p-4 border border-amber-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-600" />
-                <input type="email" placeholder="Your Email"    className="w-full p-4 border border-amber-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-600" />
-                <input type="text"  placeholder="Company Name"  className="w-full p-4 border border-amber-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-600" />
-                <textarea          placeholder="Your Message" rows="5" className="w-full p-4 border border-amber-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-600" />
-                <button className="w-full py-3 bg-gradient-to-r from-amber-900 to-yellow-700 text-white rounded-lg font-semibold hover:shadow-lg transition">
-                  Send Message
-                </button>
+              <form className="space-y-6" onSubmit={e => e.preventDefault()}>
+                <input type="text"  placeholder="Your Name"     value={contactForm.name}    onChange={e => setContactForm(f => ({ ...f, name: e.target.value }))}    className="w-full p-4 border border-amber-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-600" />
+                <input type="email" placeholder="Your Email"    value={contactForm.email}   onChange={e => setContactForm(f => ({ ...f, email: e.target.value }))}   className="w-full p-4 border border-amber-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-600" />
+                <input type="text"  placeholder="Company Name"  value={contactForm.company} onChange={e => setContactForm(f => ({ ...f, company: e.target.value }))} className="w-full p-4 border border-amber-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-600" />
+                <textarea          placeholder="Your Message" rows="5" value={contactForm.message} onChange={e => setContactForm(f => ({ ...f, message: e.target.value }))} className="w-full p-4 border border-amber-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-600" />
+                <div className="grid grid-cols-2 gap-3">
+                  <a
+                    href={`mailto:inquiries@brandioleather.com?subject=Inquiry from ${encodeURIComponent(contactForm.name || 'Website')}${contactForm.company ? ` (${encodeURIComponent(contactForm.company)})` : ''}&body=${encodeURIComponent(`Name: ${contactForm.name}\nEmail: ${contactForm.email}\nCompany: ${contactForm.company}\n\n${contactForm.message}`)}`}
+                    className="flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-amber-900 to-yellow-700 text-white rounded-lg font-semibold hover:shadow-lg transition text-sm"
+                  >
+                    <Mail size={16} /> Send via Email
+                  </a>
+                  <a
+                    href={`https://wa.me/919831335778?text=${encodeURIComponent(`Hi, I'm ${contactForm.name || 'interested in your products'}${contactForm.company ? ` from ${contactForm.company}` : ''}.\n\n${contactForm.message}`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 hover:shadow-lg transition text-sm"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/></svg>
+                    Chat on WhatsApp
+                  </a>
+                </div>
               </form>
               <div className="space-y-8">
                 <div>
@@ -1438,7 +1452,14 @@ export default function BrandioLeatherWebsite() {
                     </div>
                     <div className="flex items-start gap-4">
                       <Mail className="text-amber-900 mt-1 flex-shrink-0" size={24} />
-                      <div><p className="font-semibold text-gray-900">Email</p><p className="text-gray-600">Fiza@brandio.com</p></div>
+                      <div>
+                        <p className="font-semibold text-gray-900">Email</p>
+                        <p className="text-gray-600">
+                          Fiza@brandio.com<br />
+                          partnerships@brandioleather.com<br />
+                          inquiries@brandioleather.com
+                        </p>
+                      </div>
                     </div>
                     <div className="flex items-start gap-4">
                       <MapPin className="text-amber-900 mt-1 flex-shrink-0" size={24} />
@@ -1498,6 +1519,16 @@ export default function BrandioLeatherWebsite() {
                     <span className="absolute -bottom-0.5 left-0 w-0 h-px bg-amber-300 group-hover:w-full transition-all duration-300" />
                   </button>
                 ))}
+                <a
+                  href="https://wa.me/919831335778"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-grow
+                  className="text-amber-100/90 hover:text-white text-sm text-left transition relative group w-fit flex items-center gap-1.5"
+                >
+                  WhatsApp
+                  <span className="absolute -bottom-0.5 left-0 w-0 h-px bg-amber-300 group-hover:w-full transition-all duration-300" />
+                </a>
               </div>
             </div>
           </div>
