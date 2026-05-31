@@ -1470,7 +1470,12 @@ export default function BrandioLeatherWebsite() {
                 <div className="bg-amber-50 p-6 rounded-lg border border-amber-200">
                   <h4 className="font-bold text-amber-900 mb-3">Schedule a Call</h4>
                   <p className="text-gray-700 mb-4">Let's discuss your leather goods requirements and explore custom solutions.</p>
-                  <button className="w-full py-2 bg-amber-900 text-white rounded-lg font-semibold hover:bg-amber-800 transition">Book Meeting</button>
+                  <a
+                    href="https://wa.me/919831335778?text=Hi%2C%20I%27d%20like%20to%20schedule%20a%20call%20to%20discuss%20leather%20goods%20requirements."
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block w-full py-2 bg-amber-900 text-white rounded-lg font-semibold hover:bg-amber-800 transition text-center"
+                  >Book Meeting</a>
                 </div>
               </div>
             </div>
