@@ -98,7 +98,7 @@ function LoadingReveal({ logo }) {
               transition={{ duration: 0.8, delay: 0.7 }}
               className="text-amber-900 text-xs tracking-[0.4em] mt-6 font-light"
             >
-              CRAFTED LEATHER · SINCE 2010
+              CRAFTED LEATHER · SINCE 2007
             </motion.p>
           </motion.div>
         </motion.div>
@@ -846,7 +846,7 @@ export default function BrandioLeatherWebsite() {
   const heroTextOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
 
   const heroSlides = [
-    { image: FACTORY_FRONT, title: 'Timeless Leather Craftsmanship',  subtitle: "Handcrafted leather goods by Brandio Leather Pvt Ltd. Since 2010, we've exported premium leather accessories to over 30 countries." },
+    { image: FACTORY_FRONT, title: 'Timeless Leather Craftsmanship',  subtitle: "Handcrafted leather goods by Brandio Leather Pvt Ltd. Since 2007, we've exported premium leather accessories to over 30 countries." },
     { image: FACTORY_SIDE,  title: 'World-Class Manufacturing',        subtitle: 'State-of-the-art facility producing premium leather goods with precision, quality, and care at every step.' },
   ];
 
@@ -954,7 +954,7 @@ export default function BrandioLeatherWebsite() {
             <div className="max-w-4xl mx-auto">
               <AnimatePresence mode="wait">
                 <motion.div key={currentSlide}>
-                  <h1 className="text-5xl md:text-7xl font-bold mb-6 text-white leading-tight overflow-hidden">
+                  <h1 className="text-4xl md:text-7xl font-bold mb-6 text-white leading-tight overflow-hidden">
                     <StaggerWords text={heroSlides[currentSlide].title} />
                   </h1>
                   <motion.p
@@ -989,11 +989,11 @@ export default function BrandioLeatherWebsite() {
               </motion.div>
             </div>
           </motion.div>
-          <button onClick={() => setCurrentSlide(p => (p - 1 + heroSlides.length) % heroSlides.length)} className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-2 bg-white/20 rounded-full hover:bg-white/40 transition">
-            <ChevronLeft size={32} className="text-white" />
+          <button onClick={() => setCurrentSlide(p => (p - 1 + heroSlides.length) % heroSlides.length)} className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-3 bg-white/20 rounded-full hover:bg-white/40 transition">
+            <ChevronLeft size={28} className="text-white" />
           </button>
-          <button onClick={() => setCurrentSlide(p => (p + 1) % heroSlides.length)} className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-2 bg-white/20 rounded-full hover:bg-white/40 transition">
-            <ChevronRight size={32} className="text-white" />
+          <button onClick={() => setCurrentSlide(p => (p + 1) % heroSlides.length)} className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-3 bg-white/20 rounded-full hover:bg-white/40 transition">
+            <ChevronRight size={28} className="text-white" />
           </button>
           <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-20 flex gap-3">
             {heroSlides.map((_, i) => (
@@ -1013,7 +1013,7 @@ export default function BrandioLeatherWebsite() {
         </section>
 
         {/* ── Philosophy strip — muted brown cinematic transition ──────────── */}
-        <section className="relative text-amber-50 py-32 md:py-44 overflow-hidden" style={{ backgroundColor: '#2d231a' }}>
+        <section className="relative text-amber-50 py-16 md:py-44 overflow-hidden" style={{ backgroundColor: '#2d231a' }}>
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 0.14 }}
@@ -1041,7 +1041,7 @@ export default function BrandioLeatherWebsite() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-80px' }}
               transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-              className="text-4xl md:text-6xl lg:text-7xl font-light leading-[1.05] tracking-tight mb-8"
+              className="text-3xl md:text-6xl lg:text-7xl font-light leading-[1.05] tracking-tight mb-8"
             >
               Leather, finished by hand.<br />
               <span className="text-amber-200/90 italic font-extralight">Engineered to outlive the trend cycle.</span>
@@ -1138,16 +1138,16 @@ export default function BrandioLeatherWebsite() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-          className="py-20 px-4"
+          className="py-12 md:py-20 px-4"
         >
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-5xl font-bold mb-8 text-amber-900">Our Story</h2>
+            <h2 className="text-3xl md:text-5xl font-bold mb-8 text-amber-900">Our Story</h2>
             <div className="space-y-6 text-lg text-gray-700">
               <p>At Brandio Leather Pvt Ltd, we believe in the power of craftsmanship. Every piece we create tells a story of dedication, precision, and passion. With over a decade of experience, we've refined our expertise to deliver leather goods that stand the test of time.</p>
               <p>Our artisans meticulously hand-select the finest leather from trusted suppliers across the globe. Using traditional techniques combined with modern innovation, we create products that are not just beautiful, but built to last.</p>
               <p>Trusted by customers in Europe, North America, Australia, and beyond, we're committed to exporting quality leather goods that represent the best of craftsmanship.</p>
             </div>
-            <div className="grid md:grid-cols-4 gap-6 mt-12">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12">
               {[
                 { title: 'Premium Quality',     desc: 'Finest leather selection' },
                 { title: 'Expert Craftsmanship', desc: 'Experienced artisans' },
@@ -1171,10 +1171,10 @@ export default function BrandioLeatherWebsite() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-          className="py-20 px-4"
+          className="py-12 md:py-20 px-4"
         >
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-5xl font-bold mb-2 text-amber-900">Our Products</h2>
+            <h2 className="text-3xl md:text-5xl font-bold mb-2 text-amber-900">Our Products</h2>
             <p className="text-gray-600 mb-10 text-lg">Premium leather goods crafted for quality and style.</p>
 
             {/* ── Level 1: 4 main categories ── */}
@@ -1193,13 +1193,13 @@ export default function BrandioLeatherWebsite() {
                     if (cat.id === 'small-accessories') setSmallAccSub('card-cases');
                     if (cat.id === 'bags')              setBagSub('briefcase');
                   }}
-                  className={`p-4 rounded-xl text-left transition-all duration-300 flex items-center gap-4 ${
+                  className={`p-3 md:p-4 rounded-xl text-left transition-all duration-300 flex items-center gap-3 md:gap-4 ${
                     mainCategory === cat.id
                       ? 'bg-amber-900 text-white shadow-xl'
                       : 'bg-white border border-amber-200 text-amber-900 hover:border-amber-500 hover:shadow-md'
                   }`}
                 >
-                  <div className={`shrink-0 w-16 h-16 rounded-lg overflow-hidden flex items-center justify-center transition-colors ${
+                  <div className={`shrink-0 w-12 h-12 md:w-16 md:h-16 rounded-lg overflow-hidden flex items-center justify-center transition-colors ${
                     mainCategory === cat.id ? 'bg-amber-50' : 'bg-amber-50'
                   }`}>
                     <img src={cat.image} alt={cat.label} className="w-full h-full object-contain p-1" />
@@ -1344,10 +1344,10 @@ export default function BrandioLeatherWebsite() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-          className="py-20 px-4"
+          className="py-12 md:py-20 px-4"
         >
           <div className="max-w-5xl mx-auto">
-            <h2 className="text-5xl font-bold mb-4 text-amber-900">Collections</h2>
+            <h2 className="text-3xl md:text-5xl font-bold mb-4 text-amber-900">Collections</h2>
             <p className="text-gray-600 mb-12 text-lg">Curated leather ranges crafted around a unified design language.</p>
             <div className="grid md:grid-cols-2 gap-6">
               {[
@@ -1380,11 +1380,11 @@ export default function BrandioLeatherWebsite() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-          className="py-20 px-4"
+          className="py-12 md:py-20 px-4"
         >
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-5xl font-bold mb-4 text-amber-900">Packaging</h2>
-            <p className="text-gray-600 mb-3 text-lg">Each collection ships in its own branded presentation. Hover any box to see the wallet seated inside.</p>
+            <h2 className="text-3xl md:text-5xl font-bold mb-4 text-amber-900">Packaging</h2>
+            <p className="text-gray-600 mb-3 text-lg">Each collection ships in its own branded presentation. Tap or hover any box to see the wallet seated inside.</p>
             <p className="text-sm font-semibold text-amber-700 mb-12">Every range is available as a <span className="text-amber-900">tin box</span> or a <span className="text-amber-900">corrugated paper box</span>.</p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -1419,10 +1419,10 @@ export default function BrandioLeatherWebsite() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-          className="py-20 px-4"
+          className="py-12 md:py-20 px-4"
         >
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-5xl font-bold mb-12 text-amber-900">Get In Touch</h2>
+            <h2 className="text-3xl md:text-5xl font-bold mb-8 md:mb-12 text-amber-900">Get In Touch</h2>
             <div className="grid md:grid-cols-2 gap-12">
               <form className="space-y-6" onSubmit={e => e.preventDefault()}>
                 <input type="text"  placeholder="Your Name"     value={contactForm.name}    onChange={e => setContactForm(f => ({ ...f, name: e.target.value }))}    className="w-full p-4 border border-amber-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-600" />
@@ -1502,7 +1502,7 @@ export default function BrandioLeatherWebsite() {
       )}
 
       {/* ── Footer ───────────────────────────────────────────────────────────── */}
-      <footer className="relative bg-gradient-to-b from-amber-900 via-amber-950 to-stone-950 text-white pt-16 pb-10 px-4 overflow-hidden">
+      <footer className="relative bg-gradient-to-b from-amber-900 via-amber-950 to-stone-950 text-white pt-16 pb-24 md:pb-10 px-4 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(252,211,77,0.15),transparent_55%)] pointer-events-none" />
         <div className="relative max-w-6xl mx-auto">
           <div className="grid md:grid-cols-3 gap-10 mb-10">
@@ -1571,7 +1571,7 @@ export default function BrandioLeatherWebsite() {
         aria-label="Chat on WhatsApp"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/></svg>
-        <span className="text-sm font-semibold">WhatsApp</span>
+        <span className="hidden sm:inline text-sm font-semibold">WhatsApp</span>
       </a>
 
     </div>
