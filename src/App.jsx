@@ -1431,7 +1431,7 @@ export default function BrandioLeatherWebsite() {
                 <textarea          placeholder="Your Message" rows="5" value={contactForm.message} onChange={e => setContactForm(f => ({ ...f, message: e.target.value }))} className="w-full p-4 border border-amber-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-600" />
                 <div className="grid grid-cols-2 gap-3">
                   <a
-                    href={`mailto:inquiries@brandioleather.com?subject=Inquiry from ${encodeURIComponent(contactForm.name || 'Website')}${contactForm.company ? ` (${encodeURIComponent(contactForm.company)})` : ''}&body=${encodeURIComponent(`Name: ${contactForm.name}\nEmail: ${contactForm.email}\nCompany: ${contactForm.company}\n\n${contactForm.message}`)}`}
+                    href={`mailto:inquiries@brandioleather.com?subject=${encodeURIComponent(`Inquiry from ${contactForm.name || 'Website'}${contactForm.company ? ` — ${contactForm.company}` : ''}`)}&body=${encodeURIComponent(`Hello Brandio Team,\n\nI am interested in learning more about your leather goods manufacturing capabilities.\n\nRequirements/Inquiry:\n${contactForm.message || '[Please describe your requirements here]'}\n\nLooking forward to hearing from you.\n\nBest regards,\n${contactForm.name || '[Your Name]'}\n${contactForm.company || '[Company Name]'}\n${contactForm.email || '[Email Address]'}\n[Phone Number]`)}`}
                     className="flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-amber-900 to-yellow-700 text-white rounded-lg font-semibold hover:shadow-lg transition text-sm"
                   >
                     <Mail size={16} /> Send via Email
