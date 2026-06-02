@@ -348,6 +348,11 @@ const LOGO = 'https://raw.githubusercontent.com/Yusufsayed/brandio-leather-websi
 const FACTORY_FRONT = 'https://raw.githubusercontent.com/Yusufsayed/brandio-leather-website/main/42545c7a-e2a7-4009-82f2-f1dc6a009b4c.JPG';
 const FACTORY_SIDE = 'https://raw.githubusercontent.com/Yusufsayed/brandio-leather-website/main/c9ae221d-0bd2-42b0-b23e-390863a98187.JPG';
 
+const WA_NUMBER = '919831335778';
+const WA_TEMPLATE_MSG = `Hello Brandio Team,\n\nI am interested in your leather goods manufacturing services.\n\nName: \nCompany: \nCountry: \n\nI would like information regarding:\n☐ Product Catalog\n☐ MOQ\n☐ Custom Branding\n☐ Pricing\n☐ Samples\n☐ Book a Meeting\n\nLooking forward to hearing from you.`;
+const WA_LINK = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(WA_TEMPLATE_MSG)}`;
+const CALENDLY_LINK = 'https://calendly.com/brandioleather';
+
 const NAV_ITEMS = [
   { id: 'home',        label: 'Home' },
   { id: 'about',       label: 'About' },
@@ -979,7 +984,7 @@ export default function BrandioLeatherWebsite() {
                   onClick={() => goTo('contact')}
                   className="px-8 py-3 border-2 border-white text-white rounded-lg font-semibold hover:bg-white/10 transition-colors"
                 >
-                  Get in Touch
+                  Get a Quote
                 </MagneticButton>
               </motion.div>
             </div>
@@ -1432,7 +1437,7 @@ export default function BrandioLeatherWebsite() {
                     <Mail size={16} /> Send via Email
                   </a>
                   <a
-                    href={`https://wa.me/919831335778?text=${encodeURIComponent(`Hi, I'm ${contactForm.name || 'interested in your products'}${contactForm.company ? ` from ${contactForm.company}` : ''}.\n\n${contactForm.message}`)}`}
+                    href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`Hello Brandio Team,\n\nI am interested in your leather goods manufacturing services.\n\nName: ${contactForm.name}\nCompany: ${contactForm.company}\nCountry: \n\nMessage: ${contactForm.message}\n\nLooking forward to hearing from you.`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center gap-2 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 hover:shadow-lg transition text-sm"
@@ -1467,15 +1472,28 @@ export default function BrandioLeatherWebsite() {
                     </div>
                   </div>
                 </div>
-                <div className="bg-amber-50 p-6 rounded-lg border border-amber-200">
-                  <h4 className="font-bold text-amber-900 mb-3">Schedule a Call</h4>
-                  <p className="text-gray-700 mb-4">Let's discuss your leather goods requirements and explore custom solutions.</p>
+                <div className="bg-amber-50 p-6 rounded-xl border border-amber-200">
+                  <h4 className="font-bold text-amber-900 mb-1">Book a Meeting</h4>
+                  <p className="text-gray-600 text-sm mb-4">Schedule a 30-minute consultation with our team.</p>
                   <a
-                    href="https://wa.me/919831335778?text=Hi%2C%20I%27d%20like%20to%20schedule%20a%20call%20to%20discuss%20leather%20goods%20requirements."
+                    href={CALENDLY_LINK}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block w-full py-2 bg-amber-900 text-white rounded-lg font-semibold hover:bg-amber-800 transition text-center"
-                  >Book Meeting</a>
+                    className="block w-full py-2.5 bg-amber-900 text-white rounded-lg font-semibold hover:bg-amber-800 transition text-center text-sm"
+                  >Book via Calendly</a>
+                </div>
+                <div className="bg-green-50 p-6 rounded-xl border border-green-200">
+                  <h4 className="font-bold text-green-800 mb-1">Need a quick response?</h4>
+                  <p className="text-gray-600 text-sm mb-4">Chat with us directly on WhatsApp.</p>
+                  <a
+                    href={WA_LINK}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 w-full py-2.5 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition text-sm"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/></svg>
+                    Chat on WhatsApp
+                  </a>
                 </div>
               </div>
             </div>
@@ -1525,7 +1543,7 @@ export default function BrandioLeatherWebsite() {
                   </button>
                 ))}
                 <a
-                  href="https://wa.me/919831335778"
+                  href={WA_LINK}
                   target="_blank"
                   rel="noopener noreferrer"
                   data-grow
@@ -1543,6 +1561,18 @@ export default function BrandioLeatherWebsite() {
           </div>
         </div>
       </footer>
+
+      {/* ── Floating WhatsApp button ──────────────────────────────────────────── */}
+      <a
+        href={WA_LINK}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white pl-4 pr-5 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 group"
+        aria-label="Chat on WhatsApp"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/></svg>
+        <span className="text-sm font-semibold">WhatsApp</span>
+      </a>
 
     </div>
   );
