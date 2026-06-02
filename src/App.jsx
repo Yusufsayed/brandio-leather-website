@@ -1509,7 +1509,7 @@ export default function BrandioLeatherWebsite() {
             <div>
               <img src={LOGO} alt="Brandio Leather" className="h-14 mb-5 drop-shadow-lg" />
               <p className="text-amber-100/85 text-sm leading-relaxed max-w-xs">
-                Premium leather goods manufacturer and exporter since 2010. Crafted by hand, shipped to over thirty countries.
+                Premium leather goods manufacturer and exporter since 2007. Crafted by hand, shipped to over thirty countries.
               </p>
             </div>
             <div>
