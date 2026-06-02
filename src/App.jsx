@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Menu, X, ChevronLeft, ChevronRight, Phone, Mail, MapPin, ChevronRight as ChevronRightSm } from 'lucide-react';
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, useScroll } from 'framer-motion';
+import { Analytics } from '@vercel/analytics/react';
 
 /* ─── Custom cursor (desktop only) ─────────────────────────────────────────── */
 function CustomCursor() {
@@ -830,6 +831,7 @@ const BAG_SUBS = [
 export default function BrandioLeatherWebsite() {
   const [isMenuOpen,       setIsMenuOpen]       = useState(false);
   const [contactForm,      setContactForm]      = useState({ name: '', email: '', company: '', message: '' });
+  const [formStatus,       setFormStatus]       = useState('idle'); // idle | sending | sent | error
   const [activeSection,    setActiveSection]    = useState('home');
   const [mainCategory,     setMainCategory]     = useState('wallets');
   const [walletSub,        setWalletSub]        = useState('bifold');
@@ -867,6 +869,7 @@ export default function BrandioLeatherWebsite() {
 
   return (
     <div className="bg-gradient-to-b from-amber-50 via-white to-amber-50 text-gray-900 min-h-screen">
+      <Analytics />
       <LoadingReveal logo={LOGO} />
       <CustomCursor />
       <ProductAlcove product={alcoveProduct} onClose={() => setAlcoveProduct(null)} />
@@ -1424,18 +1427,43 @@ export default function BrandioLeatherWebsite() {
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl md:text-5xl font-bold mb-8 md:mb-12 text-amber-900">Get In Touch</h2>
             <div className="grid md:grid-cols-2 gap-12">
-              <form className="space-y-6" onSubmit={e => e.preventDefault()}>
+              {formStatus === 'sent' ? (
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex flex-col items-center justify-center text-center py-16 space-y-4"
+                >
+                  <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="text-green-600" width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                  </div>
+                  <h3 className="text-2xl font-bold text-amber-900">Message Sent!</h3>
+                  <p className="text-gray-600">We'll be in touch within 24 hours.</p>
+                  <button onClick={() => { setFormStatus('idle'); setContactForm({ name: '', email: '', company: '', message: '' }); }} className="mt-4 text-sm text-amber-700 underline">Send another message</button>
+                </motion.div>
+              ) : (
+              <form className="space-y-6" onSubmit={async e => {
+                e.preventDefault();
+                const id = import.meta.env.VITE_FORMSPREE_ID;
+                if (!id) { window.open(`mailto:inquiries@brandioleather.com?subject=${encodeURIComponent(`Inquiry from ${contactForm.name || 'Website'}`)}&body=${encodeURIComponent(`Hello Brandio Team,\n\nI am interested in learning more about your leather goods manufacturing capabilities.\n\nRequirements/Inquiry:\n${contactForm.message || ''}\n\nBest regards,\n${contactForm.name}\n${contactForm.company}\n${contactForm.email}`)}`); return; }
+                setFormStatus('sending');
+                try {
+                  const res = await fetch(`https://formspree.io/f/${id}`, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(contactForm) });
+                  if (res.ok) setFormStatus('sent'); else setFormStatus('error');
+                } catch { setFormStatus('error'); }
+              }}>
                 <input type="text"  placeholder="Your Name"     value={contactForm.name}    onChange={e => setContactForm(f => ({ ...f, name: e.target.value }))}    className="w-full p-4 border border-amber-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-600" />
                 <input type="email" placeholder="Your Email"    value={contactForm.email}   onChange={e => setContactForm(f => ({ ...f, email: e.target.value }))}   className="w-full p-4 border border-amber-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-600" />
                 <input type="text"  placeholder="Company Name"  value={contactForm.company} onChange={e => setContactForm(f => ({ ...f, company: e.target.value }))} className="w-full p-4 border border-amber-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-600" />
                 <textarea          placeholder="Your Message" rows="5" value={contactForm.message} onChange={e => setContactForm(f => ({ ...f, message: e.target.value }))} className="w-full p-4 border border-amber-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-600" />
+                {formStatus === 'error' && <p className="text-red-600 text-sm">Something went wrong — please try WhatsApp or email directly.</p>}
                 <div className="grid grid-cols-2 gap-3">
-                  <a
-                    href={`mailto:inquiries@brandioleather.com?subject=${encodeURIComponent(`Inquiry from ${contactForm.name || 'Website'}${contactForm.company ? ` — ${contactForm.company}` : ''}`)}&body=${encodeURIComponent(`Hello Brandio Team,\n\nI am interested in learning more about your leather goods manufacturing capabilities.\n\nRequirements/Inquiry:\n${contactForm.message || '[Please describe your requirements here]'}\n\nLooking forward to hearing from you.\n\nBest regards,\n${contactForm.name || '[Your Name]'}\n${contactForm.company || '[Company Name]'}\n${contactForm.email || '[Email Address]'}\n[Phone Number]`)}`}
-                    className="flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-amber-900 to-yellow-700 text-white rounded-lg font-semibold hover:shadow-lg transition text-sm"
+                  <button
+                    type="submit"
+                    disabled={formStatus === 'sending'}
+                    className="flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-amber-900 to-yellow-700 text-white rounded-lg font-semibold hover:shadow-lg transition text-sm disabled:opacity-60"
                   >
-                    <Mail size={16} /> Send via Email
-                  </a>
+                    <Mail size={16} /> {formStatus === 'sending' ? 'Sending…' : 'Send Message'}
+                  </button>
                   <a
                     href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`Hello Brandio Team,\n\nI am interested in your leather goods manufacturing services.\n\nName: ${contactForm.name}\nCompany: ${contactForm.company}\nCountry: \n\nMessage: ${contactForm.message}\n\nLooking forward to hearing from you.`)}`}
                     target="_blank"
@@ -1447,6 +1475,7 @@ export default function BrandioLeatherWebsite() {
                   </a>
                 </div>
               </form>
+              )}
               <div className="space-y-8">
                 <div>
                   <h3 className="text-2xl font-bold text-amber-900 mb-4">Direct Contact</h3>
