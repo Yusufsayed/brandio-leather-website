@@ -1445,9 +1445,10 @@ export default function BrandioLeatherWebsite() {
                 e.preventDefault();
                 const id = import.meta.env.VITE_FORMSPREE_ID;
                 if (!id) { window.open(`mailto:inquiries@brandioleather.com?subject=${encodeURIComponent(`Inquiry from ${contactForm.name || 'Website'}`)}&body=${encodeURIComponent(`Hello Brandio Team,\n\nI am interested in learning more about your leather goods manufacturing capabilities.\n\nRequirements/Inquiry:\n${contactForm.message || ''}\n\nBest regards,\n${contactForm.name}\n${contactForm.company}\n${contactForm.email}`)}`); return; }
+                const endpoint = id.startsWith('http') ? id : `https://formspree.io/f/${id}`;
                 setFormStatus('sending');
                 try {
-                  const res = await fetch(`https://formspree.io/f/${id}`, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(contactForm) });
+                  const res = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(contactForm) });
                   if (res.ok) setFormStatus('sent'); else setFormStatus('error');
                 } catch { setFormStatus('error'); }
               }}>
