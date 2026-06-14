@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { Menu, X, ChevronLeft, ChevronRight, Phone, Mail, MapPin, ChevronRight as ChevronRightSm, Globe, ChevronDown, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, useScroll } from 'framer-motion';
 import { Analytics } from '@vercel/analytics/react';
+import Lenis from 'lenis';
 
 /* ─── Custom cursor (desktop only) ─────────────────────────────────────────── */
 function CustomCursor() {
@@ -58,7 +59,7 @@ function CustomCursor() {
 }
 
 /* ─── Spotlight — cursor-tracking luxury glow (desktop only, GPU-light) ─────── */
-function Spotlight({ size = 560, color = 'rgba(251,191,36,0.30)' }) {
+function Spotlight({ size = 560, color = 'rgba(251,191,36,0.30)', blend = 'screen' }) {
   const ref = useRef(null);
   const mouseX = useSpring(0, { stiffness: 120, damping: 22, mass: 0.5 });
   const mouseY = useSpring(0, { stiffness: 120, damping: 22, mass: 0.5 });
@@ -87,13 +88,92 @@ function Spotlight({ size = 560, color = 'rgba(251,191,36,0.30)' }) {
       ref={ref}
       aria-hidden
       style={{
-        width: size, height: size, x, y,
+        width: size, height: size, x, y, mixBlendMode: blend,
         background: `radial-gradient(circle at center, ${color}, rgba(217,119,6,0.10) 45%, transparent 70%)`,
       }}
       animate={{ opacity: active ? 1 : 0 }}
       transition={{ opacity: { duration: 0.45, ease: [0.22, 1, 0.36, 1] } }}
-      className="pointer-events-none absolute left-0 top-0 z-[5] rounded-full blur-2xl mix-blend-screen will-change-transform"
+      className="pointer-events-none absolute left-0 top-0 z-[5] rounded-full blur-2xl will-change-transform"
     />
+  );
+}
+
+/* ─── Interactive 3D showcase (Spline) ──────────────────────────────────────────
+   Heavy WebGL — so it is: (1) desktop-only, (2) lazy-loaded as a separate chunk,
+   (3) only fetched once scrolled near view. Mobile + initial load never pay for it.
+   TODO: replace SPLINE_SCENE with a custom Brandio leather object made free at
+   spline.design (File → Export → "Public" gives a prod .splinecode URL). */
+const SPLINE_SCENE = 'https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode';
+// The line above is Spline's DEMO scene (a robot) — off-brand for leather goods.
+// The 3D showcase stays OFF until SPLINE_SCENE points at a real Brandio object.
+// Make one free at spline.design (model a wallet/bag), File → Export → Public,
+// paste its prod .splinecode URL above, and the section auto-enables. Verified working.
+const SPLINE_READY = !SPLINE_SCENE.includes('kZDDjO5HuC9GJUM2');
+const Spline = lazy(() => import('@splinetool/react-spline'));
+
+function Interactive3DShowcase() {
+  const ref = useRef(null);
+  const [isDesktop, setIsDesktop] = useState(false);
+  const [load, setLoad] = useState(false);
+
+  useEffect(() => {
+    setIsDesktop(window.matchMedia('(min-width: 768px) and (pointer: fine)').matches);
+  }, []);
+
+  useEffect(() => {
+    if (!isDesktop || !ref.current) return;
+    const io = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setLoad(true); io.disconnect(); } },
+      { rootMargin: '300px' }
+    );
+    io.observe(ref.current);
+    return () => io.disconnect();
+  }, [isDesktop]);
+
+  if (!isDesktop) return null; // keep mobile + low-power devices light
+
+  return (
+    <section ref={ref} className="px-4 py-12 md:py-20">
+      <div className="max-w-6xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          className="relative overflow-hidden rounded-3xl border border-amber-900/40 bg-[#0b0705] h-[520px] flex shadow-2xl"
+        >
+          <Spotlight size={620} color="rgba(252,211,77,0.22)" />
+          {/* Left — copy */}
+          <div className="flex-1 p-10 md:p-14 relative z-10 flex flex-col justify-center">
+            <span className="inline-flex items-center gap-2 mb-5 text-amber-300 text-xs font-semibold tracking-[0.25em] uppercase">
+              <Sparkles size={16} /> Interactive
+            </span>
+            <h2 className="font-display text-4xl md:text-6xl font-bold tracking-tight bg-gradient-to-b from-amber-50 to-amber-300 bg-clip-text text-transparent leading-[1.05]">
+              See It in 3D
+            </h2>
+            <p className="mt-5 text-amber-100/70 max-w-md text-lg leading-relaxed">
+              Spin it, drag it, explore every stitch. We build interactive 3D showcases
+              of your custom-branded pieces — so buyers experience the craft before the
+              sample ships.
+            </p>
+          </div>
+          {/* Right — 3D scene */}
+          <div className="flex-1 relative">
+            {load && (
+              <Suspense
+                fallback={
+                  <div className="absolute inset-0 flex items-center justify-center text-amber-200/50 text-sm tracking-widest uppercase">
+                    Loading 3D…
+                  </div>
+                }
+              >
+                <Spline scene={SPLINE_SCENE} className="w-full h-full" />
+              </Suspense>
+            )}
+          </div>
+        </motion.div>
+      </div>
+    </section>
   );
 }
 
@@ -965,6 +1045,25 @@ export default function BrandioLeatherWebsite() {
     return () => clearInterval(timer);
   }, [activeSection]);
 
+  // Lenis — buttery momentum scrolling (desktop only; native on touch + reduced-motion)
+  useEffect(() => {
+    if (window.matchMedia('(pointer: coarse)').matches) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const lenis = new Lenis({
+      duration: 1.1,
+      easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+    });
+    let raf = requestAnimationFrame(function loop(time) {
+      lenis.raf(time);
+      raf = requestAnimationFrame(loop);
+    });
+    return () => { cancelAnimationFrame(raf); lenis.destroy(); };
+  }, []);
+
+  // Reset scroll to top whenever the section changes (sections swap, not anchor-scroll)
+  useEffect(() => { window.scrollTo({ top: 0, left: 0, behavior: 'auto' }); }, [activeSection]);
+
   const goTo = section => { setActiveSection(section); setIsMenuOpen(false); };
 
   const activeCountry = COUNTRIES.find(c => c.id === selectedCountry) || COUNTRIES[0];
@@ -1246,6 +1345,7 @@ export default function BrandioLeatherWebsite() {
             </div>
           </div>
         </section>
+        {SPLINE_READY && <Interactive3DShowcase />}
         </>
       )}
 
@@ -1465,8 +1565,11 @@ export default function BrandioLeatherWebsite() {
           className="py-12 md:py-20 px-4"
         >
           <div className="max-w-5xl mx-auto">
-            <h2 className="font-display text-4xl md:text-6xl font-bold mb-4 text-amber-900 tracking-tight">Collections</h2>
-            <p className="text-gray-600 mb-12 text-lg">Curated leather ranges crafted around a unified design language.</p>
+            <div className="relative overflow-hidden rounded-3xl -mx-2 px-2 py-2 mb-12">
+              <Spotlight size={520} color="rgba(245,158,11,0.16)" blend="multiply" />
+              <h2 className="font-display text-4xl md:text-6xl font-bold mb-4 text-amber-900 tracking-tight">Collections</h2>
+              <p className="text-gray-600 text-lg">Curated leather ranges crafted around a unified design language.</p>
+            </div>
             <div className="grid md:grid-cols-2 gap-6">
               {[
                 { code: 'MC', name: 'Massini Collection', size: 'European Size', material: 'Cow NDM',                       styles: 'Note Case · Bifold · Trifold',  cover: '/cover-MC.png', hero: '/col-MC.jpg', desc: 'European-style wallets in supple Cow NDM leather. Slim profile, maximum function — presented in a Yaali New York tin.' },
@@ -1503,6 +1606,7 @@ export default function BrandioLeatherWebsite() {
         >
           {/* Parallax hero band */}
           <div className="relative overflow-hidden bg-gradient-to-br from-amber-950 via-amber-900 to-yellow-800 text-amber-50 px-4 pt-20 pb-28 md:pt-28 md:pb-36">
+            <Spotlight size={720} color="rgba(252,211,77,0.28)" />
             {/* Rotating globe watermark */}
             <motion.div
               style={{ rotate: globeSpin, scale: globeScale }}
