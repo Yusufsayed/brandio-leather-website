@@ -10,7 +10,7 @@ B2B leather goods exporter. The site is hosted on **Vercel** and auto-deploys
 from the `main` branch on every push.
 
 - **Repo**: https://github.com/Yusufsayed/brandio-leather-website
-- **Stack**: React 18 · Vite · Tailwind CSS (CDN) · Framer Motion · Lucide icons · @vercel/analytics
+- **Stack**: React 18 · Vite · Tailwind CSS (CDN) · Framer Motion · Lucide icons · @vercel/analytics · Lenis (smooth scroll) · @splinetool/react-spline (lazy 3D)
 - **Source of truth**: `src/App.jsx` (single file — everything is in here)
 - **Product images**: `public/` directory (referenced as `/FILENAME.png` at runtime)
 - **Deploy**: `git push origin main` → Vercel rebuilds automatically
@@ -242,6 +242,37 @@ Drop-in for headlines. Reveals words one at a time.
 
 All "premium" easing uses `[0.22, 1, 0.36, 1]`. Keep it consistent — that
 single curve is what makes the motion language feel unified across the site.
+
+## Performance & smoothness (do not regress)
+
+- **All product/collection/packaging/category images use `loading="lazy"
+  decoding="async"`.** Keep this on any new image. The hero LCP image is the
+  only eager one (`fetchpriority="high"` on the first slide). This was the main
+  fix for "the site feels heavy" — don't load grids eagerly again.
+- **Lenis** gives momentum smooth-scroll — initialised in a `useEffect` in the
+  App component, gated OFF for touch + `prefers-reduced-motion` (mobile uses
+  native scroll). Section changes call `window.scrollTo(top:0)`.
+- **Fonts**: only 6 weights loaded (Cormorant 600/700, Montserrat 400/500/600/700).
+  Don't add more weights without reason.
+
+## Spotlight (cursor-tracking luxury glow)
+
+`<Spotlight size color blend />` — a GPU-light radial glow that follows the
+cursor inside its **nearest positioned, `overflow-hidden` parent**. Desktop
+only (skips touch), translate-based. Use `blend="screen"` on dark backgrounds
+(hero, Countries band), `blend="multiply"` on light ones (Collections header).
+Already placed in: hero, Countries hero band, Collections header.
+
+## Interactive 3D showcase (Spline) — currently OFF
+
+`Interactive3DShowcase` renders a dark "See It in 3D" card with a draggable
+Spline scene. It is **lazy** (separate ~4MB chunk), **desktop-only**, and only
+fetches the scene when scrolled into view — so mobile/initial load never pay
+for it. It is **gated off** by `SPLINE_READY` because `SPLINE_SCENE` still
+points at Spline's off-brand DEMO robot. **To enable:** make a Brandio leather
+object at spline.design (free), export → Public, paste its `.splinecode` URL
+into `SPLINE_SCENE` near the top of `src/App.jsx`. The section auto-enables.
+Verified working in preview (the robot loaded fine — only the asset is wrong).
 
 ## Design system & UI standards (read before adding any UI)
 
