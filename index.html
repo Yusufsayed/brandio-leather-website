@@ -40,7 +40,7 @@
     <!-- Luxury typography (recommended by UI/UX Pro Max: Cormorant + Montserrat) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant:wght@600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
     <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -57,10 +57,18 @@
       };
     </script>
     <style>
-      body { font-family: 'Montserrat', system-ui, sans-serif; }
+      html { scroll-behavior: smooth; }
+      body {
+        font-family: 'Montserrat', system-ui, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+        overflow-x: hidden;
+      }
       .font-display { font-family: 'Cormorant', Georgia, serif; }
       /* Accessibility: respect users who prefer reduced motion */
       @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
         *, *::before, *::after {
           animation-duration: 0.001ms !important;
           animation-iteration-count: 1 !important;

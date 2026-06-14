@@ -57,6 +57,46 @@ function CustomCursor() {
   );
 }
 
+/* ─── Spotlight — cursor-tracking luxury glow (desktop only, GPU-light) ─────── */
+function Spotlight({ size = 560, color = 'rgba(251,191,36,0.30)' }) {
+  const ref = useRef(null);
+  const mouseX = useSpring(0, { stiffness: 120, damping: 22, mass: 0.5 });
+  const mouseY = useSpring(0, { stiffness: 120, damping: 22, mass: 0.5 });
+  const [active, setActive] = useState(false);
+  const x = useTransform(mouseX, v => v - size / 2);
+  const y = useTransform(mouseY, v => v - size / 2);
+
+  useEffect(() => {
+    if (window.matchMedia('(pointer: coarse)').matches) return; // skip on touch
+    const el = ref.current?.parentElement;
+    if (!el) return;
+    const onMove = e => {
+      const r = el.getBoundingClientRect();
+      mouseX.set(e.clientX - r.left);
+      mouseY.set(e.clientY - r.top);
+      setActive(true);
+    };
+    const onLeave = () => setActive(false);
+    el.addEventListener('mousemove', onMove);
+    el.addEventListener('mouseleave', onLeave);
+    return () => { el.removeEventListener('mousemove', onMove); el.removeEventListener('mouseleave', onLeave); };
+  }, [mouseX, mouseY, size]);
+
+  return (
+    <motion.div
+      ref={ref}
+      aria-hidden
+      style={{
+        width: size, height: size, x, y,
+        background: `radial-gradient(circle at center, ${color}, rgba(217,119,6,0.10) 45%, transparent 70%)`,
+      }}
+      animate={{ opacity: active ? 1 : 0 }}
+      transition={{ opacity: { duration: 0.45, ease: [0.22, 1, 0.36, 1] } }}
+      className="pointer-events-none absolute left-0 top-0 z-[5] rounded-full blur-2xl mix-blend-screen will-change-transform"
+    />
+  );
+}
+
 /* ─── Loading sequence ─────────────────────────────────────────────────────── */
 function LoadingReveal({ logo }) {
   const [gone, setGone] = useState(false);
@@ -389,6 +429,8 @@ function CollectionCard({ col, index, onOpen }) {
           <motion.img
             src={col.cover}
             alt={col.name}
+            loading="lazy"
+            decoding="async"
             initial={false}
             animate={{ opacity: hovered ? 0 : 1 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
@@ -399,6 +441,8 @@ function CollectionCard({ col, index, onOpen }) {
           <motion.img
             src={col.hero}
             alt={`${col.name} catalogue`}
+            loading="lazy"
+            decoding="async"
             initial={false}
             animate={{ opacity: hovered ? 1 : 0, scale: hovered ? 1 : 1.05 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
@@ -568,12 +612,16 @@ function PackagingCard({ item, index }) {
         <img
           src={item.frontImage}
           alt={item.name}
+          loading="lazy"
+          decoding="async"
           className={`absolute inset-0 w-full h-full object-contain p-4 transition-opacity duration-300 ${flipped ? 'opacity-0' : 'opacity-100'}`}
         />
         {hasInside && (
           <img
             src={item.insideImage}
             alt={`${item.name} in box`}
+            loading="lazy"
+            decoding="async"
             className={`absolute inset-0 w-full h-full object-contain p-4 transition-opacity duration-300 ${flipped ? 'opacity-100' : 'opacity-0'}`}
           />
         )}
@@ -632,6 +680,8 @@ function ProductCard({ product, imageMode = 'cover', index = 0, onOpen }) {
             <motion.img
               src={product.frontImage}
               alt={product.name}
+              loading="lazy"
+              decoding="async"
               animate={{ scale: hovered ? 1.08 : 1, opacity: flipped ? 0 : 1 }}
               transition={{ scale: { duration: 0.6, ease: [0.22, 1, 0.36, 1] }, opacity: { duration: 0.3 } }}
               style={{ translateZ: 40 }}
@@ -641,6 +691,8 @@ function ProductCard({ product, imageMode = 'cover', index = 0, onOpen }) {
               <motion.img
                 src={product.insideImage}
                 alt={`${product.name} inside`}
+                loading="lazy"
+                decoding="async"
                 animate={{ scale: hovered ? 1.08 : 1, opacity: flipped ? 1 : 0 }}
                 transition={{ scale: { duration: 0.6, ease: [0.22, 1, 0.36, 1] }, opacity: { duration: 0.3 } }}
                 style={{ translateZ: 40 }}
@@ -1001,12 +1053,16 @@ export default function BrandioLeatherWebsite() {
               <motion.img
                 src={slide.image}
                 alt={slide.title}
+                loading={i === 0 ? 'eager' : 'lazy'}
+                fetchpriority={i === 0 ? 'high' : 'low'}
+                decoding="async"
                 style={{ opacity: heroImgOpacity }}
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/55 to-black/70" />
             </motion.div>
           ))}
+          <Spotlight />
           <motion.div
             style={{ y: heroTextY, opacity: heroTextOpacity }}
             className="relative z-10 flex items-center justify-center h-full text-center px-4"
@@ -1164,6 +1220,8 @@ export default function BrandioLeatherWebsite() {
                   <motion.img
                     src={cat.image}
                     alt={cat.label}
+                    loading="lazy"
+                    decoding="async"
                     initial={false}
                     whileHover={{ scale: 1.08 }}
                     transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
@@ -1262,7 +1320,7 @@ export default function BrandioLeatherWebsite() {
                   <div className={`shrink-0 w-12 h-12 md:w-16 md:h-16 rounded-lg overflow-hidden flex items-center justify-center transition-colors ${
                     mainCategory === cat.id ? 'bg-amber-50' : 'bg-amber-50'
                   }`}>
-                    <img src={cat.image} alt={cat.label} className="w-full h-full object-contain p-1" />
+                    <img src={cat.image} alt={cat.label} loading="lazy" decoding="async" className="w-full h-full object-contain p-1" />
                   </div>
                   <div className="min-w-0">
                     <div className="font-bold text-sm leading-tight">{cat.label}</div>
