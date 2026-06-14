@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Menu, X, ChevronLeft, ChevronRight, Phone, Mail, MapPin, ChevronRight as ChevronRightSm } from 'lucide-react';
+import { Menu, X, ChevronLeft, ChevronRight, Phone, Mail, MapPin, ChevronRight as ChevronRightSm, Globe, ChevronDown, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, useScroll } from 'framer-motion';
 import { Analytics } from '@vercel/analytics/react';
 
@@ -359,6 +359,7 @@ const NAV_ITEMS = [
   { id: 'about',       label: 'About' },
   { id: 'products',    label: 'Products' },
   { id: 'collections', label: 'Collections' },
+  { id: 'countries',   label: 'Countries' },
   { id: 'packaging',   label: 'Packaging' },
   { id: 'contact',     label: 'Contact' },
 ];
@@ -827,6 +828,47 @@ const BAG_SUBS = [
   { id: 'duffle',      label: 'Duffle' },
 ];
 
+/* ─── Countries (region → assigned collections) ───────────────────────────────
+   Europe is live with the Massini Collection. USA / Mexico / Japan are
+   placeholders — the user will assign collections to each. To assign one,
+   drop its collection object into the `collections` array and set status:'live'. */
+const MASSINI_COLLECTION = {
+  code: 'MC', name: 'Massini Collection', size: 'European Size', material: 'Cow NDM',
+  styles: 'Note Case · Bifold · Trifold', cover: '/cover-MC.png', hero: '/col-MC.jpg',
+  desc: 'European-style wallets in supple Cow NDM leather. Slim profile, maximum function — presented in a Yaali New York tin.',
+};
+
+const COUNTRIES = [
+  {
+    id: 'europe', label: 'Europe', flag: '🇪🇺', accent: '#1d4ed8',
+    tagline: 'European-size craftsmanship',
+    blurb: 'Slim, refined wallets cut to the European standard — led by our flagship Massini Collection.',
+    status: 'live',
+    collections: [MASSINI_COLLECTION],
+  },
+  {
+    id: 'usa', label: 'USA', flag: '🇺🇸', accent: '#b91c1c',
+    tagline: 'American-size icons',
+    blurb: 'Our American-size ranges, tailored for the US market.',
+    status: 'soon',
+    collections: [],
+  },
+  {
+    id: 'mexico', label: 'Mexico', flag: '🇲🇽', accent: '#15803d',
+    tagline: 'Bold colour, fine leather',
+    blurb: 'Vibrant leather goods curated for Mexican retailers and distributors.',
+    status: 'soon',
+    collections: [],
+  },
+  {
+    id: 'japan', label: 'Japan', flag: '🇯🇵', accent: '#be123c',
+    tagline: 'Precision & minimal form',
+    blurb: 'Understated, precise designs selected for the Japanese market.',
+    status: 'soon',
+    collections: [],
+  },
+];
+
 /* ─── App ───────────────────────────────────────────────────────────────────── */
 export default function BrandioLeatherWebsite() {
   const [isMenuOpen,       setIsMenuOpen]       = useState(false);
@@ -837,6 +879,8 @@ export default function BrandioLeatherWebsite() {
   const [walletSub,        setWalletSub]        = useState('bifold');
   const [smallAccSub,      setSmallAccSub]      = useState('card-cases');
   const [bagSub,           setBagSub]           = useState('briefcase');
+  const [selectedCountry,  setSelectedCountry]  = useState('europe');
+  const [countryOpen,      setCountryOpen]      = useState(false);
   const [currentSlide,     setCurrentSlide]     = useState(0);
   const [alcoveProduct,    setAlcoveProduct]    = useState(null);
   const [alcoveCollection, setAlcoveCollection] = useState(null);
@@ -846,6 +890,17 @@ export default function BrandioLeatherWebsite() {
   const heroImgOpacity = useTransform(scrollYProgress, [0, 1], [1, 0.25]);
   const heroTextY      = useTransform(scrollYProgress, [0, 1], [0, -120]);
   const heroTextOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
+
+  // Countries section — scroll-driven parallax
+  const countriesRef = useRef(null);
+  const { scrollYProgress: countryScroll } = useScroll({ target: countriesRef, offset: ['start end', 'end start'] });
+  const flagDriftA   = useTransform(countryScroll, [0, 1], [80, -80]);
+  const flagDriftB   = useTransform(countryScroll, [0, 1], [140, -140]);
+  const flagDriftC   = useTransform(countryScroll, [0, 1], [40, -120]);
+  const globeSpin    = useTransform(countryScroll, [0, 1], [0, 220]);
+  const globeScale   = useTransform(countryScroll, [0, 1], [0.85, 1.25]);
+  const marqueeX     = useTransform(countryScroll, [0, 1], ['2%', '-22%']);
+  const headlineY    = useTransform(countryScroll, [0, 1], [0, -90]);
 
   const heroSlides = [
     { image: FACTORY_FRONT, title: 'Timeless Leather Craftsmanship',  subtitle: "Handcrafted leather goods by Brandio Leather Pvt Ltd. Since 2007, we've exported premium leather accessories to over 30 countries." },
@@ -859,6 +914,8 @@ export default function BrandioLeatherWebsite() {
   }, [activeSection]);
 
   const goTo = section => { setActiveSection(section); setIsMenuOpen(false); };
+
+  const activeCountry = COUNTRIES.find(c => c.id === selectedCountry) || COUNTRIES[0];
 
   /* derive product list for current selection */
   let visibleProducts;
@@ -1372,6 +1429,185 @@ export default function BrandioLeatherWebsite() {
                 />
               ))}
             </div>
+          </div>
+        </motion.section>
+      )}
+
+      {/* ── Countries ────────────────────────────────────────────────────────── */}
+      {activeSection === 'countries' && (
+        <motion.section
+          key={activeSection}
+          ref={countriesRef}
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          className="relative overflow-hidden"
+        >
+          {/* Parallax hero band */}
+          <div className="relative overflow-hidden bg-gradient-to-br from-amber-950 via-amber-900 to-yellow-800 text-amber-50 px-4 pt-20 pb-28 md:pt-28 md:pb-36">
+            {/* Rotating globe watermark */}
+            <motion.div
+              style={{ rotate: globeSpin, scale: globeScale }}
+              className="pointer-events-none absolute -right-24 -top-24 md:right-[-6rem] md:top-[-4rem] opacity-[0.08]"
+            >
+              <Globe size={420} strokeWidth={0.6} />
+            </motion.div>
+
+            {/* Floating flags drifting on scroll */}
+            <motion.span style={{ y: flagDriftA }} className="pointer-events-none absolute left-[8%] top-[18%] text-5xl md:text-7xl opacity-30 select-none">🇪🇺</motion.span>
+            <motion.span style={{ y: flagDriftB }} className="pointer-events-none absolute right-[14%] top-[30%] text-5xl md:text-7xl opacity-30 select-none">🇺🇸</motion.span>
+            <motion.span style={{ y: flagDriftC }} className="pointer-events-none absolute left-[22%] bottom-[12%] text-5xl md:text-7xl opacity-25 select-none">🇯🇵</motion.span>
+            <motion.span style={{ y: flagDriftA }} className="pointer-events-none absolute right-[26%] bottom-[18%] text-5xl md:text-7xl opacity-25 select-none">🇲🇽</motion.span>
+
+            <motion.div style={{ y: headlineY }} className="relative max-w-5xl mx-auto">
+              <div className="flex items-center gap-2 mb-5 text-amber-300">
+                <Sparkles size={18} />
+                <span className="text-xs md:text-sm font-semibold tracking-[0.25em] uppercase">Global Reach</span>
+              </div>
+              <h2 className="text-4xl md:text-7xl font-black leading-[1.02] tracking-tight">
+                <StaggerWords text="Crafted in Kolkata." />
+                <br />
+                <span className="bg-gradient-to-r from-amber-200 via-yellow-100 to-amber-300 bg-clip-text text-transparent">
+                  <StaggerWords text="Carried Worldwide." delayBase={0.25} />
+                </span>
+              </h2>
+              <motion.p
+                initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }} transition={{ delay: 0.5, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                className="mt-6 text-base md:text-xl text-amber-100/80 max-w-2xl"
+              >
+                Select a market to see the collections curated for it. Each region gets a line tuned to its sizing, taste, and packaging.
+              </motion.p>
+            </motion.div>
+          </div>
+
+          {/* Scrolling marquee strip */}
+          <div className="relative overflow-hidden bg-amber-100 border-y border-amber-200 py-3">
+            <motion.div style={{ x: marqueeX }} className="flex gap-8 whitespace-nowrap text-amber-900/70 font-bold uppercase tracking-widest text-sm md:text-base">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <span key={i} className="flex items-center gap-8">
+                  30+ Countries <span className="text-amber-400">✦</span> 5 Continents <span className="text-amber-400">✦</span> B2B Export <span className="text-amber-400">✦</span> Custom Branding <span className="text-amber-400">✦</span>
+                </span>
+              ))}
+            </motion.div>
+          </div>
+
+          {/* Selector + content */}
+          <div className="max-w-5xl mx-auto px-4 py-12 md:py-20">
+            {/* Custom animated dropdown */}
+            <div className="flex flex-col md:flex-row md:items-center gap-4 mb-12">
+              <span className="text-sm font-semibold uppercase tracking-widest text-amber-700">Choose a market</span>
+              <div className="relative z-30 w-full md:w-72">
+                <button
+                  onClick={() => setCountryOpen(o => !o)}
+                  className="w-full flex items-center justify-between gap-3 px-5 py-4 bg-white border-2 border-amber-200 rounded-xl shadow-sm hover:border-amber-400 transition"
+                  data-grow
+                >
+                  <span className="flex items-center gap-3 text-lg font-bold text-amber-900">
+                    <span className="text-2xl">{activeCountry.flag}</span>
+                    {activeCountry.label}
+                  </span>
+                  <motion.span animate={{ rotate: countryOpen ? 180 : 0 }} transition={{ duration: 0.25 }}>
+                    <ChevronDown className="text-amber-700" />
+                  </motion.span>
+                </button>
+                {countryOpen && (
+                  <button
+                    aria-label="Close menu"
+                    onClick={() => setCountryOpen(false)}
+                    className="fixed inset-0 z-20 cursor-default"
+                  />
+                )}
+                <AnimatePresence>
+                  {countryOpen && (
+                    <motion.ul
+                      initial={{ opacity: 0, y: -8, scale: 0.97 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -8, scale: 0.97 }}
+                      transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                      className="absolute left-0 right-0 mt-2 z-30 bg-white border-2 border-amber-200 rounded-xl shadow-xl overflow-hidden"
+                    >
+                      {COUNTRIES.map((c, i) => (
+                        <motion.li
+                          key={c.id}
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: i * 0.05 }}
+                        >
+                          <button
+                            onClick={() => { setSelectedCountry(c.id); setCountryOpen(false); }}
+                            className={`w-full flex items-center gap-3 px-5 py-3.5 text-left text-lg font-semibold transition ${
+                              selectedCountry === c.id ? 'bg-amber-100 text-amber-900' : 'text-gray-700 hover:bg-amber-50'
+                            }`}
+                          >
+                            <span className="text-2xl">{c.flag}</span>
+                            {c.label}
+                            {c.status === 'soon' && <span className="ml-auto text-[10px] uppercase tracking-wider text-amber-500 font-bold">Soon</span>}
+                          </button>
+                        </motion.li>
+                      ))}
+                    </motion.ul>
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
+
+            {/* Country panel — re-animates on every selection */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeCountry.id}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <div className="flex items-end gap-4 mb-2">
+                  <motion.span
+                    initial={{ scale: 0.5, rotate: -15 }} animate={{ scale: 1, rotate: 0 }}
+                    transition={{ type: 'spring', stiffness: 200, damping: 14 }}
+                    className="text-6xl md:text-8xl leading-none"
+                  >
+                    {activeCountry.flag}
+                  </motion.span>
+                  <div>
+                    <h3 className="text-3xl md:text-5xl font-black text-amber-900">{activeCountry.label}</h3>
+                    <p className="text-amber-600 font-semibold">{activeCountry.tagline}</p>
+                  </div>
+                </div>
+                <p className="text-gray-600 text-lg max-w-2xl mb-10">{activeCountry.blurb}</p>
+
+                {activeCountry.collections.length > 0 ? (
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {activeCountry.collections.map((col, i) => (
+                      <CollectionCard key={col.code} col={col} index={i} onOpen={() => setAlcoveCollection(col)} />
+                    ))}
+                  </div>
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.15, duration: 0.5 }}
+                    className="relative overflow-hidden rounded-2xl border-2 border-dashed border-amber-300 bg-amber-50 p-10 md:p-14 text-center"
+                  >
+                    <motion.div
+                      animate={{ rotate: 360 }} transition={{ duration: 22, repeat: Infinity, ease: 'linear' }}
+                      className="mx-auto mb-5 w-14 h-14 text-amber-400"
+                    >
+                      <Globe size={56} strokeWidth={1.2} />
+                    </motion.div>
+                    <h4 className="text-2xl font-bold text-amber-900 mb-2">Collections for {activeCountry.label} — arriving soon</h4>
+                    <p className="text-gray-600 max-w-md mx-auto mb-6">
+                      We’re curating the {activeCountry.label} line-up now. Tell us what you’re sourcing and we’ll match the right collections and packaging.
+                    </p>
+                    <MagneticButton
+                      onClick={() => goTo('contact')}
+                      className="inline-flex px-8 py-3 bg-gradient-to-r from-amber-900 to-yellow-700 text-white rounded-lg font-semibold hover:shadow-lg transition"
+                    >
+                      Enquire about {activeCountry.label}
+                    </MagneticButton>
+                  </motion.div>
+                )}
+              </motion.div>
+            </AnimatePresence>
           </div>
         </motion.section>
       )}
