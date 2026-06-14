@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { Menu, X, ChevronLeft, ChevronRight, Phone, Mail, MapPin, ChevronRight as ChevronRightSm, Globe, ChevronDown, Sparkles } from 'lucide-react';
-import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, useScroll } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, useScroll, useReducedMotion } from 'framer-motion';
 import { Analytics } from '@vercel/analytics/react';
-import Lenis from 'lenis';
 
 /* ─── Custom cursor (desktop only) ─────────────────────────────────────────── */
 function CustomCursor() {
@@ -1045,28 +1044,13 @@ export default function BrandioLeatherWebsite() {
     return () => clearInterval(timer);
   }, [activeSection]);
 
-  // Lenis — buttery momentum scrolling (desktop only; native on touch + reduced-motion)
-  useEffect(() => {
-    if (window.matchMedia('(pointer: coarse)').matches) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const lenis = new Lenis({
-      duration: 1.1,
-      easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
-    });
-    let raf = requestAnimationFrame(function loop(time) {
-      lenis.raf(time);
-      raf = requestAnimationFrame(loop);
-    });
-    return () => { cancelAnimationFrame(raf); lenis.destroy(); };
-  }, []);
-
   // Reset scroll to top whenever the section changes (sections swap, not anchor-scroll)
   useEffect(() => { window.scrollTo({ top: 0, left: 0, behavior: 'auto' }); }, [activeSection]);
 
   const goTo = section => { setActiveSection(section); setIsMenuOpen(false); };
 
   const activeCountry = COUNTRIES.find(c => c.id === selectedCountry) || COUNTRIES[0];
+  const prefersReduced = useReducedMotion();
 
   /* derive product list for current selection */
   let visibleProducts;
@@ -1155,6 +1139,9 @@ export default function BrandioLeatherWebsite() {
                 loading={i === 0 ? 'eager' : 'lazy'}
                 fetchpriority={i === 0 ? 'high' : 'low'}
                 decoding="async"
+                initial={false}
+                animate={prefersReduced ? {} : { scale: [1.08, 1.18], x: ['-1.2%', '1.2%'] }}
+                transition={prefersReduced ? {} : { duration: 18, ease: 'easeInOut', repeat: Infinity, repeatType: 'reverse' }}
                 style={{ opacity: heroImgOpacity }}
                 className="w-full h-full object-cover"
               />
