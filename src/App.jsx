@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
-import { Menu, X, ChevronLeft, ChevronRight, Phone, Mail, MapPin, ChevronRight as ChevronRightSm, Globe, ChevronDown, Sparkles } from 'lucide-react';
-import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, useScroll, useReducedMotion } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
+import { Menu, X, ChevronLeft, ChevronRight, Phone, Mail, MapPin, ChevronRight as ChevronRightSm, Globe, ChevronDown, Sparkles, VolumeX } from 'lucide-react';
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, useScroll } from 'framer-motion';
 import { Analytics } from '@vercel/analytics/react';
 
 /* ─── Custom cursor (desktop only) ─────────────────────────────────────────── */
@@ -97,82 +97,71 @@ function Spotlight({ size = 560, color = 'rgba(251,191,36,0.30)', blend = 'scree
   );
 }
 
-/* ─── Interactive 3D showcase (Spline) ──────────────────────────────────────────
-   Heavy WebGL — so it is: (1) desktop-only, (2) lazy-loaded as a separate chunk,
-   (3) only fetched once scrolled near view. Mobile + initial load never pay for it.
-   TODO: replace SPLINE_SCENE with a custom Brandio leather object made free at
-   spline.design (File → Export → "Public" gives a prod .splinecode URL). */
-const SPLINE_SCENE = 'https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode';
-// The line above is Spline's DEMO scene (a robot) — off-brand for leather goods.
-// The 3D showcase stays OFF until SPLINE_SCENE points at a real Brandio object.
-// Make one free at spline.design (model a wallet/bag), File → Export → Public,
-// paste its prod .splinecode URL above, and the section auto-enables. Verified working.
-const SPLINE_READY = !SPLINE_SCENE.includes('kZDDjO5HuC9GJUM2');
-const Spline = lazy(() => import('@splinetool/react-spline'));
+/* ─── Ambient audio — luxury background sound with on/off toggle ──────────────
+   Add a royalty-free track to public/ambient.mp3 (e.g. a soft jazz/lounge or
+   ambient loop from pixabay.com/music or uppbeat.io — both free for commercial
+   use). The toggle appears automatically once the file loads. Sound starts OFF
+   (browsers block audio autoplay; users opt in), fades in gently when enabled. */
+function AmbientAudio() {
+  const audioRef = useRef(null);
+  const [available, setAvailable] = useState(false);
+  const [playing, setPlaying] = useState(false);
 
-function Interactive3DShowcase() {
-  const ref = useRef(null);
-  const [isDesktop, setIsDesktop] = useState(false);
-  const [load, setLoad] = useState(false);
-
-  useEffect(() => {
-    setIsDesktop(window.matchMedia('(min-width: 768px) and (pointer: fine)').matches);
-  }, []);
-
-  useEffect(() => {
-    if (!isDesktop || !ref.current) return;
-    const io = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setLoad(true); io.disconnect(); } },
-      { rootMargin: '300px' }
-    );
-    io.observe(ref.current);
-    return () => io.disconnect();
-  }, [isDesktop]);
-
-  if (!isDesktop) return null; // keep mobile + low-power devices light
+  const toggle = () => {
+    const a = audioRef.current;
+    if (!a) return;
+    if (a.paused) {
+      a.volume = 0;
+      a.play().then(() => {
+        setPlaying(true);
+        let v = 0;
+        const id = setInterval(() => { v = Math.min(0.4, v + 0.03); a.volume = v; if (v >= 0.4) clearInterval(id); }, 70);
+      }).catch(() => {});
+    } else {
+      a.pause();
+      setPlaying(false);
+    }
+  };
 
   return (
-    <section ref={ref} className="px-4 py-12 md:py-20">
-      <div className="max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className="relative overflow-hidden rounded-3xl border border-amber-900/40 bg-[#0b0705] h-[520px] flex shadow-2xl"
+    <>
+      <audio
+        ref={audioRef}
+        src="/ambient.mp3"
+        loop
+        preload="auto"
+        onCanPlayThrough={() => setAvailable(true)}
+        onError={() => setAvailable(false)}
+      />
+      {available && (
+        <motion.button
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+          onClick={toggle}
+          data-grow
+          aria-label={playing ? 'Mute ambient sound' : 'Play ambient sound'}
+          title={playing ? 'Sound on' : 'Sound off'}
+          className="fixed bottom-6 left-6 z-[60] w-12 h-12 rounded-full bg-amber-900/90 backdrop-blur-sm text-amber-50 shadow-lg shadow-amber-900/30 flex items-center justify-center hover:bg-amber-800 transition"
         >
-          <Spotlight size={620} color="rgba(252,211,77,0.22)" />
-          {/* Left — copy */}
-          <div className="flex-1 p-10 md:p-14 relative z-10 flex flex-col justify-center">
-            <span className="inline-flex items-center gap-2 mb-5 text-amber-300 text-xs font-semibold tracking-[0.25em] uppercase">
-              <Sparkles size={16} /> Interactive
+          {playing ? (
+            <span className="flex items-end gap-[3px] h-4" aria-hidden>
+              {[0, 1, 2].map(i => (
+                <motion.span
+                  key={i}
+                  className="w-[3px] bg-amber-50 rounded-full"
+                  animate={{ height: ['35%', '100%', '45%'] }}
+                  transition={{ duration: 0.8, repeat: Infinity, repeatType: 'reverse', delay: i * 0.15, ease: 'easeInOut' }}
+                  style={{ height: '60%' }}
+                />
+              ))}
             </span>
-            <h2 className="font-display text-4xl md:text-6xl font-bold tracking-tight bg-gradient-to-b from-amber-50 to-amber-300 bg-clip-text text-transparent leading-[1.05]">
-              See It in 3D
-            </h2>
-            <p className="mt-5 text-amber-100/70 max-w-md text-lg leading-relaxed">
-              Spin it, drag it, explore every stitch. We build interactive 3D showcases
-              of your custom-branded pieces — so buyers experience the craft before the
-              sample ships.
-            </p>
-          </div>
-          {/* Right — 3D scene */}
-          <div className="flex-1 relative">
-            {load && (
-              <Suspense
-                fallback={
-                  <div className="absolute inset-0 flex items-center justify-center text-amber-200/50 text-sm tracking-widest uppercase">
-                    Loading 3D…
-                  </div>
-                }
-              >
-                <Spline scene={SPLINE_SCENE} className="w-full h-full" />
-              </Suspense>
-            )}
-          </div>
-        </motion.div>
-      </div>
-    </section>
+          ) : (
+            <VolumeX size={20} />
+          )}
+        </motion.button>
+      )}
+    </>
   );
 }
 
@@ -1050,7 +1039,6 @@ export default function BrandioLeatherWebsite() {
   const goTo = section => { setActiveSection(section); setIsMenuOpen(false); };
 
   const activeCountry = COUNTRIES.find(c => c.id === selectedCountry) || COUNTRIES[0];
-  const prefersReduced = useReducedMotion();
 
   /* derive product list for current selection */
   let visibleProducts;
@@ -1064,6 +1052,7 @@ export default function BrandioLeatherWebsite() {
       <Analytics />
       <LoadingReveal logo={LOGO} />
       <CustomCursor />
+      <AmbientAudio />
       <ProductAlcove product={alcoveProduct} onClose={() => setAlcoveProduct(null)} />
       <CollectionModal
         collection={alcoveCollection}
@@ -1139,9 +1128,6 @@ export default function BrandioLeatherWebsite() {
                 loading={i === 0 ? 'eager' : 'lazy'}
                 fetchpriority={i === 0 ? 'high' : 'low'}
                 decoding="async"
-                initial={false}
-                animate={prefersReduced ? {} : { scale: [1.08, 1.18], x: ['-1.2%', '1.2%'] }}
-                transition={prefersReduced ? {} : { duration: 18, ease: 'easeInOut', repeat: Infinity, repeatType: 'reverse' }}
                 style={{ opacity: heroImgOpacity }}
                 className="w-full h-full object-cover"
               />
@@ -1332,7 +1318,6 @@ export default function BrandioLeatherWebsite() {
             </div>
           </div>
         </section>
-        {SPLINE_READY && <Interactive3DShowcase />}
         </>
       )}
 
@@ -1431,12 +1416,12 @@ export default function BrandioLeatherWebsite() {
                     transition={{ type: 'spring', stiffness: 380, damping: 22 }}
                     className={`px-5 py-2 rounded-full font-semibold text-sm relative ${
                       walletSub === sub.id
-                        ? 'text-white shadow'
+                        ? 'text-amber-50 shadow-lg shadow-amber-900/30'
                         : 'bg-amber-100 text-amber-900 hover:bg-amber-200'
                     }`}
                   >
                     {walletSub === sub.id && (
-                      <motion.span layoutId="wallet-pill" transition={{ type: 'spring', stiffness: 380, damping: 30 }} className="absolute inset-0 bg-amber-700 rounded-full -z-0" style={{ zIndex: -1 }} />
+                      <motion.span layoutId="wallet-pill" transition={{ type: 'spring', stiffness: 380, damping: 30 }} className="absolute inset-0 z-0 bg-gradient-to-br from-amber-800 via-amber-900 to-amber-950 rounded-full ring-1 ring-amber-300/20" />
                     )}
                     <span className="relative z-10">{sub.label}</span>
                   </motion.button>
@@ -1454,12 +1439,12 @@ export default function BrandioLeatherWebsite() {
                     transition={{ type: 'spring', stiffness: 380, damping: 22 }}
                     className={`px-5 py-2 rounded-full font-semibold text-sm relative ${
                       smallAccSub === sub.id
-                        ? 'text-white shadow'
+                        ? 'text-amber-50 shadow-lg shadow-amber-900/30'
                         : 'bg-amber-100 text-amber-900 hover:bg-amber-200'
                     }`}
                   >
                     {smallAccSub === sub.id && (
-                      <motion.span layoutId="sa-pill" transition={{ type: 'spring', stiffness: 380, damping: 30 }} className="absolute inset-0 bg-amber-700 rounded-full" style={{ zIndex: -1 }} />
+                      <motion.span layoutId="sa-pill" transition={{ type: 'spring', stiffness: 380, damping: 30 }} className="absolute inset-0 z-0 bg-gradient-to-br from-amber-800 via-amber-900 to-amber-950 rounded-full ring-1 ring-amber-300/20" />
                     )}
                     <span className="relative z-10">{sub.label}</span>
                   </motion.button>
@@ -1477,12 +1462,12 @@ export default function BrandioLeatherWebsite() {
                     transition={{ type: 'spring', stiffness: 380, damping: 22 }}
                     className={`px-5 py-2 rounded-full font-semibold text-sm relative ${
                       bagSub === sub.id
-                        ? 'text-white shadow'
+                        ? 'text-amber-50 shadow-lg shadow-amber-900/30'
                         : 'bg-amber-100 text-amber-900 hover:bg-amber-200'
                     }`}
                   >
                     {bagSub === sub.id && (
-                      <motion.span layoutId="bag-pill" transition={{ type: 'spring', stiffness: 380, damping: 30 }} className="absolute inset-0 bg-amber-700 rounded-full" style={{ zIndex: -1 }} />
+                      <motion.span layoutId="bag-pill" transition={{ type: 'spring', stiffness: 380, damping: 30 }} className="absolute inset-0 z-0 bg-gradient-to-br from-amber-800 via-amber-900 to-amber-950 rounded-full ring-1 ring-amber-300/20" />
                     )}
                     <span className="relative z-10">{sub.label}</span>
                   </motion.button>

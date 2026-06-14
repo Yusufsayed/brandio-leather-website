@@ -10,14 +10,16 @@ B2B leather goods exporter. The site is hosted on **Vercel** and auto-deploys
 from the `main` branch on every push.
 
 - **Repo**: https://github.com/Yusufsayed/brandio-leather-website
-- **Stack**: React 18 · Vite · Tailwind CSS (CDN) · Framer Motion · Lucide icons · @vercel/analytics · Lenis (smooth scroll) · @splinetool/react-spline (lazy 3D)
+- **Stack**: React 18 · Vite · Tailwind CSS (CDN) · Framer Motion · Lucide icons · @vercel/analytics
 - **Source of truth**: `src/App.jsx` (single file — everything is in here)
 - **Product images**: `public/` directory (referenced as `/FILENAME.png` at runtime)
 - **Deploy**: `git push origin main` → Vercel rebuilds automatically
 - **Contact form**: Formspree (`VITE_FORMSPREE_ID` env var in Vercel — set to form ID `mjgdenop` or full URL, both work)
 - **Analytics**: Vercel Analytics — `<Analytics />` component already in `src/App.jsx`
 - **PWA**: static `public/manifest.json` + `public/icon-192.png` / `public/icon-512.png`
-- **SEO**: full meta tags, Open Graph, JSON-LD LocalBusiness schema all in `index.html`
+- **SEO**: meta tags + Open Graph in `index.html`. The JSON-LD LocalBusiness
+  schema was **removed** at the owner's request (no GMB for now). It's weightless
+  and beneficial — restore from git history when GMB is revisited "much later".
 
 ## File map
 
@@ -249,11 +251,17 @@ single curve is what makes the motion language feel unified across the site.
   decoding="async"`.** Keep this on any new image. The hero LCP image is the
   only eager one (`fetchpriority="high"` on the first slide). This was the main
   fix for "the site feels heavy" — don't load grids eagerly again.
-- **Lenis** gives momentum smooth-scroll — initialised in a `useEffect` in the
-  App component, gated OFF for touch + `prefers-reduced-motion` (mobile uses
-  native scroll). Section changes call `window.scrollTo(top:0)`.
+- **Native scroll on purpose.** Lenis smooth-scroll was tried and removed — the
+  owner prefers the native feel. Don't re-add a scroll-hijacking library.
+- **Keep it light.** Owner's priority is "smooth & clean", not effects. Heavy deps
+  (Spline) and continuous hero animations (Ken Burns) were removed for this reason.
+  Section changes still call `window.scrollTo(top:0)`.
 - **Fonts**: only 6 weights loaded (Cormorant 600/700, Montserrat 400/500/600/700).
   Don't add more weights without reason.
+- **Active sub-tab pills** (`wallet-pill`/`sa-pill`/`bag-pill`): the moving
+  `motion.span` must stay at `z-0` (NOT a negative z-index — that hid it behind
+  the page and made the selected tab's text invisible). Active text is `text-amber-50`
+  on a `from-amber-800 via-amber-900 to-amber-950` leather gradient.
 
 ## Spotlight (cursor-tracking luxury glow)
 
@@ -263,16 +271,19 @@ only (skips touch), translate-based. Use `blend="screen"` on dark backgrounds
 (hero, Countries band), `blend="multiply"` on light ones (Collections header).
 Already placed in: hero, Countries hero band, Collections header.
 
-## Interactive 3D showcase (Spline) — currently OFF
+## Ambient audio (luxury background sound)
 
-`Interactive3DShowcase` renders a dark "See It in 3D" card with a draggable
-Spline scene. It is **lazy** (separate ~4MB chunk), **desktop-only**, and only
-fetches the scene when scrolled into view — so mobile/initial load never pay
-for it. It is **gated off** by `SPLINE_READY` because `SPLINE_SCENE` still
-points at Spline's off-brand DEMO robot. **To enable:** make a Brandio leather
-object at spline.design (free), export → Public, paste its `.splinecode` URL
-into `SPLINE_SCENE` near the top of `src/App.jsx`. The section auto-enables.
-Verified working in preview (the robot loaded fine — only the asset is wrong).
+`AmbientAudio` renders a floating speaker toggle (bottom-left, mirrors the
+WhatsApp button). It plays `public/ambient.mp3` on a loop. **The toggle only
+appears once that file exists** (gated on `canplaythrough`). Sound starts OFF
+(browser autoplay policy + UX); enabling fades volume in to 0.4. **To activate:**
+drop a royalty-free track at `public/ambient.mp3` (free for commercial use from
+pixabay.com/music or uppbeat.io). Do NOT commit an unlicensed track.
+
+> Spline 3D was tried and **removed** — a desktop-only lazy 3D showcase, but the
+> only available scene was an off-brand demo robot and the runtime added ~4MB.
+> The plan if revisited: get a GLB of a real product and load it with
+> `@react-three/fiber` (~600KB), not Spline. Removed in favour of "light & smooth".
 
 ## Design system & UI standards (read before adding any UI)
 
