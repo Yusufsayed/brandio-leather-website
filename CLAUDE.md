@@ -98,7 +98,26 @@ There is also a **floating WhatsApp button** fixed bottom-right on all pages (re
 
 ### `NAV_ITEMS`
 
-The 6-item top nav. Each id matches an `activeSection` value.
+The 7-item top nav. Each id matches an `activeSection` value:
+`home · about · products · collections · countries · packaging · contact`.
+
+### `COUNTRIES` — the Countries section (region → collections)
+
+Array near `BAG_SUBS`. Each region: `{ id, label, flag, accent, tagline,
+blurb, status, collections }`. The Countries section renders an **animated
+dropdown** (USA / Europe / Mexico / Japan) plus a scroll-parallax header.
+
+- **Europe** is `status: 'live'` and shows the `MASSINI_COLLECTION` object
+  (defined just above `COUNTRIES`, reused so it stays in sync).
+- **USA / Mexico / Japan** are `status: 'soon'` with empty `collections: []`
+  → they render an "arriving soon" CTA that links to Contact.
+
+**To assign a collection to a country**: find the collection object in the
+Collections-section inline array (e.g. the Osaka row), copy it into that
+country's `collections: [ ... ]` array, and set `status: 'live'`. Selecting
+the country in the dropdown then shows real `<CollectionCard>`s.
+
+State: `selectedCountry` (default `'europe'`) + `countryOpen` (dropdown).
 
 ### Collections page — inline array
 
