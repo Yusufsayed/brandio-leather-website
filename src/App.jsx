@@ -1014,7 +1014,7 @@ export default function BrandioLeatherWebsite() {
             <div className="max-w-4xl mx-auto">
               <AnimatePresence mode="wait">
                 <motion.div key={currentSlide}>
-                  <h1 className="text-4xl md:text-7xl font-bold mb-6 text-white leading-tight overflow-hidden">
+                  <h1 className="font-display text-5xl md:text-8xl font-bold mb-6 text-white leading-[1.05] tracking-tight overflow-hidden">
                     <StaggerWords text={heroSlides[currentSlide].title} />
                   </h1>
                   <motion.p
@@ -1138,7 +1138,7 @@ export default function BrandioLeatherWebsite() {
             >
               <div>
                 <p className="text-[10px] tracking-[0.4em] text-amber-700/80 uppercase mb-3">Explore</p>
-                <h2 className="text-4xl md:text-5xl font-bold text-amber-950 leading-tight">Featured Products</h2>
+                <h2 className="font-display text-5xl md:text-6xl font-bold text-amber-950 leading-tight tracking-tight">Featured Products</h2>
               </div>
               <MagneticButton
                 onClick={() => goTo('products')}
@@ -1201,7 +1201,7 @@ export default function BrandioLeatherWebsite() {
           className="py-12 md:py-20 px-4"
         >
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl md:text-5xl font-bold mb-8 text-amber-900">Our Story</h2>
+            <h2 className="font-display text-4xl md:text-6xl font-bold mb-8 text-amber-900 tracking-tight">Our Story</h2>
             <div className="space-y-6 text-lg text-gray-700">
               <p>At Brandio Leather Pvt Ltd, we believe in the power of craftsmanship. Every piece we create tells a story of dedication, precision, and passion. With over a decade of experience, we've refined our expertise to deliver leather goods that stand the test of time.</p>
               <p>Our artisans meticulously hand-select the finest leather from trusted suppliers across the globe. Using traditional techniques combined with modern innovation, we create products that are not just beautiful, but built to last.</p>
@@ -1234,7 +1234,7 @@ export default function BrandioLeatherWebsite() {
           className="py-12 md:py-20 px-4"
         >
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-3xl md:text-5xl font-bold mb-2 text-amber-900">Our Products</h2>
+            <h2 className="font-display text-4xl md:text-6xl font-bold mb-2 text-amber-900 tracking-tight">Our Products</h2>
             <p className="text-gray-600 mb-10 text-lg">Premium leather goods crafted for quality and style.</p>
 
             {/* ── Level 1: 4 main categories ── */}
@@ -1407,7 +1407,7 @@ export default function BrandioLeatherWebsite() {
           className="py-12 md:py-20 px-4"
         >
           <div className="max-w-5xl mx-auto">
-            <h2 className="text-3xl md:text-5xl font-bold mb-4 text-amber-900">Collections</h2>
+            <h2 className="font-display text-4xl md:text-6xl font-bold mb-4 text-amber-900 tracking-tight">Collections</h2>
             <p className="text-gray-600 mb-12 text-lg">Curated leather ranges crafted around a unified design language.</p>
             <div className="grid md:grid-cols-2 gap-6">
               {[
@@ -1464,7 +1464,7 @@ export default function BrandioLeatherWebsite() {
                 <Sparkles size={18} />
                 <span className="text-xs md:text-sm font-semibold tracking-[0.25em] uppercase">Global Reach</span>
               </div>
-              <h2 className="text-4xl md:text-7xl font-black leading-[1.02] tracking-tight">
+              <h2 className="font-display text-5xl md:text-8xl font-bold leading-[1.02] tracking-tight">
                 <StaggerWords text="Crafted in Kolkata." />
                 <br />
                 <span className="bg-gradient-to-r from-amber-200 via-yellow-100 to-amber-300 bg-clip-text text-transparent">
@@ -1478,6 +1478,28 @@ export default function BrandioLeatherWebsite() {
               >
                 Select a market to see the collections curated for it. Each region gets a line tuned to its sizing, taste, and packaging.
               </motion.p>
+
+              {/* Animated trust stats */}
+              <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 max-w-3xl">
+                {[
+                  { value: '2007', label: 'Crafting Since' },
+                  { value: '30+',  label: 'Countries Served' },
+                  { value: '4',    label: 'Continents' },
+                  { value: '100%', label: 'Custom Branding' },
+                ].map((stat, i) => (
+                  <motion.div
+                    key={stat.label}
+                    initial={{ opacity: 0, y: 24 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.6 + i * 0.12, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                    className="rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 px-4 py-5 text-center"
+                  >
+                    <div className="font-display text-4xl md:text-5xl font-bold text-amber-200 leading-none">{stat.value}</div>
+                    <div className="mt-2 text-[11px] md:text-xs uppercase tracking-[0.18em] text-amber-100/70">{stat.label}</div>
+                  </motion.div>
+                ))}
+              </div>
             </motion.div>
           </div>
 
@@ -1570,7 +1592,7 @@ export default function BrandioLeatherWebsite() {
                     {activeCountry.flag}
                   </motion.span>
                   <div>
-                    <h3 className="text-3xl md:text-5xl font-black text-amber-900">{activeCountry.label}</h3>
+                    <h3 className="font-display text-4xl md:text-6xl font-bold text-amber-900 tracking-tight">{activeCountry.label}</h3>
                     <p className="text-amber-600 font-semibold">{activeCountry.tagline}</p>
                   </div>
                 </div>
@@ -1622,7 +1644,7 @@ export default function BrandioLeatherWebsite() {
           className="py-12 md:py-20 px-4"
         >
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-3xl md:text-5xl font-bold mb-4 text-amber-900">Packaging</h2>
+            <h2 className="font-display text-4xl md:text-6xl font-bold mb-4 text-amber-900 tracking-tight">Packaging</h2>
             <p className="text-gray-600 mb-3 text-lg">Each collection ships in its own branded presentation. Tap or hover any box to see the wallet seated inside.</p>
             <p className="text-sm font-semibold text-amber-700 mb-12">Every range is available as a <span className="text-amber-900">tin box</span> or a <span className="text-amber-900">corrugated paper box</span>.</p>
 
@@ -1661,7 +1683,7 @@ export default function BrandioLeatherWebsite() {
           className="py-12 md:py-20 px-4"
         >
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl md:text-5xl font-bold mb-8 md:mb-12 text-amber-900">Get In Touch</h2>
+            <h2 className="font-display text-4xl md:text-6xl font-bold mb-8 md:mb-12 text-amber-900 tracking-tight">Get In Touch</h2>
             <div className="grid md:grid-cols-2 gap-12">
               {formStatus === 'sent' ? (
                 <motion.div
